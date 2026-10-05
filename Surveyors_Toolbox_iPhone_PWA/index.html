@@ -685,9 +685,36 @@ function parseDMS(value){
 function calcCoords(){let e1=num('ce1'),n1=num('cn1'),e2=num('ce2'),n2=num('cn2'),de=e2-e1,dn=n2-n1;let dist=Math.hypot(de,dn),b=Math.atan2(de,dn)*180/Math.PI;if(b<0)b+=360;crDist.textContent=dist.toFixed(3)+' m';crBear.textContent=dms(b);crE.textContent=de.toFixed(3)+' m';crN.textContent=dn.toFixed(3)+' m'}
 
 function calcBD(){let e=num('be'),n=num('bn'),b=parseDMS(document.getElementById('bb').value),d=num('bdist'),r=b*Math.PI/180,de=d*Math.sin(r),dn=d*Math.cos(r);bE.textContent=(e+de).toFixed(3)+' m';bN.textContent=(n+dn).toFixed(3)+' m';bDep.textContent=de.toFixed(3)+' m';bLat.textContent=dn.toFixed(3)+' m'}
-let lineNo=0;function addLine(){lineNo++;let tr=document.createElement('tr');tr.innerHTML=`<td>${lineNo}</td><td><input class="tb" value="90d00'00&quot;"></td><td><input class="td" value="50"></td><td class="teo">—</td><td class="tno">—</td><td><button class="btn danger" onclick="this.closest('tr').remove()">×</button></td>`;trBody.appendChild(tr)}
-function calcTraverse(){let e=num('te'),n=num('tn'),rows=[...document.querySelectorAll('#trBody tr')],pts=[[e,n]];rows.forEach(r=>{let b=parseDMS(r.querySelector('.tb').value),d=parseFloat(r.querySelector('.td').value)||0,rad=b*Math.PI/180;e+=d*Math.sin(rad);n+=d*Math.cos(rad);r.querySelector('.teo').textContent=e.toFixed(3);r.querySelector('.tno').textContent=n.toFixed(3);pts.push([e,n])});trStatus.textContent=rows.length?`Traverse endpoint: E ${e.toFixed(3)}, N ${n.toFixed(3)}. ${rows.length} line(s) calculated.`:'Add lines first.';draw(pts)}
-function clearTraverse(){trBody.innerHTML='';lineNo=0;trStatus.textContent='Add lines to build your traverse.';draw([])}
+let lineNo=0;
+function addLine(){
+  lineNo++;
+  const body=document.getElementById('trBody');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${lineNo}</td><td><input class="tb" value="90d00'00&quot;"></td><td><input class="td" value="50"></td><td class="teo">—</td><td class="tno">—</td><td><button class="btn danger" onclick="this.closest('tr').remove()">×</button></td>`;
+  body.appendChild(tr);
+}
+function calcTraverse(){
+  let e=num('te'),n=num('tn');
+  const rows=[...document.querySelectorAll('#trBody tr')],pts=[[e,n]];
+  rows.forEach(r=>{
+    const b=parseDMS(r.querySelector('.tb').value);
+    const d=parseFloat(r.querySelector('.td').value)||0;
+    const rad=b*Math.PI/180;
+    e+=d*Math.sin(rad); n+=d*Math.cos(rad);
+    r.querySelector('.teo').textContent=e.toFixed(3);
+    r.querySelector('.tno').textContent=n.toFixed(3);
+    pts.push([e,n]);
+  });
+  const status=document.getElementById('trStatus');
+  status.textContent=rows.length?`Traverse endpoint: E ${e.toFixed(3)}, N ${n.toFixed(3)}. ${rows.length} line(s) calculated.`:'Add lines first.';
+  draw(pts);
+}
+function clearTraverse(){
+  document.getElementById('trBody').innerHTML='';
+  lineNo=0;
+  document.getElementById('trStatus').textContent='Add lines to build your traverse.';
+  draw([]);
+}
 function draw(pts){
   const c=document.getElementById('plot');
   if(!c)return;
@@ -819,12 +846,12 @@ function clearQuickClose(){
   document.getElementById('qcBody').innerHTML='';
   document.getElementById('qcDetailBody').innerHTML='';
   qcLineNo=0;
-  qcBearing.textContent='—';
-  qcDistance.textContent='—';
-  qcDeltaE.textContent='—';
-  qcDeltaN.textContent='—';
-  qcStatus.textContent='Enter your known traverse lines, then calculate the missing closing line.';
-  qcStatus.className='status';
+  document.getElementById('qcBearing').textContent='—';
+  document.getElementById('qcDistance').textContent='—';
+  document.getElementById('qcDeltaE').textContent='—';
+  document.getElementById('qcDeltaN').textContent='—';
+  document.getElementById('qcStatus').textContent='Enter your known traverse lines, then calculate the missing closing line.';
+  document.getElementById('qcStatus').className='status';
   drawQuickClose([]);
 }
 
@@ -834,13 +861,13 @@ function calcQuickClose(){
   const rows=[...document.querySelectorAll('#qcBody tr')];
 
   if(!Number.isFinite(startE)||!Number.isFinite(startN)){
-    qcStatus.textContent='Invalid starting coordinate.';
-    qcStatus.className='status warn';
+    document.getElementById('qcStatus').textContent='Invalid starting coordinate.';
+    document.getElementById('qcStatus').className='status warn';
     return;
   }
   if(!rows.length){
-    qcStatus.textContent='Add at least one known traverse line.';
-    qcStatus.className='status warn';
+    document.getElementById('qcStatus').textContent='Add at least one known traverse line.';
+    document.getElementById('qcStatus').className='status warn';
     return;
   }
 
@@ -856,8 +883,8 @@ function calcQuickClose(){
     const distance=Number(row.querySelector('.qcdistance').value);
 
     if(!Number.isFinite(bearing)||!Number.isFinite(distance)||distance<0){
-      qcStatus.textContent=`Invalid bearing or distance on line ${i+1}.`;
-      qcStatus.className='status warn';
+      document.getElementById('qcStatus').textContent=`Invalid bearing or distance on line ${i+1}.`;
+      document.getElementById('qcStatus').className='status warn';
       return;
     }
 
@@ -898,16 +925,16 @@ function calcQuickClose(){
   let bearing=Math.atan2(closeE,closeN)*180/Math.PI;
   bearing=(bearing+360)%360;
 
-  qcBearing.textContent=dms(bearing);
-  qcDistance.textContent=distance.toFixed(3)+' m';
-  qcDeltaE.textContent=closeE.toFixed(3)+' m';
-  qcDeltaN.textContent=closeN.toFixed(3)+' m';
+  document.getElementById('qcBearing').textContent=dms(bearing);
+  document.getElementById('qcDistance').textContent=distance.toFixed(3)+' m';
+  document.getElementById('qcDeltaE').textContent=closeE.toFixed(3)+' m';
+  document.getElementById('qcDeltaN').textContent=closeN.toFixed(3)+' m';
 
   pts.push([startE,startN]);
   drawQuickClose(pts);
 
-  qcStatus.textContent=`Closing line: ${dms(bearing)} for ${distance.toFixed(3)} m back to the starting point.`;
-  qcStatus.className='status ok';
+  document.getElementById('qcStatus').textContent=`Closing line: ${dms(bearing)} for ${distance.toFixed(3)} m back to the starting point.`;
+  document.getElementById('qcStatus').className='status ok';
 }
 
 function exportQuickCloseDXF(){
@@ -1682,10 +1709,9 @@ window.addEventListener('DOMContentLoaded',function(){
     <div class="tools">
       <button onclick="iphoneShow('coords');iphoneMoreClose()">Coords from B&D</button>
       <button onclick="iphoneShow('strata');iphoneMoreClose()">Strata Areas</button>
-      <button onclick="iphoneShow('saved');iphoneMoreClose()">Saved Jobs</button>
+      <button onclick="iphoneShow('jobs');iphoneMoreClose()">Saved Jobs</button>
       <button onclick="iphoneShow('scale');iphoneMoreClose()">Scale</button>
       <button onclick="iphoneShow('convert');iphoneMoreClose()">Conversions</button>
-      <button onclick="iphoneShow('shortcuts');iphoneMoreClose()">Shortcuts</button>
     </div>
     <button style="width:100%;margin-top:10px" onclick="iphoneMoreClose()">Close</button>
   </div>
@@ -1705,8 +1731,10 @@ window.addEventListener('DOMContentLoaded',function(){
       var el=document.getElementById(id);
       if(el) el.style.display='block';
     }
-    var map={bd:'bd',traverse:'traverse',quick:'quick',area:'area'};
+    var map={bd:'bd',traverse:'traverse',quick:'misclose',area:'area'};
     setActive(document.querySelector('#iphoneNav button[data-target="'+(map[id]||'')+'"]'));
+    if(id==='traverse' && typeof window.calcTraverse==='function') window.calcTraverse();
+    if(id==='misclose' && typeof window.calcQuickClose==='function') window.calcQuickClose();
     window.scrollTo({top:0,behavior:'smooth'});
   };
   window.iphoneMoreOpen = function(){
