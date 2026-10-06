@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Surveyor’s Toolbox</title>
+<style>
+:root{
+ --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
+ --muted:#687687;--nav:#16212c;--nav2:#1f2d3a;--accent:#1677c8;--accent2:#0f5f9f;
+ --good:#18864b;--goodbg:#eaf7ef;--warn:#a66b00;--warnbg:#fff6df;--bad:#b33a3a;
+ --shadow:0 2px 10px rgba(22,34,48,.06)
+}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.app{display:flex;min-height:100vh}.side{width:240px;display:flex;flex-direction:column;background:var(--nav);color:#dce6ef;position:fixed;inset:0 auto 0 0;padding:18px 12px;box-shadow:2px 0 12px #0001;z-index:5}
+.logo{padding:8px 11px 22px;font-size:18px;font-weight:750;letter-spacing:-.2px}.logo small{display:block;color:#91a2b3;font-size:11px;font-weight:400;margin-top:5px}
+.section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#708293;padding:12px 11px 5px}
+.nav button{width:100%;border:0;background:transparent;color:#b9c6d2;text-align:left;border-radius:7px;padding:10px 11px;margin:2px 0;cursor:pointer;font-size:13px}
+.nav button:hover{background:var(--nav2);color:#fff}.nav button.active{background:#fff;color:#17212b;font-weight:650}
+.main{margin-left:240px;width:calc(100% - 240px);padding:0 34px 35px;max-width:1500px;min-width:0}
+.topbar{height:66px;margin:0 -34px 28px;padding:0 34px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.crumb{font-size:12px;color:var(--muted)}.brandtag{font-size:12px;color:var(--muted)}
+h1{font-size:28px;letter-spacing:-.5px;margin:0 0 5px}.sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+.page{display:none}.page.active{display:block;min-width:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.full{grid-column:1/-1}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;box-shadow:var(--shadow)}
+.card h2{font-size:15px;margin:0 0 15px}.card h3{font-size:13px;margin:0 0 12px}
+label{display:block;font-size:11px;font-weight:650;color:#637181;margin:11px 0 5px;text-transform:uppercase;letter-spacing:.35px}
+input,select{width:100%;padding:10px 11px;border:1px solid #cbd5de;border-radius:6px;background:#fff;color:#17212b;font-size:13px;outline:none}
+input:focus,select:focus{border-color:#5b9ed2;box-shadow:0 0 0 2px #1677c81a}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.btn{border:1px solid transparent;border-radius:6px;padding:9px 13px;cursor:pointer;font-size:12px;font-weight:700}
+.primary{background:var(--accent);color:#fff}.primary:hover{background:var(--accent2)}
+.secondary{background:#fff;border-color:#cbd5de;color:#334454}.danger{background:#fff;border-color:#e2b4b4;color:var(--bad)}
+.results{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.result{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:13px}.result small{display:block;color:#6d7b8b;font-size:10px;font-weight:700;letter-spacing:.5px}.result strong{display:block;margin-top:5px;font-size:17px;letter-spacing:-.2px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+th{background:#f3f6f8;color:#687687;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.45px;padding:9px;border-bottom:1px solid var(--line)}
+td{padding:7px 9px;border-bottom:1px solid #e7edf1;background:#fff}tr:last-child td{border-bottom:0}td input{padding:7px;font-size:12px}
+.status{padding:10px 12px;border-radius:7px;background:#f5f7f9;border:1px solid var(--line);color:#687687;margin-top:13px;font-size:12px}
+.status.ok{background:var(--goodbg);border-color:#bfe3cc;color:var(--good)}.status.warn{background:var(--warnbg);border-color:#efd89c;color:var(--warn)}
+.plot-card{padding:0;overflow:hidden}.plot-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}.plot-head span{font-size:12px;color:var(--muted)}
+canvas{display:block;width:100%;height:350px;background:#fbfcfd}
+.muted{color:var(--muted);font-size:12px;line-height:1.55}.eyebrow{font-size:10px;text-transform:uppercase;color:var(--accent);font-weight:750;letter-spacing:1px;margin-bottom:7px}
+@media(max-width:900px){.side{width:200px}.main{margin-left:200px;width:calc(100% - 200px);padding-left:20px;padding-right:20px}.topbar{margin-left:-20px;margin-right:-20px;padding:0 20px}.results{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.side{position:relative;width:100%;height:auto;inset:auto}.app{display:block}.main{margin-left:0;width:100%}.grid{grid-template-columns:1fr}.full{grid-column:auto}.side .nav{display:grid;grid-template-columns:1fr 1fr}.topbar{display:none}}
+
+/* Compact workspace layout */
+.workspace{display:grid;grid-template-columns:minmax(500px,1.05fr) minmax(360px,.95fr);gap:14px;align-items:stretch}
+.workspace-left,.workspace-right{min-width:0}
+.workspace-left>.card{height:500px;display:flex;flex-direction:column}
+.workspace-right>.live-card{height:500px;display:flex;flex-direction:column;padding:0;overflow:hidden}
+.workspace-right .plot-head{flex:0 0 auto}.workspace-right canvas{flex:1;height:auto;min-height:0}
+.scroll-table{overflow:auto;flex:1;min-height:0}.sticky-actions{flex:0 0 auto;padding-top:10px;background:#fff}
+.calc-summary{margin-top:12px}.calc-summary .results{margin-top:0}
+@media(max-width:950px){.workspace{grid-template-columns:1fr}.workspace-right>.live-card{height:360px}}
+
+/* Compact survey workspaces: content stays in the first viewport; only long tables scroll. */
+.workspace{display:grid;grid-template-columns:minmax(500px,1.08fr) minmax(360px,.92fr);gap:14px;min-height:0}
+.workspace-left,.workspace-right{min-width:0}
+.workspace-left>.card{height:520px;display:flex;flex-direction:column}
+.workspace-right>.live-card{height:520px;display:flex;flex-direction:column;padding:0;overflow:hidden}
+.workspace-right .plot-head{flex:0 0 auto}
+.workspace-right canvas{flex:1;min-height:0;height:auto}
+.scroll-table{overflow:auto;min-height:120px;flex:1}
+.calc-summary{margin-top:12px}.calc-summary .results{margin-top:0}
+@media(max-width:950px){.workspace{grid-template-columns:1fr}.workspace-right>.live-card{height:360px}}
+
+.nav-spacer{flex:1;min-height:14px}
+.shortcuts-nav{margin-top:auto;width:100%;text-align:left;display:flex;align-items:center;gap:8px;background:transparent;border:0;color:inherit;padding:10px 12px;border-radius:7px;font:inherit;cursor:pointer;box-sizing:border-box}.shortcuts-nav:hover{background:rgba(255,255,255,.08)}.shortcuts-nav.active{background:#fff;color:#17212b}
+.shortcut-grid{display:grid;grid-template-columns:repeat(2,minmax(280px,420px));gap:14px;max-width:900px}
+.shortcut-card{background:var(--panel,#fff);border:1px solid var(--border,#ddd);border-radius:12px;padding:18px}
+.shortcut-card h3{margin:0 0 12px;font-size:15px}
+.shortcut-row{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:9px 0;border-bottom:1px solid var(--border,#eee)}
+.shortcut-row:last-child{border-bottom:0}
+.shortcut-key{display:inline-flex;align-items:center;justify-content:center;min-width:82px;padding:5px 9px;border:1px solid #c9cdd3;border-bottom-width:2px;border-radius:6px;background:#f7f8fa;font:600 12px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:nowrap}
+.shortcut-desc{font-size:13px;color:var(--muted,#667085);text-align:right}
+.shortcut-note{margin-top:14px;padding:12px 14px;border-radius:9px;background:#f4f7fa;color:#596579;font-size:12px;line-height:1.5}
+@media(max-width:750px){.shortcut-grid{grid-template-columns:1fr}}
+
+.page#shortcuts{padding:0;box-sizing:border-box;overflow:hidden;min-height:0}.page#shortcuts .shortcut-grid{width:100%}
+.page#shortcuts .page-head{margin-bottom:20px}.page#shortcuts .subtitle{color:var(--muted);font-size:13px;margin-bottom:24px}
+
+.strata-page{min-width:0}
+.strata-header{display:grid;grid-template-columns:1fr 1.7fr 1fr;gap:10px;margin-bottom:12px}
+.strata-header .card{padding:13px 15px}
+.strata-header label{margin-top:0}
+.strata-layout{display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:14px;align-items:start}
+.strata-table-wrap{background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);overflow:auto}
+.strata-table{min-width:850px;border:0;border-radius:0}
+.strata-table th,.strata-table td{text-align:center;padding:8px 7px}
+.strata-table th{white-space:nowrap}
+.strata-table th:first-child,.strata-table td:first-child{width:68px;text-align:center}
+.strata-table td input{width:100%;min-width:70px;text-align:right;padding:7px 6px}
+.strata-table .unit-no{font-weight:700;background:#f7f9fb}
+.strata-table .row-total{font-weight:750;background:#fff0e1}
+.strata-table tfoot td{font-weight:750;background:#edf2f6;border-top:2px solid var(--line)}
+.strata-key{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;box-shadow:var(--shadow)}
+.strata-key h2{font-size:15px;margin:0 0 12px}
+.strata-key p{margin:7px 0;font-size:12px;color:var(--muted)}
+.strata-key strong{display:inline-block;width:38px;color:var(--text)}
+.strata-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.strata-actions .btn{min-width:120px}
+.strata-summary{margin-top:12px}
+@media(max-width:1000px){.strata-layout{grid-template-columns:1fr}.strata-key{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 14px}.strata-key h2{grid-column:1/-1}}
+@media(max-width:650px){.strata-header{grid-template-columns:1fr}.strata-key{grid-template-columns:1fr}.strata-table-wrap{overflow-x:auto}}
+
+.saved-job{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 0;border-bottom:1px solid var(--line)}
+.saved-job:last-child{border-bottom:0}
+.saved-job-info{min-width:0}.saved-job-title{font-weight:750;font-size:14px}.saved-job-meta{font-size:11px;color:var(--muted);margin-top:4px}.saved-job-actions{display:flex;gap:7px;flex-wrap:wrap}.jobs-empty{padding:35px 10px;text-align:center;color:var(--muted);font-size:13px}
+@media(max-width:650px){.saved-job{align-items:flex-start;flex-direction:column}.saved-job-actions{width:100%}}
+@media print{
+  body{background:#fff!important}
+  .side,.topbar{display:none!important}
+  .main{margin:0!important;width:100%!important;max-width:none!important;padding:0!important}
+  .page{display:none!important}
+  .page.active{display:block!important}
+  .toolbar .btn.danger,
+  .toolbar .btn.primary,
+  .toolbar .btn.secondary{print-color-adjust:exact}
+  .toolbar{display:none!important}
+  .workspace{display:grid!important;grid-template-columns:1fr 1fr!important;gap:14px!important}
+  .card{box-shadow:none!important}
+  canvas{max-width:100%;height:auto}
+  .scroll-table{overflow:visible!important}
+  table{font-size:10px}
+  .strata-actions{display:none!important}
+  .strata-table-wrap,.strata-key,.strata-header .card{box-shadow:none!important}
+  .strata-layout{grid-template-columns:1fr 220px}
+}
+
+.plan-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:7px 10px;border-bottom:1px solid var(--line);background:#f7f9fb;font-size:11px;color:var(--muted)}
+.plan-tools button{border:1px solid #cbd3dc;background:#fff;border-radius:5px;padding:4px 9px;font-weight:700;cursor:pointer}
+.plan-tools button:hover{background:#eef3f7}
+.plan-tools label{display:inline-flex;align-items:center;gap:4px;margin-left:4px;cursor:pointer;font-weight:650}
+.plan-tools input{margin:0;width:auto}
+#plot{cursor:grab;touch-action:none}
+#plot.dragging{cursor:grabbing}
+
+/* v8 dashboard + point manager */
+.dash-hero{display:flex;align-items:center;gap:14px;padding:18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,#16212c,#263a4b);color:#fff;box-shadow:0 8px 24px rgba(22,34,48,.14);margin-bottom:12px}.dash-mark{width:52px;height:52px;border-radius:15px;background:#fff;color:#17212b;display:grid;place-items:center;font-size:28px;flex:none}.dash-copy{min-width:0;flex:1}.dash-kicker{font-size:9px;letter-spacing:1.3px;font-weight:800;color:#a9bac9}.dash-hero h1{margin:2px 0 0;font-size:24px;letter-spacing:-.5px}.dash-copy p{margin:3px 0 0;color:#c5d0da;font-size:12px}.dash-job-btn{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;border-radius:11px;padding:10px 12px;font-weight:750;min-height:44px}.current-job-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:14px;box-shadow:var(--shadow);margin-bottom:18px}.current-job-card.empty{background:#f7f9fb}.current-job-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.current-job-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:800}.current-job-name{font-size:17px;font-weight:800;margin-top:3px}.current-job-meta{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45}.current-job-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}.dash-section-title{display:flex;align-items:center;justify-content:space-between;margin:16px 2px 8px;font-size:13px;font-weight:800}.dash-section-title small{font-size:10px;color:var(--muted);font-weight:600}.dash-section-title button{border:0;background:none;color:var(--accent);font-weight:750}.quick-tools-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.quick-tools-grid button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px;text-align:left;box-shadow:var(--shadow);min-height:106px}.quick-tools-grid button span{display:block;font-size:23px;margin-bottom:7px}.quick-tools-grid button b{display:block;font-size:13px}.quick-tools-grid button small{display:block;color:var(--muted);font-size:10px;margin-top:4px;line-height:1.35}.recent-jobs{display:grid;gap:8px}.recent-job{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);background:#fff;border-radius:12px}.recent-job-icon{font-size:20px}.recent-job-info{min-width:0;flex:1}.recent-job-name{font-weight:750;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.recent-job-meta{font-size:10px;color:var(--muted);margin-top:3px}.recent-job button{min-height:38px!important;padding:6px 10px!important}.field-tip{display:flex;gap:9px;align-items:flex-start;padding:12px;border-radius:12px;background:#eef6fb;border:1px solid #cde3f2;color:#4d6374;font-size:11px;line-height:1.45}.field-tip b{color:var(--accent)}.page-head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.point-summary{display:grid;grid-template-columns:1fr 1fr auto auto;gap:8px;margin-bottom:12px}.point-summary>div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}.point-summary small{display:block;color:var(--muted);font-size:9px;font-weight:800}.point-summary strong{display:block;font-size:16px;margin-top:3px}.point-list-card{padding:12px!important}.point-search-row{display:flex;gap:8px;margin-bottom:8px}.point-search-row input{flex:1}.point-row{display:grid;grid-template-columns:62px 1fr auto;gap:10px;align-items:center;padding:12px 2px;border-bottom:1px solid var(--line)}.point-row:last-child{border-bottom:0}.point-no{font-weight:800;color:var(--accent)}.point-main b{display:block;font-size:13px}.point-main small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.point-actions{display:flex;gap:5px}.point-actions button{min-height:38px!important;padding:6px 9px!important}.point-empty{text-align:center;padding:30px 10px;color:var(--muted);font-size:12px}.job-manager-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.jobs-backup-note{font-size:10px;color:var(--muted);margin-top:8px}
+@media(max-width:700px){.dash-hero{padding:14px}.dash-mark{width:46px;height:46px;font-size:24px}.dash-hero h1{font-size:20px}.dash-job-btn{padding:8px 9px}.quick-tools-grid{gap:8px}.quick-tools-grid button{min-height:100px;padding:11px}.point-summary{grid-template-columns:1fr 1fr}.point-summary .btn{width:100%}.page-head-row .btn{flex:none}.point-row{grid-template-columns:48px 1fr}.point-actions{grid-column:2}.point-actions button{flex:1}.current-job-actions .btn{flex:1}}
+</style>
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#16212c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Survey Toolbox">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+
+<style id="iphone-pwa-overrides">
+/* Surveyor's Toolbox — iPhone PWA */
+:root{
+  --ios-safe-top: env(safe-area-inset-top, 0px);
+  --ios-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  overscroll-behavior-y:none;
+}
+body{
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior-y:none;
+  min-height:100dvh;
+}
+button, input, select, textarea{
+  font-size:16px !important; /* prevents Safari input zoom */
+}
+input, select, textarea{
+  max-width:100%;
+}
+@media (max-width:700px){
+  body{
+    padding-top:var(--ios-safe-top);
+    padding-bottom:calc(var(--ios-safe-bottom) + 78px);
+  }
+  .app{
+    display:block !important;
+    min-height:100dvh;
+  }
+  .side{
+    display:none !important;
+  }
+  .main{
+    margin-left:0 !important;
+    width:100% !important;
+    max-width:none !important;
+    padding:12px 12px 18px !important;
+  }
+  .topbar{
+    display:flex !important;
+    position:sticky;
+    top:var(--ios-safe-top);
+    z-index:100;
+    min-height:56px;
+    padding:10px 4px !important;
+    margin:0 0 12px !important;
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+  }
+  .topbar h1{
+    font-size:20px !important;
+    line-height:1.15;
+  }
+  .mobile-brand{display:flex;align-items:center;gap:10px;min-width:0}
+  .mobile-brand-mark{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#17212b;color:#fff;font-size:21px;box-shadow:0 2px 7px rgba(0,0,0,.12)}
+  .mobile-brand-title{font-weight:850;font-size:17px;line-height:1.05;letter-spacing:-.2px;color:#17212b;white-space:nowrap}
+  .mobile-brand-sub{font-size:11px;color:#6b7280;margin-top:3px;font-weight:650}
+  .topbar .brandtag{font-size:10px;font-weight:750;color:#66717d;background:#f1f4f7;border:1px solid #e1e6eb;border-radius:999px;padding:6px 9px;white-space:nowrap}
+
+  .topbar small{
+    font-size:12px !important;
+  }
+  .grid,.workspace{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:12px !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+  .workspace-left,.workspace-right{
+    width:100% !important;
+    min-width:0 !important;
+  }
+  .workspace-right>.live-card{
+    height:auto !important;
+    min-height:0 !important;
+    width:100% !important;
+    padding:0 !important;
+    overflow:hidden !important;
+  }
+  .workspace-right .plot-head{padding:12px 14px !important;font-size:14px}
+  .workspace-right .plot-head span{font-size:11px}
+  .live-card canvas{
+    display:block !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:320px !important;
+    aspect-ratio:10 / 7;
+    background:#fff;
+  }
+  .plan-tools{padding:8px 10px !important;gap:6px !important}
+  .plan-tools button{min-height:42px !important;min-width:44px !important;padding:5px 11px !important}
+  .plan-tools .muted{display:none !important}
+  .plan-tools label{font-size:11px;margin-left:2px}
+  .plan-tools label:nth-of-type(3),.plan-tools label:nth-of-type(4){display:none}
+
+  .page h1{font-size:24px !important;letter-spacing:-.4px;margin-bottom:4px}
+  .page .sub{font-size:13px;line-height:1.45;color:#687381;margin-bottom:14px}
+  .card{
+    width:100% !important;
+    min-width:0 !important;
+    border-radius:14px !important;
+    padding:14px !important;
+  }
+  .results{
+    grid-template-columns:1fr 1fr !important;
+    gap:8px !important;
+  }
+  .result{
+    min-width:0 !important;
+    padding:10px !important;
+  }
+  .result b{
+    font-size:16px !important;
+    overflow-wrap:anywhere;
+  }
+  table{
+    font-size:14px;
+  }
+  th,td{
+    padding:8px 6px !important;
+  }
+  .table-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  #plot, canvas{
+    max-width:100%;
+  }
+  #plot{
+    touch-action:none !important;
+    border-radius:12px;
+  }
+  .btn, button{
+    min-height:46px;
+    border-radius:10px !important;
+  }
+  input, select{
+    min-height:46px;
+    border-radius:10px !important;
+  }
+  .navbtn, .side button{
+    min-height:48px;
+  }
+
+  /* iPhone bottom app navigation */
+  #iphoneNav{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:9999;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:4px;
+    padding:7px 8px calc(7px + var(--ios-safe-bottom));
+    background:rgba(18,27,36,.96);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 -4px 20px rgba(0,0,0,.16);
+  }
+  #iphoneNav button{
+    appearance:none;
+    border:0;
+    background:transparent;
+    color:#cbd5df;
+    min-height:52px;
+    padding:4px 2px;
+    font-weight:700;
+    font-size:11px !important;
+    line-height:1.1;
+  }
+  #iphoneNav button.active{
+    color:#fff;
+    background:rgba(255,255,255,.12);
+  }
+  #iphoneNav .ico{
+    display:block;
+    font-size:20px;
+    margin-bottom:3px;
+  }
+
+  /* Extra tools sheet */
+  #iphoneMore{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:10000;
+    background:rgba(0,0,0,.42);
+  }
+  #iphoneMore.open{display:block}
+  #iphoneMore .sheet{
+    position:absolute;
+    left:0;right:0;bottom:0;
+    padding:12px 12px calc(18px + var(--ios-safe-bottom));
+    background:#fff;
+    border-radius:20px 20px 0 0;
+    box-shadow:0 -10px 35px rgba(0,0,0,.25);
+  }
+  #iphoneMore .sheet h3{
+    margin:4px 4px 12px;
+  }
+  #iphoneMore .tools{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  #iphoneMore button{
+    min-height:52px;
+    border:1px solid #d8dee5;
+    background:#f7f9fb;
+    border-radius:12px;
+    font-weight:700;
+    font-size:14px !important;
+  }
+}
+@media (min-width:701px){
+  #iphoneNav,#iphoneMore{display:none !important}
+}
+
+/* v6 visual polish */
+@media (max-width:700px){
+  body{background:#f3f6f8;}
+  .main{padding:0 10px calc(92px + var(--ios-safe-bottom)) !important;}
+  .topbar{
+    margin:0 -10px 14px !important;
+    padding:10px 14px !important;
+    min-height:68px !important;
+    border-bottom:1px solid #dfe5ea !important;
+    box-shadow:0 2px 12px rgba(18,30,42,.07);
+  }
+  .mobile-brand-mark{width:42px;height:42px;border-radius:12px;font-size:22px;background:linear-gradient(145deg,#17212b,#263746);}
+  .mobile-brand-title{font-size:18px;letter-spacing:-.35px;}
+  .mobile-brand-sub{font-size:10.5px;color:#647180;}
+  .topbar .brandtag{font-size:9px;padding:6px 8px;}
+  .page h1{font-size:25px !important;font-weight:850 !important;}
+  .page .sub{margin-bottom:12px;}
+  .card{box-shadow:0 2px 12px rgba(18,30,42,.055) !important;border-color:#dfe5ea !important;}
+  .eyebrow{font-size:10px;letter-spacing:1.15px;}
+  .toolbar{gap:7px;}
+  .toolbar .btn{flex:1 1 auto;}
+  .workspace-left>.card{height:auto !important;min-height:0 !important;}
+  .workspace-right>.live-card{border-radius:14px !important;}
+  .workspace-right .plot-head{background:#fff;}
+  .plot-head b{font-size:14px;}
+  .plot-head span{font-weight:600;color:#87919d;}
+  .live-card canvas{min-height:360px !important;aspect-ratio:1.18 / 1 !important;}
+  .plan-tools{background:#f8fafb !important;border-bottom:1px solid #e4e9ee !important;}
+  .plan-tools button{box-shadow:0 1px 2px rgba(0,0,0,.05);background:#fff !important;}
+  .plan-tools button:active{transform:scale(.97);background:#eef3f7 !important;}
+  .status{border-radius:10px;padding:11px 12px;}
+  .results .result{background:#f8fafb;}
+  #iphoneNav{padding-top:8px !important;box-shadow:0 -5px 24px rgba(0,0,0,.18) !important;}
+  #iphoneNav button{border-radius:11px !important;transition:transform .12s ease,background .12s ease;}
+  #iphoneNav button:active{transform:scale(.96);}
+  #iphoneNav button.active{background:rgba(255,255,255,.15) !important;}
+  #iphoneNav .ico{font-size:21px;}
+  /* Make the More sheet feel like a native iOS action sheet. */
+  #iphoneMore .sheet{padding-top:8px;}
+  #iphoneMore .sheet:before{content:"";display:block;width:38px;height:4px;border-radius:99px;background:#cbd2d9;margin:2px auto 12px;}
+  #iphoneMore .tools button{background:#f6f8fa;border-color:#dfe5ea;}
+  /* Better table scrolling on small screens. */
+  .scroll-table{border-radius:10px;-webkit-overflow-scrolling:touch;}
+  .scroll-table table{min-width:680px;}
+}
+</style>
+
+<style id="v7-field-app">
+@media(max-width:700px){.qc-job-meta{grid-template-columns:1fr 1fr!important}.qc-job-meta>div:first-child{grid-column:1/-1}.field-plan-tools{display:flex;align-items:center;gap:7px;padding:8px 10px;border-bottom:1px solid var(--line);background:#f7f9fb;color:#687687;font-size:11px}.field-plan-tools button{min-width:44px!important;min-height:40px!important;padding:5px 10px!important;background:#fff;border:1px solid #cbd5de;border-radius:9px;font-weight:800}.field-plan-tools span{margin-left:auto;text-align:right;line-height:1.2}.live-card canvas{min-height:340px!important;aspect-ratio:10/7}.qc-summary .qc-primary{background:#eef7ff;border-color:#a9d4f5}.qc-summary .qc-primary strong{font-size:20px;color:#0f5f9f}.close-banner{margin-top:9px;padding:11px 13px;border-radius:11px;background:#f5f7f9;border:1px solid var(--line);font-weight:700;font-size:12px;color:#526171}.close-banner.ok{background:#eaf7ef;border-color:#bfe3cc;color:#18864b}.area-summary .area-primary{background:#f0f8f3;border-color:#bfe3cc}.area-summary .area-primary strong{font-size:20px;color:#18864b}.jobs-toolbar-v7{grid-template-columns:1fr!important}.jobs-toolbar-v7 button{width:100%}.saved-job-actions{display:grid!important;grid-template-columns:1fr 1fr 1fr;gap:6px;width:100%}.saved-job-actions .btn{min-height:42px!important;padding:7px 5px!important}.jobs-filter button{min-height:40px!important}.plan-readout{font-size:10px;max-width:78%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+@media(min-width:701px){.qc-job-meta{grid-template-columns:repeat(3,1fr)}.field-plan-tools{display:flex;align-items:center;gap:7px;padding:7px 10px;border-bottom:1px solid var(--line);background:#f7f9fb;color:#687687;font-size:11px}.field-plan-tools button{border:1px solid #cbd5de;background:#fff;border-radius:6px;padding:4px 10px;font-weight:700;cursor:pointer}.field-plan-tools span{margin-left:auto}}
+.saved-job{background:#fff;border:1px solid var(--line);border-radius:13px;margin:9px 0;padding:14px!important;box-shadow:0 2px 8px rgba(22,34,48,.04)}.saved-job-info{flex:1}.saved-job-meta{line-height:1.5}.jobs-toolbar-v7{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;margin-bottom:10px}.jobs-filter{display:flex;gap:7px;overflow:auto;padding-bottom:4px;margin-bottom:8px}.jobs-filter button{border:1px solid #d3dae1;background:#fff;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:750;white-space:nowrap}.jobs-filter button.active{background:#17212b;color:#fff;border-color:#17212b}.jobs-count{font-size:11px;color:var(--muted);margin:4px 0 8px}.plan-readout{position:absolute;left:10px;bottom:10px;z-index:2;padding:7px 9px;border-radius:9px;background:rgba(255,255,255,.94);border:1px solid #d7dee6;box-shadow:0 2px 8px rgba(0,0,0,.08);font-size:11px;font-weight:700;color:#334454;pointer-events:none}.live-card{position:relative}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+<div class="logo">📐 Surveyor’s Toolbox<small>Built By Jackson 2026</small></div>
+<div class="nav"><div class="section">Survey</div>
+<button class="active" onclick="show('coords',this)">📍 B&D From Coords</button>
+<button onclick="show('bd',this)">🎯 Coords From B&D</button>
+<button onclick="show('traverse',this)">📏 Traverse</button>
+<button onclick="show('misclose',this)">🔒 Quick Close</button>
+<button onclick="show('area',this)">▱ Area</button>
+<button onclick="show('strata',this)">▦ Strata Areas</button><button onclick="show('jobs',this)">💾 Saved Jobs</button><div class="section">Geometry & Tools</div>
+<button onclick="show('scale',this)">↔ Scale</button>
+<button onclick="show('convert',this)">🔄 Conversions</button></div>
+
+      <div class="nav-spacer"></div>
+      <button class="nav-item shortcuts-nav" data-page="shortcuts" type="button">⌨️ <span>Shortcuts</span></button>
+</aside>
+<main class="main"><div class="topbar">
+  <div class="mobile-brand">
+    <div class="mobile-brand-mark">📐</div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026</div></div>
+  </div>
+  <div class="brandtag">Survey tools</div>
+</div>
+
+
+<section id="dashboard" class="page">
+  <div class="dash-hero">
+    <div class="dash-mark">📐</div>
+    <div class="dash-copy"><div class="dash-kicker">FIELD WORKSPACE</div><h1>Surveyor’s Toolbox</h1><p>Built By Jackson 2026</p></div>
+    <button class="dash-job-btn" type="button" onclick="openJobManager()">💾 Jobs</button>
+  </div>
+  <div id="currentJobCard" class="current-job-card"></div>
+  <div class="dash-section-title"><span>Quick Tools</span><small>Tap to open</small></div>
+  <div class="quick-tools-grid">
+    <button onclick="iphoneShow('bd')"><span>📐</span><b>B&D From Coords</b><small>Calculate bearing & distance</small></button>
+    <button onclick="iphoneShow('coords')"><span>🎯</span><b>Coords From B&D</b><small>Calculate destination point</small></button>
+    <button onclick="iphoneShow('traverse')"><span>↗</span><b>Traverse</b><small>Build and plot a traverse</small></button>
+    <button onclick="iphoneShow('quick')"><span>✓</span><b>Quick Close</b><small>Calculate closing line</small></button>
+    <button onclick="iphoneShow('area')"><span>▱</span><b>Area</b><small>Calculate parcel area</small></button>
+    <button onclick="iphoneShow('points')"><span>📍</span><b>Points</b><small>Manage survey coordinates</small></button>
+  </div>
+  <div class="dash-section-title"><span>Recent Jobs</span><button onclick="openJobManager()">View all</button></div>
+  <div id="dashboardRecentJobs" class="recent-jobs"></div>
+  <div class="dash-section-title"><span>Field Notes</span></div>
+  <div class="field-tip"><b>Tip</b><span>Your jobs and points are stored on this device. Use <strong>Backup All</strong> regularly if the data matters.</span></div>
+</section>
+
+<section id="points" class="page">
+  <div class="page-head-row"><div><h1>Point Manager</h1><div class="sub">Keep your survey coordinates in one place and reuse them across calculations.</div></div><button class="btn primary" onclick="addSurveyPoint()">＋ Add Point</button></div>
+  <div class="point-summary"><div><small>POINTS</small><strong id="pointCount">0</strong></div><div><small>LAST ADDED</small><strong id="pointLast">—</strong></div><button class="btn secondary" onclick="exportPoints()">⇩ Export</button><button class="btn secondary" onclick="document.getElementById('pointImportFile').click()">⇧ Import</button><input id="pointImportFile" type="file" accept="application/json,.json" hidden onchange="importPoints(event)"></div>
+  <div class="card point-list-card"><div class="point-search-row"><input id="pointSearch" placeholder="Search point number, description or coordinate..." oninput="renderPoints()"><button class="btn secondary" onclick="clearPointSearch()">Clear</button></div><div id="pointList"></div></div>
+</section>
+
+<section id="coords" class="page">
+<h1>B&D</h1><div class="sub">Bearing & Distance calculator.</div>
+<div class="grid">
+<div class="card"><h2>Point A</h2><label>Easting</label><input id="ce1" value="500"><label>Northing</label><input id="cn1" value="1000"></div>
+<div class="card"><h2>Point B</h2><label>Easting</label><input id="ce2" value="666"><label>Northing</label><input id="cn2" value="777"></div>
+<div class="card full"><button class="btn primary" onclick="calcCoords()">CALCULATE</button>
+<div class="results"><div class="result"><small>Distance</small><strong id="crDist">278.002 m</strong></div><div class="result"><small>Bearing</small><strong id="crBear">323d20'10"</strong></div><div class="result"><small>Δ Easting</small><strong id="crE">166.000 m</strong></div><div class="result"><small>Δ Northing</small><strong id="crN">-223.000 m</strong></div></div></div>
+</div></section>
+
+<section id="bd" class="page">
+<h1>Bearing & Distance</h1><div class="sub">Enter a bearing and distance to calculate the destination coordinate.</div>
+<div class="grid"><div class="card"><h2>Start Point</h2><label>Easting</label><input id="be" value="500"><label>Northing</label><input id="bn" value="1000"></div>
+<div class="card"><h2>Line</h2><label>Bearing (e.g. 137d13'15")</label><input id="bb" value="137d13'15&quot;"><label>Distance (m)</label><input id="bdist" value="52.438"></div>
+<div class="card full"><button class="btn primary" onclick="calcBD()">CALCULATE</button><div class="results"><div class="result"><small>End Easting</small><strong id="bE">—</strong></div><div class="result"><small>End Northing</small><strong id="bN">—</strong></div><div class="result"><small>Departure</small><strong id="bDep">—</strong></div><div class="result"><small>Latitude</small><strong id="bLat">—</strong></div></div></div></div>
+</section>
+
+<section id="traverse" class="page">
+<h1>Traverse Calculator</h1>
+<div class="sub">Build a traverse and watch the calculated plan update.</div>
+<div class="workspace">
+  <div class="workspace-left">
+    <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
+      <div class="eyebrow">Traverse Entry</div>
+      <div class="row">
+        <div><label>Start Easting</label><input id="te" value="500"></div>
+        <div><label>Start Northing</label><input id="tn" value="1000"></div>
+      </div>
+      <div class="toolbar sticky-actions">
+        <button class="btn primary" onclick="addLine()">＋ Add Line</button>
+        <button class="btn secondary" onclick="calcTraverse()">Calculate</button>
+        <button class="btn secondary" onclick="printCurrentPage()">🖨 Print</button>
+        <button class="btn danger" onclick="clearTraverse()">Clear</button>
+      </div>
+      <div class="scroll-table">
+        <table><thead><tr><th>Line</th><th>Bearing</th><th>Distance</th><th>End E</th><th>End N</th><th></th></tr></thead><tbody id="trBody"></tbody></table>
+      </div>
+      <div id="trStatus" class="status">Add lines to build your traverse.</div>
+    </div>
+  </div>
+  <div class="workspace-right">
+    <div class="card live-card">
+      <div class="plot-head"><b>Traverse Plan</b><span>Live plan view</span></div>
+<div class="plan-tools">
+  <button type="button" onclick="zoomPlan(1.25)">＋</button>
+  <button type="button" onclick="zoomPlan(0.8)">−</button>
+  <button type="button" onclick="fitPlan()">Fit</button>
+  <span style="margin-left:8px">Show:</span>
+  <label><input type="checkbox" id="trShowBearings" onchange="calcTraverse()"> Bearings</label>
+  <label><input type="checkbox" id="trShowDistances" onchange="calcTraverse()"> Distances</label>
+  <label><input type="checkbox" id="trShowPoints" checked onchange="calcTraverse()"> Point numbers</label>
+  <label><input type="checkbox" id="trShowCoords" onchange="calcTraverse()"> Coordinates</label>
+  <span class="muted" style="margin-left:auto">Pinch = zoom · Drag = pan</span>
+</div>
+      <canvas id="plot" width="1000" height="700"></canvas>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="misclose" class="page">
+<h1>Quick Close</h1>
+<div class="sub">Enter your traverse lines and calculate the missing closing bearing and distance back to the starting point.</div>
+
+<div class="workspace">
+  <div class="workspace-left">
+    <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
+      <div class="eyebrow">Traverse Entry</div>
+      <div class="row qc-job-meta">
+        <div><label>Job Number</label><input id="qcJobNo" placeholder="e.g. 2385"></div>
+        <div><label>Project / Client</label><input id="qcProject" placeholder="Project name or client"></div>
+        <div><label>Site / Address</label><input id="qcAddress" placeholder="Site address"></div>
+        <div><label>Job Date</label><input id="qcDate" type="date"></div>
+        <div><label>Starting Easting</label><input id="qcE" value="500.000"></div>
+        <div><label>Starting Northing</label><input id="qcN" value="1000.000"></div>
+      </div>
+      <div class="toolbar sticky-actions">
+        <button class="btn primary" onclick="addQuickCloseLine()">＋ Add Line</button>
+        <button class="btn secondary" onclick="calcQuickClose()">Calculate Close</button>
+        <button class="btn primary" onclick="saveQuickCloseJob(false)">💾 Save Job</button>
+        <button class="btn secondary" onclick="saveQuickCloseJob(true)">Save As</button>
+        <button class="btn secondary" onclick="quickCloseNewJob()">New Job</button>
+        <button class="btn primary" onclick="exportQuickCloseDXF()">⇩ Export DXF</button>
+        <button class="btn secondary" onclick="printCurrentPage()">🖨 Print</button>
+        <button class="btn danger" onclick="clearQuickClose()">Clear</button>
+      </div>
+      <div class="scroll-table">
+        <table>
+          <thead><tr><th>Line</th><th>Bearing</th><th>Distance</th><th>End E</th><th>End N</th><th></th></tr></thead>
+          <tbody id="qcBody"></tbody>
+        </table>
+      </div>
+      <div id="qcStatus" class="status">Enter your known traverse lines, then calculate the missing closing line.</div>
+    </div>
+  </div>
+
+  <div class="workspace-right">
+    <div class="card live-card">
+      <div class="plot-head"><b>Quick Close Plan</b><span>Known traverse + calculated close</span></div>
+      <canvas id="qcPlot" width="1000" height="700"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="calc-summary qc-summary"><div class="results"><div class="result qc-primary"><small>CLOSING BEARING</small><strong id="qcBearing">—</strong></div><div class="result qc-primary"><small>CLOSING DISTANCE</small><strong id="qcDistance">—</strong></div><div class="result"><small>Δ EASTING</small><strong id="qcDeltaE">—</strong></div><div class="result"><small>Δ NORTHING</small><strong id="qcDeltaN">—</strong></div></div><div id="qcCloseBanner" class="close-banner">Calculate the close to see the closing line.</div></div>
+
+<div class="card" style="margin-top:12px">
+  <div class="eyebrow">Calculation Details</div>
+  <div class="muted" style="margin-bottom:8px">Full-precision components used for the closing calculation. Intermediate coordinates are not rounded before the final result.</div>
+  <div style="overflow:auto">
+    <table>
+      <thead><tr><th>Line</th><th>Parsed Bearing</th><th>Departure ΔE</th><th>Latitude ΔN</th><th>Cumulative E</th><th>Cumulative N</th></tr></thead>
+      <tbody id="qcDetailBody"></tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<section id="area" class="page">
+<h1>Area from Bearing & Distance</h1>
+<div class="sub">Enter the boundary traverse in order. The plan and closure update from the same data.</div>
+
+<div class="workspace">
+  <div class="workspace-left">
+    <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
+      <div class="eyebrow">Boundary Traverse</div>
+      <div class="row">
+        <div><label>Starting Easting</label><input id="aeStart" value="500.000"></div>
+        <div><label>Starting Northing</label><input id="anStart" value="1000.000"></div>
+      </div>
+      <div class="toolbar sticky-actions">
+        <button class="btn primary" onclick="addAreaLine()">＋ Add Line</button>
+        <button class="btn secondary" onclick="calcBearingArea()">Calculate Area</button>
+        <button class="btn danger" onclick="clearAreaLines()">Clear</button>
+      </div>
+      <div class="scroll-table">
+        <table>
+          <thead><tr><th>Line</th><th>Bearing</th><th>Distance</th><th>End E</th><th>End N</th><th></th></tr></thead>
+          <tbody id="areaBody"></tbody>
+        </table>
+      </div>
+      <div id="areaStatus" class="status">Enter the boundary bearings and distances, then calculate.</div>
+    </div>
+  </div>
+
+  <div class="workspace-right">
+    <div class="card live-card">
+      <div class="plot-head"><b>Boundary Plan</b><span>Live plan view</span></div>
+      <div class="field-plan-tools" data-plan="area"><button type="button" onclick="fieldPlanZoom('area',1.25)">＋</button><button type="button" onclick="fieldPlanZoom('area',0.8)">−</button><button type="button" onclick="fieldPlanFit('area')">Fit</button><span>Pinch to zoom · drag to pan · tap a point</span></div>
+      <canvas id="areaPlot" width="1000" height="700"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="calc-summary area-summary"><div class="results"><div class="result area-primary"><small>AREA</small><strong id="bearingAreaOut">—</strong></div><div class="result"><small>PERIMETER</small><strong id="bearingPeriOut">—</strong></div><div class="result"><small>LINEAR MISCLOSE</small><strong id="bearingMiscloseOut">—</strong></div><div class="result"><small>CLOSURE RATIO</small><strong id="bearingRatioOut">—</strong></div></div></div>
+</section>
+
+
+<section id="jobs" class="page">
+ <h1>Saved Jobs</h1><div class="sub">Strata and Quick Close jobs are stored locally in this browser on this computer.</div>
+ <div class="card">
+  <div class="jobs-toolbar-v7"><input id="jobSearch" placeholder="Search jobs, project, address..." oninput="renderSavedJobs()"><button class="btn secondary" type="button" onclick="exportStrataJobs()">⇩ Export</button><button class="btn secondary" type="button" onclick="document.getElementById('jobImportFile').click()">⇧ Import</button><button class="btn primary" type="button" onclick="backupAllData()">⬇ Backup All</button><input id="jobImportFile" type="file" accept="application/json,.json" style="display:none" onchange="importStrataJobs(event)"></div><div class="jobs-filter"><button class="active" data-jobfilter="all" onclick="setJobFilter('all',this)">All</button><button data-jobfilter="quickclose" onclick="setJobFilter('quickclose',this)">Quick Close</button><button data-jobfilter="strata" onclick="setJobFilter('strata',this)">Strata</button></div><div id="jobsCount" class="jobs-count"></div><div id="savedJobsList"></div>
+ </div>
+</section>
+
+<section id="scale" class="page">
+<h1>Scale Calculator</h1><div class="sub">Convert drawing measurements to real-world measurements.</div>
+<div class="grid"><div class="card"><label>Drawing Distance</label><input id="sd" value="25"><label>Scale denominator (e.g. 500 for 1:500)</label><input id="ss" value="500"><select id="su"><option value="m">metres</option><option value="mm">millimetres</option></select><button class="btn primary" onclick="calcScale()">CALCULATE</button></div>
+<div class="card"><div class="result"><small>Real Distance</small><strong id="so">—</strong></div><p class="muted">For a 1:500 drawing, 25 mm on paper represents 12.5 m in reality.</p></div></div>
+</section>
+
+<section id="convert" class="page">
+<h1>Conversions</h1><div class="sub">Common surveying unit conversions.</div>
+<div class="grid"><div class="card"><label>Value</label><input id="cv" value="1"><label>From</label><select id="cf"><option>metres</option><option>millimetres</option><option>kilometres</option><option>feet</option><option>chains</option></select><label>To</label><select id="ct"><option>metres</option><option>millimetres</option><option>kilometres</option><option>feet</option><option>chains</option></select><button class="btn primary" onclick="convert()">CONVERT</button></div>
+<div class="card"><div class="result"><small>Result</small><strong id="co">—</strong></div></div></div>
+</section>
+
+<section class="page" id="shortcuts">
+  <div class="page-head">
+    <div>
+      <h1>Keyboard Shortcuts</h1>
+      <p class="subtitle">Quick reference for working faster through the Surveyor's Toolbox.</p>
+    </div>
+  </div>
+
+  <div class="shortcut-grid">
+    <div class="shortcut-card">
+      <h3>General</h3>
+      <div class="shortcut-row">
+        <span class="shortcut-key">Enter</span>
+        <span class="shortcut-desc">Calculate the active calculator</span>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-key">Tab</span>
+        <span class="shortcut-desc">Move to the next input</span>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-key">Esc</span>
+        <span class="shortcut-desc">Leave the current input</span>
+      </div>
+    </div>
+
+    <div class="shortcut-card">
+      <h3>Traverse / Area / Quick Close</h3>
+      <div class="shortcut-row">
+        <span class="shortcut-key">Ctrl + Enter</span>
+        <span class="shortcut-desc">Add a new line and focus its bearing</span>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-key">Delete</span>
+        <span class="shortcut-desc">Remove the active line</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shortcut-note">
+    <strong>Tip:</strong> Use <strong>Ctrl + Enter</strong> while entering a traverse to quickly add the next line without reaching for the mouse. Deleted lines are automatically renumbered.
+  </div>
+</section>
+
+<section id="strata" class="page strata-page">
+  <h1>Strata Area Calculator</h1>
+  <div class="sub">Enter the area components for each strata unit. Totals calculate automatically.</div>
+
+  <div class="strata-header">
+    <div class="card">
+      <label>Project No.</label>
+      <input id="strataProject" value="2385">
+    </div>
+    <div class="card">
+      <label>Job Address</label>
+      <input id="strataAddress" value="74 Meadow St">
+    </div>
+    <div class="card">
+      <label>Date</label>
+      <input id="strataDate" type="date">
+    </div>
+  </div>
+
+  <div class="strata-actions">
+    <button class="btn primary" type="button" onclick="strataAddRow()">＋ Add Unit</button>
+    <button class="btn primary" type="button" onclick="saveStrataJob(false)">💾 Save Job</button>
+    <button class="btn secondary" type="button" onclick="saveStrataJob(true)">Save As</button>
+    <button class="btn secondary" type="button" onclick="strataNewJob()">New Job</button>
+    <button class="btn secondary" type="button" onclick="strataReset()">Reset Table</button>
+    <button class="btn secondary" type="button" onclick="strataPrint()">Print</button>
+  </div>
+
+  <div class="strata-layout">
+    <div>
+      <div class="strata-table-wrap">
+        <table class="strata-table">
+          <thead><tr><th>Unit No.</th><th title="GROUND FLOOR">GF</th><th title="FIRST FLOOR">FF</th><th title="COURTYARD">CY</th><th title="BALCONY">B</th><th title="ALFRESCO">ALF</th><th title="CAR SPACE">CS</th><th title="PATIO">P</th><th title="STORAGE">ST</th><th>Total</th></tr></thead>
+          <tbody id="strataBody"><tr><td class="unit-no">1</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 1 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 1 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 1 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 1 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 1 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 1 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 1 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 1 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">2</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 2 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 2 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 2 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 2 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 2 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 2 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 2 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 2 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">3</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 3 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 3 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 3 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 3 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 3 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 3 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 3 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 3 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">4</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 4 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 4 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 4 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 4 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 4 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 4 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 4 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 4 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">5</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 5 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 5 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 5 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 5 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 5 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 5 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 5 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 5 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">6</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 6 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 6 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 6 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 6 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 6 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 6 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 6 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 6 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">7</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 7 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 7 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 7 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 7 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 7 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 7 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 7 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 7 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">8</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 8 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 8 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 8 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 8 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 8 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 8 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 8 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 8 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">9</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 9 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 9 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 9 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 9 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 9 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 9 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 9 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 9 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">10</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 10 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 10 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 10 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 10 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 10 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 10 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 10 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 10 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">11</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 11 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 11 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 11 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 11 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 11 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 11 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 11 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 11 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">12</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 12 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 12 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 12 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 12 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 12 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 12 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 12 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 12 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">13</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 13 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 13 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 13 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 13 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 13 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 13 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 13 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 13 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">14</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 14 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 14 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 14 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 14 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 14 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 14 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 14 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 14 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">15</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 15 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 15 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 15 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 15 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 15 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 15 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 15 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 15 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">16</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 16 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 16 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 16 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 16 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 16 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 16 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 16 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 16 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">17</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 17 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 17 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 17 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 17 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 17 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 17 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 17 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 17 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">18</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 18 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 18 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 18 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 18 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 18 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 18 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 18 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 18 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">19</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 19 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 19 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 19 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 19 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 19 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 19 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 19 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 19 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">20</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 20 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 20 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 20 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 20 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 20 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 20 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 20 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 20 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">21</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 21 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 21 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 21 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 21 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 21 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 21 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 21 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 21 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">22</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 22 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 22 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 22 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 22 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 22 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 22 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 22 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 22 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">23</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 23 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 23 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 23 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 23 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 23 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 23 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 23 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 23 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">24</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 24 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 24 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 24 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 24 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 24 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 24 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 24 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 24 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">25</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 25 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 25 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 25 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 25 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 25 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 25 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 25 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 25 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">26</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 26 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 26 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 26 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 26 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 26 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 26 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 26 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 26 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">27</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 27 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 27 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 27 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 27 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 27 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 27 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 27 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 27 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">28</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 28 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 28 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 28 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 28 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 28 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 28 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 28 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 28 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">29</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 29 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 29 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 29 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 29 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 29 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 29 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 29 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 29 ST area"></td><td class="row-total">0.000</td></tr><tr><td class="unit-no">30</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 30 GF area"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 30 FF area"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 30 CY area"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 30 B area"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 30 ALF area"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 30 CS area"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 30 P area"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal" aria-label="Unit 30 ST area"></td><td class="row-total">0.000</td></tr></tbody>
+          <tfoot><tr><td>ALL UNITS</td><td id="strataTotalGF">0.000</td><td id="strataTotalFF">0.000</td><td id="strataTotalCY">0.000</td><td id="strataTotalB">0.000</td><td id="strataTotalALF">0.000</td><td id="strataTotalCS">0.000</td><td id="strataTotalP">0.000</td><td id="strataTotalST">0.000</td><td id="strataGrandTotal">0.000</td></tr></tfoot>
+        </table>
+      </div>
+      <div id="strataStatus" class="status">Enter areas in m². Row and column totals update automatically.</div>
+    </div>
+
+    <div class="strata-key">
+      <h2>Key</h2>
+      <p><strong>GF</strong> = GROUND FLOOR</p><p><strong>FF</strong> = FIRST FLOOR</p><p><strong>CY</strong> = COURTYARD</p><p><strong>B</strong> = BALCONY</p><p><strong>ALF</strong> = ALFRESCO</p><p><strong>CS</strong> = CAR SPACE</p><p><strong>P</strong> = PATIO</p><p><strong>ST</strong> = STORAGE</p>
+      <p style="margin-top:14px"><strong>Units</strong> = m²</p>
+    </div>
+  </div>
+</section>
+
+</main></div>
+
+
+
+<script>
+function show(id,btn){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  const page=document.getElementById(id);
+  if(!page)return;
+  page.classList.add('active');
+  document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
+  if(btn && btn.classList) btn.classList.add('active');
+}
+function num(id){return parseFloat(document.getElementById(id).value)||0}
+function dms(deg){
+  deg=((deg%360)+360)%360;
+  let d=Math.floor(deg);
+  let mf=(deg-d)*60;
+  let m=Math.floor(mf);
+  let sec=Math.round((mf-m)*60);
+  if(sec===60){sec=0;m++}
+  if(m===60){m=0;d++}
+  if(d===360)d=0;
+  return `${d}d${String(m).padStart(2,'0')}'${String(sec).padStart(2,'0')}"`;
+}
+function parseDMS(value){
+  let raw=String(value ?? '').trim()
+    .replace(/[º°]/g,'d')
+    .replace(/[′’`]/g,"'")
+    .replace(/[″“”]/g,'"')
+    .replace(/\s+/g,'');
+
+  if(!raw) return NaN;
+
+  // Decimal degrees / degree-only values.
+  if(/^-?\d+(?:\.\d+)?d?$/i.test(raw)){
+    const x=Number(raw.replace(/d$/i,''));
+    return Number.isFinite(x)?x:NaN;
+  }
+
+  // Standard survey DMS. Final seconds marker is optional so entries such as
+  // 90d00'00 and 90d00'00" are both valid.
+  const m=raw.match(/^(-?\d+(?:\.\d+)?)d(?:(\d+(?:\.\d+)?)(?:m|'))?(?:(\d+(?:\.\d+)?)(?:s|")?)?$/i);
+  if(!m) return NaN;
+
+  const deg=Number(m[1]);
+  const minutes=Number(m[2]||0);
+  const seconds=Number(m[3]||0);
+
+  if(!Number.isFinite(deg) || minutes<0 || minutes>=60 || seconds<0 || seconds>=60) return NaN;
+
+  const sign=deg<0?-1:1;
+  return deg + sign*(minutes/60 + seconds/3600);
+}
+
+function calcCoords(){let e1=num('ce1'),n1=num('cn1'),e2=num('ce2'),n2=num('cn2'),de=e2-e1,dn=n2-n1;let dist=Math.hypot(de,dn),b=Math.atan2(de,dn)*180/Math.PI;if(b<0)b+=360;crDist.textContent=dist.toFixed(3)+' m';crBear.textContent=dms(b);crE.textContent=de.toFixed(3)+' m';crN.textContent=dn.toFixed(3)+' m'}
+
+function calcBD(){let e=num('be'),n=num('bn'),b=parseDMS(document.getElementById('bb').value),d=num('bdist'),r=b*Math.PI/180,de=d*Math.sin(r),dn=d*Math.cos(r);bE.textContent=(e+de).toFixed(3)+' m';bN.textContent=(n+dn).toFixed(3)+' m';bDep.textContent=de.toFixed(3)+' m';bLat.textContent=dn.toFixed(3)+' m'}
+let lineNo=0;
+function addLine(){
+  lineNo++;
+  const body=document.getElementById('trBody');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${lineNo}</td><td><input class="tb" value="90d00'00&quot;"></td><td><input class="td" value="50"></td><td class="teo">—</td><td class="tno">—</td><td><button class="btn danger" onclick="this.closest('tr').remove()">×</button></td>`;
+  body.appendChild(tr);
+}
+function calcTraverse(){
+  let e=num('te'),n=num('tn');
+  const rows=[...document.querySelectorAll('#trBody tr')],pts=[[e,n]];
+  rows.forEach(r=>{
+    const b=parseDMS(r.querySelector('.tb').value);
+    const d=parseFloat(r.querySelector('.td').value)||0;
+    const rad=b*Math.PI/180;
+    e+=d*Math.sin(rad); n+=d*Math.cos(rad);
+    r.querySelector('.teo').textContent=e.toFixed(3);
+    r.querySelector('.tno').textContent=n.toFixed(3);
+    pts.push([e,n]);
+  });
+  const status=document.getElementById('trStatus');
+  status.textContent=rows.length?`Traverse endpoint: E ${e.toFixed(3)}, N ${n.toFixed(3)}. ${rows.length} line(s) calculated.`:'Add lines first.';
+  draw(pts);
+}
+function clearTraverse(){
+  document.getElementById('trBody').innerHTML='';
+  lineNo=0;
+  document.getElementById('trStatus').textContent='Add lines to build your traverse.';
+  draw([]);
+}
+function draw(pts){
+  const c=document.getElementById('plot');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  if(!pts || !pts.length)return;
+
+  const showBear=document.getElementById('trShowBearings')?.checked ?? false;
+  const showDist=document.getElementById('trShowDistances')?.checked ?? false;
+  const showPts=document.getElementById('trShowPoints')?.checked ?? true;
+  const showCoords=document.getElementById('trShowCoords')?.checked ?? false;
+  const zoom=window.__traverseZoom || 1;
+  const panX=window.__traversePanX || 0;
+  const panY=window.__traversePanY || 0;
+
+  const es=pts.map(p=>p[0]), ns=pts.map(p=>p[1]);
+  const minE=Math.min(...es),maxE=Math.max(...es),minN=Math.min(...ns),maxN=Math.max(...ns);
+  const rangeE=Math.max(1,maxE-minE),rangeN=Math.max(1,maxN-minN);
+  const base=Math.min((c.width-80)/rangeE,(c.height-80)/rangeN);
+  const scale=base*zoom;
+  const midE=(minE+maxE)/2,midN=(minN+maxN)/2;
+  const px=e=>c.width/2+panX+(e-midE)*scale;
+  const py=n=>c.height/2+panY-(n-midN)*scale;
+
+  ctx.strokeStyle='#1769aa';ctx.lineWidth=3;ctx.lineJoin='round';ctx.lineCap='round';
+  ctx.beginPath();
+  pts.forEach((p,i)=>{
+    const x=px(p[0]),y=py(p[1]);
+    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+  });
+  ctx.stroke();
+
+  if(showPts){
+    const pointFont=Math.min(28,Math.max(10,12*zoom));
+    ctx.font=`bold ${pointFont}px Arial`;
+    ctx.textAlign='left';ctx.textBaseline='middle';
+
+    pts.forEach((p,i)=>{
+      const x=px(p[0]),y=py(p[1]);
+      ctx.fillStyle='#1769aa';
+      ctx.beginPath();ctx.arc(x,y,Math.max(4,5*zoom),0,Math.PI*2);ctx.fill();
+
+      const label=String(i+1),w=ctx.measureText(label).width;
+      const h=Math.max(18,pointFont+6);
+      ctx.fillStyle='rgba(255,255,255,.96)';
+      ctx.fillRect(x+8*zoom,y-h/2,w+8*zoom,h);
+      ctx.fillStyle='#17212b';
+      ctx.fillText(label,x+11*zoom,y);
+    });
+  }
+
+  if(showCoords){
+    const coordFont=Math.min(24,Math.max(8,10*zoom));
+    ctx.font=`${coordFont}px Arial`;
+    ctx.textAlign='left';ctx.textBaseline='top';
+    pts.forEach((p,i)=>{
+      const x=px(p[0]),y=py(p[1]);
+      const text=`E ${p[0].toFixed(3)}  N ${p[1].toFixed(3)}`;
+      const w=ctx.measureText(text).width;
+      const h=coordFont+8;
+      const ox=10*zoom, oy=10*zoom;
+      ctx.fillStyle='rgba(255,255,255,.96)';
+      ctx.fillRect(x+ox,y+oy,w+8*zoom,h);
+      ctx.strokeStyle='#d5dce4';ctx.lineWidth=1;
+      ctx.strokeRect(x+ox,y+oy,w+8*zoom,h);
+      ctx.fillStyle='#374151';
+      ctx.fillText(text,x+ox+4*zoom,y+oy+4*zoom);
+    });
+  }
+
+  if(showBear||showDist){
+    const labelFont=Math.min(30,Math.max(9,11*zoom));
+    ctx.font=`${labelFont}px Arial`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+
+    for(let i=0;i<pts.length-1;i++){
+      const a=pts[i],b=pts[i+1];
+      const de=b[0]-a[0],dn=b[1]-a[1],len=Math.hypot(de,dn);
+      if(!len)continue;
+
+      const parts=[];
+      if(showBear)parts.push(dms((Math.atan2(de,dn)*180/Math.PI+360)%360));
+      if(showDist)parts.push(len.toFixed(3)+' m');
+
+      const x1=px(a[0]),y1=py(a[1]),x2=px(b[0]),y2=py(b[1]);
+      const mx=(x1+x2)/2,my=(y1+y2)/2;
+      const screenLen=Math.hypot(x2-x1,y2-y1)||1;
+      const side=i%2===0?1:-1;
+      const offset=18*zoom;
+      const offX=(-(y2-y1)/screenLen)*offset*side;
+      const offY=((x2-x1)/screenLen)*offset*side;
+      const text=parts.join('  •  ');
+      const w=ctx.measureText(text).width;
+      const h=Math.max(20,labelFont+10);
+      const x=mx+offX,y=my+offY;
+
+      ctx.fillStyle='rgba(255,255,255,.96)';
+      ctx.fillRect(x-w/2-6*zoom,y-h/2,w+12*zoom,h);
+      ctx.strokeStyle='#d5dce4';ctx.lineWidth=1;
+      ctx.strokeRect(x-w/2-6*zoom,y-h/2,w+12*zoom,h);
+      ctx.fillStyle='#374151';
+      ctx.fillText(text,x,y);
+    }
+  }
+
+  ctx.strokeStyle='#111827';ctx.fillStyle='#111827';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(c.width-35,48);ctx.lineTo(c.width-35,18);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(c.width-35,18);ctx.lineTo(c.width-40,27);ctx.lineTo(c.width-30,27);ctx.closePath();ctx.fill();
+  ctx.font='bold 11px Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText('N',c.width-35,13);
+}
+
+let qcLineNo=0;
+function addQuickCloseLine(bearing="90d00'00\"",distance="50"){
+  qcLineNo++;
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${qcLineNo}</td>
+    <td><input class="qcbearing"></td>
+    <td><input class="qcdistance"></td>
+    <td class="qcendE">—</td>
+    <td class="qcendN">—</td>
+    <td><button class="btn danger" onclick="this.closest('tr').remove()">×</button></td>`;
+  tr.querySelector('.qcbearing').value=bearing;
+  tr.querySelector('.qcdistance').value=distance;
+  document.getElementById('qcBody').appendChild(tr);
+}
+
+function clearQuickClose(){
+  document.getElementById('qcBody').innerHTML='';
+  document.getElementById('qcDetailBody').innerHTML='';
+  qcLineNo=0;
+  document.getElementById('qcBearing').textContent='—';
+  document.getElementById('qcDistance').textContent='—';
+  document.getElementById('qcDeltaE').textContent='—';
+  document.getElementById('qcDeltaN').textContent='—';
+  document.getElementById('qcStatus').textContent='Enter your known traverse lines, then calculate the missing closing line.';
+  document.getElementById('qcStatus').className='status';
+  drawQuickClose([]);
+}
+
+function calcQuickClose(){
+  const startE=Number(document.getElementById('qcE').value);
+  const startN=Number(document.getElementById('qcN').value);
+  const rows=[...document.querySelectorAll('#qcBody tr')];
+
+  if(!Number.isFinite(startE)||!Number.isFinite(startN)){
+    document.getElementById('qcStatus').textContent='Invalid starting coordinate.';
+    document.getElementById('qcStatus').className='status warn';
+    return;
+  }
+  if(!rows.length){
+    document.getElementById('qcStatus').textContent='Add at least one known traverse line.';
+    document.getElementById('qcStatus').className='status warn';
+    return;
+  }
+
+  let e=startE,n=startN;
+  let totalE=0,totalN=0;
+  const pts=[[e,n]];
+  const detail=document.getElementById('qcDetailBody');
+  detail.innerHTML='';
+
+  for(let i=0;i<rows.length;i++){
+    const row=rows[i];
+    const bearing=parseDMS(row.querySelector('.qcbearing').value);
+    const distance=Number(row.querySelector('.qcdistance').value);
+
+    if(!Number.isFinite(bearing)||!Number.isFinite(distance)||distance<0){
+      document.getElementById('qcStatus').textContent=`Invalid bearing or distance on line ${i+1}.`;
+      document.getElementById('qcStatus').className='status warn';
+      return;
+    }
+
+    const rad=bearing*Math.PI/180;
+
+    // Surveying convention:
+    // Departure (E) = D × sin(Bearing)
+    // Latitude  (N) = D × cos(Bearing)
+    const dE=distance*Math.sin(rad);
+    const dN=distance*Math.cos(rad);
+
+    totalE+=dE;
+    totalN+=dN;
+    e=startE+totalE;
+    n=startN+totalN;
+
+    row.querySelector('.qcendE').textContent=e.toFixed(3);
+    row.querySelector('.qcendN').textContent=n.toFixed(3);
+
+    const detailRow=document.createElement('tr');
+    detailRow.innerHTML=
+      `<td>${i+1}</td>`+
+      `<td>${dms(bearing)}</td>`+
+      `<td>${dE.toFixed(6)}</td>`+
+      `<td>${dN.toFixed(6)}</td>`+
+      `<td>${e.toFixed(6)}</td>`+
+      `<td>${n.toFixed(6)}</td>`;
+    detail.appendChild(detailRow);
+
+    pts.push([e,n]);
+  }
+
+  // Required closing vector from final point back to start.
+  const closeE=-totalE;
+  const closeN=-totalN;
+  const distance=Math.hypot(closeE,closeN);
+
+  let bearing=Math.atan2(closeE,closeN)*180/Math.PI;
+  bearing=(bearing+360)%360;
+
+  document.getElementById('qcBearing').textContent=dms(bearing);
+  document.getElementById('qcDistance').textContent=distance.toFixed(3)+' m';
+  document.getElementById('qcDeltaE').textContent=closeE.toFixed(3)+' m';
+  document.getElementById('qcDeltaN').textContent=closeN.toFixed(3)+' m';
+
+  pts.push([startE,startN]);
+  drawQuickClose(pts);
+
+  document.getElementById('qcStatus').textContent=`Closing line: ${dms(bearing)} for ${distance.toFixed(3)} m back to the starting point.`;
+  document.getElementById('qcStatus').className='status ok';
+}
+
+function exportQuickCloseDXF(){
+  const startE=Number(document.getElementById('qcE').value);
+  const startN=Number(document.getElementById('qcN').value);
+  const rows=[...document.querySelectorAll('#qcBody tr')];
+
+  if(!Number.isFinite(startE)||!Number.isFinite(startN)){
+    alert('Enter valid starting Easting and Northing coordinates first.');
+    return;
+  }
+  if(!rows.length){
+    alert('Add at least one Quick Close line before exporting.');
+    return;
+  }
+
+  let e=startE,n=startN;
+  const points=[[e,n]];
+  for(let i=0;i<rows.length;i++){
+    const bearing=parseDMS(rows[i].querySelector('.qcbearing').value);
+    const distance=Number(rows[i].querySelector('.qcdistance').value);
+    if(!Number.isFinite(bearing)||!Number.isFinite(distance)||distance<0){
+      alert(`Invalid bearing or distance on line ${i+1}. Calculate the Quick Close first.`);
+      return;
+    }
+    const rad=bearing*Math.PI/180;
+    e+=distance*Math.sin(rad);
+    n+=distance*Math.cos(rad);
+    points.push([e,n]);
+  }
+  points.push([startE,startN]);
+
+  const jobNo=(document.getElementById('qcJobNo')?.value||'QuickClose').trim();
+  const safeName=jobNo.replace(/[^a-zA-Z0-9_-]+/g,'_')||'QuickClose';
+
+  // One reusable survey-point block. Its base point is 0,0, so the INSERT
+  // coordinate is the exact survey point and the cross is centred on it.
+  const arm=0.5;
+  const lines=[];
+  const add=(code,value)=>lines.push(String(code),String(value));
+  const addLine=(x1,y1,x2,y2)=>{
+    add(0,'LINE'); add(8,'QC_POINT');
+    add(10,x1.toFixed(6)); add(20,y1.toFixed(6)); add(30,'0.000000');
+    add(11,x2.toFixed(6)); add(21,y2.toFixed(6)); add(31,'0.000000');
+  };
+
+  // Header
+  add(0,'SECTION'); add(2,'HEADER');
+  add(9,'$ACADVER'); add(1,'AC1009');
+  add(0,'ENDSEC');
+
+  // Layer table
+  add(0,'SECTION'); add(2,'TABLES');
+  add(0,'TABLE'); add(2,'LAYER'); add(70,'1');
+  add(0,'LAYER'); add(2,'QC_POINT'); add(70,'0'); add(62,'7'); add(6,'CONTINUOUS');
+  add(0,'ENDTAB');
+  add(0,'ENDSEC');
+
+  // Block definition. The base point is exactly 0,0.
+  add(0,'SECTION'); add(2,'BLOCKS');
+  add(0,'BLOCK');
+  add(8,'0');
+  add(2,'QC_SURVEY_POINT');
+  add(70,'0');
+  add(10,'0.000000'); add(20,'0.000000'); add(30,'0.000000');
+  addLine(-arm,0,arm,0);
+  addLine(0,-arm,0,arm);
+  add(0,'ENDBLK');
+  add(8,'0');
+  add(0,'ENDSEC');
+
+  // Insert each point at its true Easting/Northing.
+  add(0,'SECTION'); add(2,'ENTITIES');
+  points.forEach(([px,py])=>{
+    add(0,'INSERT');
+    add(8,'QC_POINT');
+    add(2,'QC_SURVEY_POINT');
+    add(10,px.toFixed(6));
+    add(20,py.toFixed(6));
+    add(30,'0.000000');
+    add(41,'1.000000');
+    add(42,'1.000000');
+    add(43,'1.000000');
+    add(50,'0.000000');
+  });
+  add(0,'ENDSEC');
+  add(0,'EOF');
+
+  const dxf=lines.join('\r\n')+'\r\n';
+  const blob=new Blob([dxf],{type:'application/dxf'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=safeName+' - close.dxf';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+
+  document.getElementById('qcStatus').textContent=`DXF exported: ${points.length} survey point(s) as insertion-point blocks.`;
+  document.getElementById('qcStatus').className='status ok';
+}
+
+function drawQuickClose(pts){
+  const c=document.getElementById('qcPlot');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  if(!pts.length)return;
+
+  const es=pts.map(p=>p[0]),ns=pts.map(p=>p[1]);
+  const minE=Math.min(...es),maxE=Math.max(...es),minN=Math.min(...ns),maxN=Math.max(...ns);
+  const scale=Math.min((c.width-90)/Math.max(1,maxE-minE),(c.height-90)/Math.max(1,maxN-minN));
+  const ox=45-minE*scale,oy=45+maxN*scale;
+
+  ctx.strokeStyle='#e5eaf0';ctx.lineWidth=1;
+  for(let i=0;i<10;i++){
+    const x=45+i*(c.width-90)/9,y=45+i*(c.height-90)/9;
+    ctx.beginPath();ctx.moveTo(x,45);ctx.lineTo(x,c.height-45);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(45,y);ctx.lineTo(c.width-45,y);ctx.stroke();
+  }
+
+  ctx.beginPath();
+  pts.forEach((p,i)=>{const x=ox+p[0]*scale,y=oy-p[1]*scale;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});
+  ctx.strokeStyle='#1677c8';ctx.lineWidth=3;ctx.stroke();
+
+  if(pts.length>1){
+    const last=pts[pts.length-2],first=pts[0];
+    ctx.beginPath();ctx.setLineDash([8,6]);
+    ctx.moveTo(ox+last[0]*scale,oy-last[1]*scale);
+    ctx.lineTo(ox+first[0]*scale,oy-first[1]*scale);
+    ctx.strokeStyle='#18864b';ctx.lineWidth=3;ctx.stroke();ctx.setLineDash([]);
+  }
+
+  pts.forEach((p,i)=>{
+    const x=ox+p[0]*scale,y=oy-p[1]*scale;
+    ctx.fillStyle=i===pts.length-1?'#18864b':'#17212b';
+    ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#17212b';ctx.font='12px Arial';
+    ctx.fillText(i===0?'START':i===pts.length-1?'CLOSE':i,x+8,y-8);
+  });
+
+  ctx.strokeStyle='#17212b';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(c.width-55,65);ctx.lineTo(c.width-55,105);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(c.width-55,65);ctx.lineTo(c.width-61,77);ctx.moveTo(c.width-55,65);ctx.lineTo(c.width-49,77);ctx.stroke();
+  ctx.fillStyle='#17212b';ctx.font='12px Arial';ctx.fillText('N',c.width-61,55);
+}
+
+let areaLineNo=0;
+
+function addAreaLine(bearing="90d00'00\"",distance="50"){
+  areaLineNo++;
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${areaLineNo}</td>
+    <td><input class="abearing"></td>
+    <td><input class="adistance"></td>
+    <td class="aendE">—</td>
+    <td class="aendN">—</td>
+    <td><button class="btn danger" onclick="this.closest('tr').remove()">×</button></td>`;
+  tr.querySelector('.abearing').value=bearing;
+  tr.querySelector('.adistance').value=distance;
+  document.getElementById('areaBody').appendChild(tr);
+}
+
+function clearAreaLines(){
+  areaBody.innerHTML='';
+  areaLineNo=0;
+  bearingAreaOut.textContent='—';
+  bearingPeriOut.textContent='—';
+  bearingMiscloseOut.textContent='—';
+  bearingRatioOut.textContent='—';
+  areaStatus.textContent='Enter the boundary bearings and distances, then calculate.';
+  drawAreaPlot([]);
+}
+
+function calcBearingArea(){
+  let e=parseFloat(aeStart.value)||0;
+  let n=parseFloat(anStart.value)||0;
+  const startE=e, startN=n;
+  const rows=[...document.querySelectorAll('#areaBody tr')];
+  const pts=[[e,n]];
+  let perimeter=0;
+
+  for(let i=0;i<rows.length;i++){
+    const r=rows[i];
+    const b=parseDMS(r.querySelector('.abearing').value);
+    const d=Number(r.querySelector('.adistance').value);
+
+    if(!Number.isFinite(b) || !Number.isFinite(d) || d<0){
+      areaStatus.textContent=`Invalid bearing or distance on line ${i+1}.`;
+      areaStatus.className='status warn';
+      bearingAreaOut.textContent='—';
+      bearingMiscloseOut.textContent='—';
+      bearingRatioOut.textContent='—';
+      return;
+    }
+
+    const rad=b*Math.PI/180;
+    e += d*Math.sin(rad);
+    n += d*Math.cos(rad);
+    perimeter += d;
+
+    r.querySelector('.aendE').textContent=e.toFixed(3);
+    r.querySelector('.aendN').textContent=n.toFixed(3);
+    pts.push([e,n]);
+  }
+
+  if(rows.length<3){
+    areaStatus.textContent='At least 3 boundary lines are required.';
+    areaStatus.className='status warn';
+    return;
+  }
+
+  // Shoelace area using internally calculated coordinates.
+  let twiceArea=0;
+  for(let i=0;i<pts.length-1;i++){
+    twiceArea += pts[i][0]*pts[i+1][1] - pts[i+1][0]*pts[i][1];
+  }
+
+  // Include the closing segment back to the start.
+  twiceArea += pts[pts.length-1][0]*startN - startE*pts[pts.length-1][1];
+
+  const area=Math.abs(twiceArea/2);
+  let closeE=e-startE;
+  let closeN=n-startN;
+  // Remove floating-point noise from exact closures (e.g. sin(90°) / cos(90°).
+  if(Math.abs(closeE)<1e-9) closeE=0;
+  if(Math.abs(closeN)<1e-9) closeN=0;
+  const misclose=Math.hypot(closeE,closeN);
+  const ratio=misclose>0 ? perimeter/misclose : Infinity;
+
+  bearingAreaOut.textContent=area.toFixed(3)+' m²';
+  bearingPeriOut.textContent=perimeter.toFixed(3)+' m';
+  bearingMiscloseOut.textContent=misclose.toFixed(3)+' m';
+  bearingRatioOut.textContent=misclose<0.0005?'CLOSED':`1 : ${Math.round(ratio).toLocaleString()}`;
+
+  // A land boundary does not need to close mathematically before an area
+  // can be calculated. The area is calculated from the entered traverse and
+  // the straight closing line back to the starting point. The misclose and
+  // closure ratio are reported separately for checking.
+  if(misclose < 0.005){
+    areaStatus.textContent=`✓ Area calculated. Traverse closes within ${misclose.toFixed(3)} m.`;
+    areaStatus.className='status ok';
+  }else{
+    areaStatus.textContent=`Area calculated. Traverse misclose: ${misclose.toFixed(3)} m (ΔE ${closeE.toFixed(3)} m, ΔN ${closeN.toFixed(3)} m).`;
+    areaStatus.className='status';
+  }
+
+  drawAreaPlot(pts);
+}
+
+function drawAreaPlot(pts){
+  const c=document.getElementById('areaPlot');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+
+  if(!pts.length)return;
+
+  const es=pts.map(p=>p[0]);
+  const ns=pts.map(p=>p[1]);
+  const minE=Math.min(...es),maxE=Math.max(...es);
+  const minN=Math.min(...ns),maxN=Math.max(...ns);
+  const sx=(c.width-70)/Math.max(1,maxE-minE);
+  const sy=(c.height-70)/Math.max(1,maxN-minN);
+  const scale=Math.min(sx,sy);
+  const ox=35-minE*scale;
+  const oy=35+maxN*scale;
+
+  ctx.beginPath();
+  pts.forEach((p,i)=>{
+    const px=ox+p[0]*scale;
+    const py=oy-p[1]*scale;
+    i?ctx.lineTo(px,py):ctx.moveTo(px,py);
+  });
+  ctx.closePath();
+  ctx.strokeStyle='#4ade80';
+  ctx.lineWidth=3;
+  ctx.stroke();
+
+  pts.forEach((p,i)=>{
+    const px=ox+p[0]*scale;
+    const py=oy-p[1]*scale;
+    ctx.fillStyle='#fff';
+    ctx.beginPath();
+    ctx.arc(px,py,4,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillText(i===pts.length-1?'END':i===0?'START':i,px+7,py-7);
+  });
+}
+
+function calcArc(){let r=num('ar'),a=num('aa')*Math.PI/180;al.textContent=(r*a).toFixed(3)+' m';ac.textContent=(2*r*Math.sin(a/2)).toFixed(3)+' m';as.textContent=(r*(1-Math.cos(a/2))).toFixed(3)+' m';arad.textContent=a.toFixed(6)}
+function calcGradient(){let r=num('gr'),u=num('gu'),g=r/u;gRatio.textContent='1 : '+Math.abs(u/r).toFixed(3);gPct.textContent=(g*100).toFixed(3)+'%';gAng.textContent=Math.atan(Math.abs(g))*180/Math.PI.toFixed+'°'}
+function calcScale(){let d=num('sd'),s=num('ss'),u=document.getElementById('su').value,real=d*s;if(u==='mm')real/=1000;if(u==='m'){}so.textContent=real.toFixed(3)+' m'}
+
+
+const STRATA_JOBS_KEY='norrisbox_strata_jobs_v1';
+let currentStrataJobId=null;
+function getStrataJobs(){try{return JSON.parse(localStorage.getItem(STRATA_JOBS_KEY)||'[]')}catch(e){return []}}
+function setStrataJobs(jobs){localStorage.setItem(STRATA_JOBS_KEY,JSON.stringify(jobs))}
+function collectStrataJob(){
+  const rows=[...document.querySelectorAll('#strataBody tr')];
+  return {project:document.getElementById('strataProject').value.trim(),address:document.getElementById('strataAddress').value.trim(),date:document.getElementById('strataDate').value,units:rows.map(r=>({unit:r.querySelector('.unit-no')?.textContent||'',values:Object.fromEntries([...r.querySelectorAll('.strata-val')].map(i=>[i.dataset.col,i.value]))}))};
+}
+function saveStrataJob(saveAs=false){
+  const data=collectStrataJob();
+  let jobs=getStrataJobs();
+  let jobId=saveAs?null:currentStrataJobId;
+  let existing=jobId?jobs.find(j=>j.id===jobId):null;
+  if(!existing){
+    const defaultName=[data.project,data.address].filter(Boolean).join(' — ')||'Untitled Strata Job';
+    const name=prompt('Job name:',defaultName);
+    if(name===null)return;
+    jobId='job_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+    existing={id:jobId,name:name.trim()||defaultName,created:new Date().toISOString()};
+    jobs.unshift(existing);
+  }
+  existing.project=data.project; existing.address=data.address; existing.date=data.date; existing.units=data.units; existing.updated=new Date().toISOString();
+  setStrataJobs(jobs); currentStrataJobId=jobId;
+  setCurrentJob({id:jobId,type:'strata',name:existing.name});
+  renderSavedJobs();
+  document.getElementById('strataStatus').textContent='Saved job: '+existing.name;
+}
+function loadStrataJob(id){
+  const job=getStrataJobs().find(j=>j.id===id); if(!job)return;
+  if(typeof setCurrentJob==='function') setCurrentJob({id:job.id,type:job.type||'strata',name:job.name||'Strata Job'});
+  currentStrataJobId=id;
+  document.getElementById('strataProject').value=job.project||'';
+  document.getElementById('strataAddress').value=job.address||'';
+  document.getElementById('strataDate').value=job.date||'';
+  const body=document.getElementById('strataBody'); body.innerHTML='';
+  const units=job.units||[];
+  const count=Math.max(1,units.length);
+  for(let i=0;i<count;i++){
+    const row=document.createElement('tr'); const u=units[i]||{unit:i+1,values:{}};
+    row.innerHTML=`<td class="unit-no">${i+1}</td><td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001"></td><td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001"></td><td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001"></td><td><input class="strata-val" data-col="B" type="number" min="0" step="0.001"></td><td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001"></td><td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001"></td><td><input class="strata-val" data-col="P" type="number" min="0" step="0.001"></td><td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001"></td><td class="row-total">0.000</td>`;
+    body.appendChild(row); strataBindRow(row);
+    Object.entries(u.values||{}).forEach(([k,v])=>{const input=row.querySelector(`[data-col="${k}"]`);if(input)input.value=v||''});
+  }
+  strataUpdate();
+  const strataBtn=[...document.querySelectorAll('.nav button')].find(b=>b.textContent.includes('Strata Areas')); if(strataBtn)show('strata',strataBtn);
+  document.getElementById('strataStatus').textContent='Loaded job: '+job.name;
+}
+function deleteStrataJob(id){
+  const job=getStrataJobs().find(j=>j.id===id); if(!job)return;
+  if(!confirm('Delete saved job "'+job.name+'"?'))return;
+  setStrataJobs(getStrataJobs().filter(j=>j.id!==id));
+  if(currentStrataJobId===id)currentStrataJobId=null;
+  renderSavedJobs();
+}
+function renameStrataJob(id){
+  const jobs=getStrataJobs(),job=jobs.find(j=>j.id===id);if(!job)return;
+  const name=prompt('New job name:',job.name);if(name===null)return;job.name=name.trim()||job.name;job.updated=new Date().toISOString();setStrataJobs(jobs);renderSavedJobs();
+}
+let currentQuickCloseJobId=null;
+
+function collectQuickCloseJob(jobNo){
+  const rows=[...document.querySelectorAll('#qcBody tr')];
+  return {
+    type:'quickclose',
+    name:'Quick Close — '+jobNo,
+    project:jobNo,
+    jobNumber:jobNo,
+    startE:document.getElementById('qcE').value,
+    startN:document.getElementById('qcN').value,
+    lines:rows.map(r=>({bearing:r.querySelector('.qcbearing')?.value||'',distance:r.querySelector('.qcdistance')?.value||''}))
+  };
+}
+
+function saveQuickCloseJob(saveAs=false){
+  let jobNo=document.getElementById('qcJobNo')?.value.trim();
+  if(saveAs){
+    const entered=prompt('Job number:',jobNo||'');
+    if(entered===null)return;
+    jobNo=entered.trim();
+    if(!jobNo){alert('Enter a job number.');return}
+    document.getElementById('qcJobNo').value=jobNo;
+  }
+  if(!jobNo){alert('Enter a job number first.');document.getElementById('qcJobNo')?.focus();return}
+  const rows=[...document.querySelectorAll('#qcBody tr')];
+  if(!rows.length){alert('Add at least one Quick Close line before saving.');return}
+
+  const jobs=getStrataJobs();
+  let jobId=saveAs?null:currentQuickCloseJobId;
+  let existing=jobId?jobs.find(j=>j.id===jobId):null;
+
+  if(!existing){
+    const id='qc_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+    existing={id,...collectQuickCloseJob(jobNo),created:new Date().toISOString()};
+    jobs.unshift(existing);
+    currentQuickCloseJobId=id;
+  }else{
+    const data=collectQuickCloseJob(jobNo);
+    Object.assign(existing,data,{updated:new Date().toISOString()});
+  }
+
+  existing.updated=new Date().toISOString();
+  setStrataJobs(jobs);
+  renderSavedJobs();
+  setCurrentJob({id:existing.id,type:'quickclose',name:existing.name||('Quick Close — '+jobNo)});
+  document.getElementById('qcStatus').textContent='Saved Quick Close job: '+jobNo;
+}
+
+function renameQuickCloseJob(id){
+  const jobs=getStrataJobs(),job=jobs.find(j=>j.id===id);if(!job)return;
+  const name=prompt('New job number:',job.jobNumber||job.project||'');
+  if(name===null)return;
+  const newNo=name.trim();
+  if(!newNo)return;
+  const duplicate=jobs.find(j=>j.type==='quickclose'&&j.id!==id&&(j.jobNumber||j.project)===newNo);
+  if(duplicate){alert('A Quick Close job with that number already exists.');return}
+  job.jobNumber=newNo; job.project=newNo; job.name='Quick Close — '+newNo; job.updated=new Date().toISOString();
+  if(currentQuickCloseJobId===id)document.getElementById('qcJobNo').value=newNo;
+  setStrataJobs(jobs);renderSavedJobs();
+}
+
+function quickCloseNewJob(){
+  if(!confirm('Start a new Quick Close job? Unsaved changes in the current job will be cleared.'))return;
+  currentQuickCloseJobId=null;
+  document.getElementById('qcJobNo').value='';
+  clearQuickClose();
+  document.getElementById('qcStatus').textContent='New Quick Close job.';
+}
+
+function loadQuickCloseJob(id){
+  const job=getStrataJobs().find(j=>j.id===id); if(!job)return;
+  if(typeof setCurrentJob==='function') setCurrentJob({id:job.id,type:'quickclose',name:job.name||('Quick Close — '+(job.jobNumber||''))});
+  currentQuickCloseJobId=id;
+  document.getElementById('qcJobNo').value=job.jobNumber||job.project||'';
+  document.getElementById('qcE').value=job.startE||'';
+  document.getElementById('qcN').value=job.startN||'';
+  const body=document.getElementById('qcBody'); body.innerHTML=''; qcLineNo=0;
+  (job.lines||[]).forEach(line=>addQuickCloseLine(line.bearing||'',line.distance||''));
+  calcQuickClose();
+  const btn=[...document.querySelectorAll('.nav button')].find(b=>b.textContent.includes('Quick Close')); if(btn)show('misclose',btn);
+  document.getElementById('qcStatus').textContent='Loaded Quick Close job: '+(job.jobNumber||job.name);
+}
+
+function escapeHtml(value){
+  return String(value ?? '').replace(/[&<>"']/g,function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+  });
+}
+
+function renderSavedJobs(){
+  const list=document.getElementById('savedJobsList');if(!list)return;
+  const q=(document.getElementById('jobSearch')?.value||'').toLowerCase().trim();
+  const jobs=getStrataJobs().filter(j=>[j.name,j.project,j.address,j.jobNumber,j.type].join(' ').toLowerCase().includes(q));
+  if(!jobs.length){list.innerHTML='<div class="jobs-empty">No saved jobs yet. Save a Strata or Quick Close job and it will appear here.</div>';return}
+  list.innerHTML=jobs.map(j=>{
+    const when=j.updated?new Date(j.updated).toLocaleString():'';
+    if(j.type==='quickclose'){
+      const lines=(j.lines||[]).length;
+      return `<div class="saved-job"><div class="saved-job-info"><div class="saved-job-title">🔒 Quick Close — ${escapeHtml(j.jobNumber||j.project||'')}</div><div class="saved-job-meta">Job ${escapeHtml(j.jobNumber||'')} · ${lines} line(s) · Updated ${escapeHtml(when)}</div></div><div class="saved-job-actions"><button class="btn primary" type="button" onclick="loadQuickCloseJob('${j.id}')">Open</button><button class="btn secondary" type="button" onclick="renameQuickCloseJob('${j.id}')">Rename</button><button class="btn danger" type="button" onclick="deleteStrataJob('${j.id}')">Delete</button></div></div>`;
+    }
+    const units=(j.units||[]).length;
+    return `<div class="saved-job"><div class="saved-job-info"><div class="saved-job-title">▦ ${escapeHtml(j.name)}</div><div class="saved-job-meta">${escapeHtml(j.project||'No project')} · ${escapeHtml(j.address||'No address')} · ${units} unit(s) · Updated ${escapeHtml(when)}</div></div><div class="saved-job-actions"><button class="btn primary" type="button" onclick="loadStrataJob('${j.id}')">Open</button><button class="btn secondary" type="button" onclick="renameStrataJob('${j.id}')">Rename</button><button class="btn danger" type="button" onclick="deleteStrataJob('${j.id}')">Delete</button></div></div>`;
+  }).join('');
+}
+function strataNewJob(){
+  if(!confirm('Start a new Strata job? Unsaved changes in the current job will be cleared.'))return;
+  currentStrataJobId=null; document.getElementById('strataProject').value='';document.getElementById('strataAddress').value='';
+  const d=new Date();document.getElementById('strataDate').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  strataReset(); document.getElementById('strataStatus').textContent='New Strata job.';
+}
+function exportStrataJobs(){
+  const blob=new Blob([JSON.stringify(getStrataJobs(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='NorrisBox_Strata_Jobs.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+}
+function importStrataJobs(e){
+  const file=e.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const incoming=JSON.parse(reader.result);if(!Array.isArray(incoming))throw new Error();const existing=getStrataJobs();const map=new Map(existing.map(j=>[j.id,j]));incoming.forEach(j=>{if(j&&j.id)map.set(j.id,j)});setStrataJobs([...map.values()]);renderSavedJobs();alert('Jobs imported successfully.');}catch(err){alert('Could not import that jobs file.')}};reader.readAsText(file);e.target.value='';
+}
+
+function strataUpdate(){
+  const rows=[...document.querySelectorAll('#strataBody tr')];
+  const keys=['GF','FF','CY','B','ALF','CS','P','ST'];
+  const totals=Object.fromEntries(keys.map(k=>[k,0]));
+  let grand=0;
+
+  rows.forEach((row,ri)=>{
+    let rowTotal=0;
+    row.querySelectorAll('.strata-val').forEach(input=>{
+      let v=Number(input.value);
+      if(!Number.isFinite(v) || v<0){v=0; input.value='';}
+      const k=input.dataset.col;
+      totals[k]+=v;
+      rowTotal+=v;
+    });
+    const totalCell=row.querySelector('.row-total');
+    if(totalCell) totalCell.textContent=rowTotal.toFixed(3);
+    grand+=rowTotal;
+  });
+
+  keys.forEach(k=>{
+    const el=document.getElementById('strataTotal'+k);
+    if(el) el.textContent=totals[k].toFixed(3);
+  });
+  document.getElementById('strataGrandTotal').textContent=grand.toFixed(3);
+  document.getElementById('strataStatus').textContent=
+    `${rows.length} unit(s) • Grand total ${grand.toFixed(3)} m²`;
+}
+
+function strataBindRow(row){
+  row.querySelectorAll('.strata-val').forEach(input=>{
+    input.addEventListener('input',strataUpdate);
+    input.addEventListener('change',strataUpdate);
+  });
+}
+
+function strataAddRow(){
+  const body=document.getElementById('strataBody');
+  const number=body.querySelectorAll('tr').length+1;
+  const row=document.createElement('tr');
+  row.innerHTML=`<td class="unit-no">${number}</td>
+    <td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal"></td>
+    <td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal"></td>
+    <td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal"></td>
+    <td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal"></td>
+    <td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal"></td>
+    <td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal"></td>
+    <td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal"></td>
+    <td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal"></td>
+    <td class="row-total">0.000</td>`;
+  body.appendChild(row);
+  strataBindRow(row);
+  strataUpdate();
+  const first=row.querySelector('.strata-val');
+  if(first) first.focus();
+}
+
+function strataReset(){
+  const body=document.getElementById('strataBody');
+  body.innerHTML='';
+  for(let i=1;i<=4;i++){
+    const row=document.createElement('tr');
+    row.innerHTML=`<td class="unit-no">${i}</td>
+      <td><input class="strata-val" data-col="GF" type="number" min="0" step="0.001" inputmode="decimal"></td>
+      <td><input class="strata-val" data-col="FF" type="number" min="0" step="0.001" inputmode="decimal"></td>
+      <td><input class="strata-val" data-col="CY" type="number" min="0" step="0.001" inputmode="decimal"></td>
+      <td><input class="strata-val" data-col="B" type="number" min="0" step="0.001" inputmode="decimal"></td>
+      <td><input class="strata-val" data-col="ALF" type="number" min="0" step="0.001" inputmode="decimal"></td>
+      <td><input class="strata-val" data-col="CS" type="number" min="0" step="0.001" inputmode="decimal"></td>
+      <td><input class="strata-val" data-col="P" type="number" min="0" step="0.001" inputmode="decimal"></td>
+      <td><input class="strata-val" data-col="ST" type="number" min="0" step="0.001" inputmode="decimal"></td>
+      <td class="row-total">0.000</td>`;
+    body.appendChild(row);
+    strataBindRow(row);
+  }
+  strataUpdate();
+}
+
+function strataPrint(){
+  window.print();
+}
+
+function printCurrentPage(){
+  window.print();
+}
+
+function strataInit(){
+  const date=document.getElementById('strataDate');
+  if(date && !date.value){
+    const d=new Date();
+    date.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  document.querySelectorAll('#strataBody tr').forEach(strataBindRow);
+  strataUpdate();
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e){
+  const el = e.target;
+  const tag = (el.tagName || '').toLowerCase();
+  if(['input','select','textarea','button'].includes(tag) && e.key === 'Tab') return;
+
+  const active = document.querySelector('.page.active');
+  if(!active) return;
+
+  const id = active.id;
+
+  // Enter = calculate the current calculator.
+  if(e.key === 'Enter' && !e.ctrlKey && !e.altKey && !e.metaKey){
+    if(tag === 'input'){
+      e.preventDefault();
+      if(id === 'traverse') calcTraverse();
+      else if(id === 'misclose') calcQuickClose();
+      else if(id === 'area') calcBearingArea();
+      else if(id === 'coords') calcCoords();
+      else if(id === 'bd') calcBD();
+      else if(id === 'scale') calcScale();
+      else if(id === 'convert') convert();
+      else if(id === 'strata') strataUpdate();
+    }
+    return;
+  }
+
+  // Ctrl+Enter = add a new traverse line and focus its bearing.
+  if(e.key === 'Enter' && e.ctrlKey && !e.altKey && !e.metaKey){
+    if(id === 'traverse' || id === 'misclose' || id === 'area'){
+      e.preventDefault();
+      let body, addFn, selector;
+      if(id === 'traverse'){
+        body = document.getElementById('trBody');
+        addFn = addLine;
+        selector = '.tb';
+      } else if(id === 'misclose'){
+        body = document.getElementById('qcBody');
+        addFn = addQuickCloseLine;
+        selector = '.qcbearing';
+      } else {
+        body = document.getElementById('areaBody');
+        addFn = addAreaLine;
+        selector = '.abearing';
+      }
+      addFn();
+      const rows = body.querySelectorAll('tr');
+      const last = rows[rows.length - 1];
+      if(last){
+        const input = last.querySelector(selector);
+        if(input){
+          input.focus();
+          input.select();
+        }
+      }
+    }
+    return;
+  }
+
+  // Escape simply leaves the active field without changing its value.
+  if(e.key === 'Escape'){
+    if(tag === 'input' || tag === 'select' || tag === 'textarea'){
+      e.preventDefault();
+      el.blur();
+    }
+    return;
+  }
+
+  // Delete removes the currently focused traverse line.
+  if(e.key === 'Delete' && tag === 'input'){
+    let row = el.closest('tr');
+    if(row){
+      const body = row.parentElement;
+      const isTraverseRow =
+        (id === 'traverse' && body && body.id === 'trBody') ||
+        (id === 'misclose' && body && body.id === 'qcBody') ||
+        (id === 'area' && body && body.id === 'areaBody');
+
+      if(isTraverseRow){
+        e.preventDefault();
+        row.remove();
+
+        // Renumber remaining rows.
+        [...body.querySelectorAll('tr')].forEach((r, i) => {
+          if(r.cells[0]) r.cells[0].textContent = i + 1;
+        });
+
+        if(id === 'traverse') lineNo = body.querySelectorAll('tr').length;
+        if(id === 'misclose') qcLineNo = body.querySelectorAll('tr').length;
+        if(id === 'area') areaLineNo = body.querySelectorAll('tr').length;
+      }
+    }
+  }
+});
+
+const units={metres:1,millimetres:.001,kilometres:1000,feet:.3048,chains:20.1168};function convert(){let v=num('cv'),a=document.getElementById('cf').value,b=document.getElementById('ct').value;co.textContent=(v*units[a]/units[b]).toFixed(6)+' '+b}
+for(let i=0;i<4;i++)addLine();addAreaLine('90d00\'00\"','50');addAreaLine('180d00\'00\"','30');addAreaLine('270d00\'00\"','50');addAreaLine('0d00\'00\"','30');calcCoords();addQuickCloseLine('90d00\'00\"','50');addQuickCloseLine('180d00\'00\"','30');addQuickCloseLine('270d00\'00\"','50');calcQuickClose();calcBearingArea();strataInit();renderSavedJobs();
+
+// Explicit Shortcuts navigation handler.
+document.addEventListener('DOMContentLoaded', function(){
+  const shortcutBtn = document.querySelector('.shortcuts-nav[data-page="shortcuts"]');
+  const shortcutPage = document.getElementById('shortcuts');
+  if(!shortcutBtn || !shortcutPage) return;
+
+  shortcutBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    document.querySelectorAll('.page').forEach(function(page){
+      page.classList.remove('active');
+    });
+    document.querySelectorAll('.nav-item, .shortcuts-nav').forEach(function(btn){
+      btn.classList.remove('active');
+    });
+
+    shortcutPage.classList.add('active');
+    shortcutBtn.classList.add('active');
+  });
+});
+
+
+window.__traverseZoom=1;
+window.__traversePanX=0;
+window.__traversePanY=0;
+
+function zoomPlan(factor){
+  const old=window.__traverseZoom||1;
+  window.__traverseZoom=Math.max(0.25,Math.min(12,old*factor));
+  calcTraverse();
+}
+
+function fitPlan(){
+  window.__traverseZoom=1;
+  window.__traversePanX=0;
+  window.__traversePanY=0;
+  calcTraverse();
+}
+
+window.__traversePanX = window.__traversePanX || 0;
+window.__traversePanY = window.__traversePanY || 0;
+
+window.addEventListener('DOMContentLoaded',function(){
+  const canvas=document.getElementById('plot');
+  if(!canvas)return;
+
+  // Desktop: wheel zoom + drag. iPhone/iPad: one-finger pan + two-finger pinch zoom.
+  const pointers=new Map();
+  let dragging=false,lastX=0,lastY=0;
+  let pinchStartDist=0,pinchStartZoom=1,pinchMidX=0,pinchMidY=0;
+
+  function dist(a,b){return Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)}
+  function mid(a,b){return {x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2}}
+
+  canvas.addEventListener('pointerdown',function(e){
+    pointers.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});
+    try{canvas.setPointerCapture(e.pointerId)}catch(_){}
+    if(pointers.size===1){
+      dragging=true; lastX=e.clientX; lastY=e.clientY;
+      canvas.classList.add('dragging');
+    } else if(pointers.size===2){
+      const ps=[...pointers.values()];
+      pinchStartDist=dist(ps[0],ps[1]);
+      pinchStartZoom=window.__traverseZoom||1;
+      const m=mid(ps[0],ps[1]); pinchMidX=m.x; pinchMidY=m.y;
+      dragging=false;
+    }
+    e.preventDefault();
+  });
+
+  canvas.addEventListener('pointermove',function(e){
+    if(!pointers.has(e.pointerId))return;
+    pointers.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});
+    const ps=[...pointers.values()];
+    const rect=canvas.getBoundingClientRect();
+    const sx=canvas.width/rect.width, sy=canvas.height/rect.height;
+
+    if(ps.length>=2){
+      const d=dist(ps[0],ps[1]);
+      if(pinchStartDist>0){
+        const z=Math.max(.25,Math.min(12,pinchStartZoom*(d/pinchStartDist)));
+        window.__traverseZoom=z;
+        // Keep the pinch centre visually stable while zooming.
+        const m=mid(ps[0],ps[1]);
+        window.__traversePanX += (m.x-pinchMidX)*sx;
+        window.__traversePanY += (m.y-pinchMidY)*sy;
+        pinchMidX=m.x; pinchMidY=m.y;
+        calcTraverse();
+      }
+      e.preventDefault();
+      return;
+    }
+
+    if(dragging && ps.length===1){
+      window.__traversePanX += (e.clientX-lastX)*sx;
+      window.__traversePanY += (e.clientY-lastY)*sy;
+      lastX=e.clientX; lastY=e.clientY;
+      calcTraverse();
+      e.preventDefault();
+    }
+  });
+
+  function endPointer(e){
+    pointers.delete(e.pointerId);
+    if(pointers.size<2){pinchStartDist=0}
+    if(pointers.size===1){
+      const p=[...pointers.values()][0]; lastX=p.clientX; lastY=p.clientY; dragging=true;
+    } else {dragging=false;canvas.classList.remove('dragging')}
+    try{canvas.releasePointerCapture(e.pointerId)}catch(_){}
+  }
+  canvas.addEventListener('pointerup',endPointer);
+  canvas.addEventListener('pointercancel',endPointer);
+
+  canvas.addEventListener('wheel',function(e){
+    e.preventDefault();
+    zoomPlan(e.deltaY<0 ? 1.12 : 1/1.12);
+  },{passive:false});
+
+  ['trShowBearings','trShowDistances','trShowPoints','trShowCoords'].forEach(function(id){
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('change',calcTraverse);
+  });
+});
+</script>
+
+<script id="v7-enhancements">
+window.__jobFilter='all';
+function setJobFilter(f,b){window.__jobFilter=f;document.querySelectorAll('.jobs-filter button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');renderSavedJobs()}
+function v7DateDefault(id){const e=document.getElementById(id);if(!e||e.value)return;const d=new Date();e.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+const _cqc=collectQuickCloseJob;collectQuickCloseJob=function(jobNo){const d=_cqc(jobNo);d.project=document.getElementById('qcProject')?.value.trim()||'';d.address=document.getElementById('qcAddress')?.value.trim()||'';d.date=document.getElementById('qcDate')?.value||'';d.name=[jobNo,d.project].filter(Boolean).join(' — ')||('Quick Close — '+jobNo);return d}
+const _lqc=loadQuickCloseJob;loadQuickCloseJob=function(id){_lqc(id);const j=getStrataJobs().find(x=>x.id===id);if(!j)return;document.getElementById('qcProject').value=j.project||'';document.getElementById('qcAddress').value=j.address||'';document.getElementById('qcDate').value=j.date||''}
+const _qcn=quickCloseNewJob;quickCloseNewJob=function(){_qcn();document.getElementById('qcProject').value='';document.getElementById('qcAddress').value='';v7DateDefault('qcDate')}
+const _rsj=renderSavedJobs;renderSavedJobs=function(){const list=document.getElementById('savedJobsList');if(!list)return;const q=(document.getElementById('jobSearch')?.value||'').toLowerCase().trim();let jobs=getStrataJobs();if(window.__jobFilter!=='all')jobs=jobs.filter(j=>j.type===window.__jobFilter);jobs=jobs.filter(j=>[j.name,j.project,j.address,j.jobNumber,j.type].join(' ').toLowerCase().includes(q));jobs.sort((a,b)=>new Date(b.updated||b.created||0)-new Date(a.updated||a.created||0));const count=document.getElementById('jobsCount');if(count)count.textContent=`${jobs.length} saved job${jobs.length===1?'':'s'}`;if(!jobs.length){list.innerHTML='<div class="jobs-empty">No matching jobs. Save a Quick Close or Strata job and it will appear here.</div>';return}list.innerHTML=jobs.map(j=>{const when=j.updated?new Date(j.updated).toLocaleString():'Not yet updated';if(j.type==='quickclose'){const lines=(j.lines||[]).length;return `<div class="saved-job"><div class="saved-job-info"><div class="saved-job-title">🔒 ${escapeHtml(j.name||('Quick Close — '+(j.jobNumber||'')))}</div><div class="saved-job-meta">Job ${escapeHtml(j.jobNumber||'—')} · ${lines} line(s)${j.project?' · '+escapeHtml(j.project):''}${j.address?' · '+escapeHtml(j.address):''} · ${escapeHtml(when)}</div></div><div class="saved-job-actions"><button class="btn primary" onclick="loadQuickCloseJob('${j.id}')">Open</button><button class="btn secondary" onclick="renameQuickCloseJob('${j.id}')">Rename</button><button class="btn danger" onclick="deleteStrataJob('${j.id}')">Delete</button></div></div>`}const units=(j.units||[]).length;return `<div class="saved-job"><div class="saved-job-info"><div class="saved-job-title">▦ ${escapeHtml(j.name||'Strata Job')}</div><div class="saved-job-meta">${escapeHtml(j.project||'No project')} · ${escapeHtml(j.address||'No address')} · ${units} unit(s) · ${escapeHtml(when)}</div></div><div class="saved-job-actions"><button class="btn primary" onclick="loadStrataJob('${j.id}')">Open</button><button class="btn secondary" onclick="renameStrataJob('${j.id}')">Rename</button><button class="btn danger" onclick="deleteStrataJob('${j.id}')">Delete</button></div></div>`}).join('')}
+const _cqc2=calcQuickClose;calcQuickClose=function(){_cqc2();const b=document.getElementById('qcCloseBanner'),be=document.getElementById('qcBearing')?.textContent||'—',di=document.getElementById('qcDistance')?.textContent||'—';if(!b)return;if(be==='—'||di==='—'){b.className='close-banner';b.textContent='Calculate the close to see the closing line.'}else{b.className='close-banner ok';b.textContent=`Closing line: ${be} for ${di} back to the starting point.`}}
+const __plan={traverse:{z:1,x:0,y:0,p:[],sel:null},qc:{z:1,x:0,y:0,p:[],sel:null},area:{z:1,x:0,y:0,p:[],sel:null}};
+function pc(k){return document.getElementById(k==='traverse'?'plot':k==='qc'?'qcPlot':'areaPlot')}
+function fieldPlanZoom(k,f){__plan[k].z=Math.max(.25,Math.min(12,__plan[k].z*f));redraw(k)}function fieldPlanFit(k){__plan[k].z=1;__plan[k].x=0;__plan[k].y=0;__plan[k].sel=null;redraw(k)}function niceStep(r){if(!isFinite(r)||r<=0)return 1;const p=10**Math.floor(Math.log10(r)),n=r/p;return (n<=1?1:n<=2?2:n<=5?5:10)*p}
+function drawField(k,pts){const c=pc(k);if(!c)return;const st=__plan[k];st.p=pts||[];const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);if(!pts?.length){north(ctx,c);return}const es=pts.map(p=>p[0]),ns=pts.map(p=>p[1]),miE=Math.min(...es),maE=Math.max(...es),miN=Math.min(...ns),maN=Math.max(...ns),scale=Math.min((c.width-140)/Math.max(1,maE-miE),(c.height-140)/Math.max(1,maN-miN))*st.z,midE=(miE+maE)/2,midN=(miN+maN)/2,px=e=>c.width/2+st.x+(e-midE)*scale,py=n=>c.height/2+st.y-(n-midN)*scale;grid(ctx,c,st);ctx.beginPath();pts.forEach((p,i)=>{const X=px(p[0]),Y=py(p[1]);i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)});if(k==='area'&&pts.length>2)ctx.closePath();ctx.strokeStyle=k==='area'?'#18864b':'#1677c8';ctx.lineWidth=3;ctx.lineJoin='round';ctx.stroke();if(k==='area'&&pts.length>2){ctx.globalAlpha=.07;ctx.fillStyle='#18864b';ctx.fill();ctx.globalAlpha=1}if(k==='qc'&&pts.length>2){const a=pts[pts.length-2],b=pts[pts.length-1];ctx.save();ctx.setLineDash([8,6]);ctx.strokeStyle='#18864b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(px(a[0]),py(a[1]));ctx.lineTo(px(b[0]),py(b[1]));ctx.stroke();ctx.restore()}pts.forEach((p,i)=>{const X=px(p[0]),Y=py(p[1]);ctx.fillStyle=k==='qc'&&i===pts.length-1?'#18864b':'#17212b';ctx.beginPath();ctx.arc(X,Y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17212b';ctx.font='bold 11px Arial';ctx.textAlign='left';ctx.fillText(i===0?'START':(k==='qc'&&i===pts.length-1?'CLOSE':i),X+8,Y-8)});north(ctx,c);scalebar(ctx,c,scale);readout(k,st.sel||pts[0])}
+function grid(ctx,c,st){ctx.strokeStyle='#e9eef2';ctx.lineWidth=1;const g=55;for(let x=c.width/2+(st.x%g);x<c.width;x+=g){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke()}for(let x=c.width/2+(st.x%g);x>0;x-=g){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke()}for(let y=c.height/2+(st.y%g);y<c.height;y+=g){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke()}for(let y=c.height/2+(st.y%g);y>0;y-=g){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke()}}
+function north(ctx,c){const x=c.width-38,y=36;ctx.strokeStyle='#17212b';ctx.fillStyle='#17212b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y+25);ctx.lineTo(x,y);ctx.stroke();ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-6,y+10);ctx.lineTo(x+6,y+10);ctx.closePath();ctx.fill();ctx.font='bold 11px Arial';ctx.textAlign='center';ctx.fillText('N',x,y-7)}
+function scalebar(ctx,c,scale){const m=niceStep(110/Math.max(scale,.0001)),px=m*scale,x=16,y=c.height-20;ctx.strokeStyle='#17212b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+px,y);ctx.moveTo(x,y-5);ctx.lineTo(x,y+5);ctx.moveTo(x+px,y-5);ctx.lineTo(x+px,y+5);ctx.stroke();ctx.font='10px Arial';ctx.textAlign='left';ctx.fillStyle='#17212b';ctx.fillText(`${m>=1000?(m/1000).toFixed(1)+' km':m.toFixed(m<1?2:0)+' m'}`,x,y-8)}
+function readout(k,p){const c=pc(k);let b=c.parentElement.querySelector('.plan-readout');if(!b){b=document.createElement('div');b.className='plan-readout';c.parentElement.appendChild(b)}b.textContent=p?`E ${p[0].toFixed(3)} · N ${p[1].toFixed(3)}`:'Tap a point for coordinates'}
+function redraw(k){if(k==='traverse')draw(__plan[k].p);else if(k==='qc')drawQuickClose(__plan[k].p);else drawAreaPlot(__plan[k].p)}
+function draw(pts){drawField('traverse',pts)}function drawQuickClose(pts){drawField('qc',pts)}function drawAreaPlot(pts){drawField('area',pts)}
+function attachPlan(k){const c=pc(k);if(!c||c.__v7)return;c.__v7=1;const st=__plan[k],ps=new Map();let drag=false,lx=0,ly=0,pinch=0,pz=1;c.style.touchAction='none';const dist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);c.addEventListener('pointerdown',e=>{ps.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});if(ps.size===1){drag=true;lx=e.clientX;ly=e.clientY}else if(ps.size===2){const a=[...ps.values()];pinch=dist(a[0],a[1]);pz=st.z;drag=false}e.preventDefault()});c.addEventListener('pointermove',e=>{if(!ps.has(e.pointerId))return;ps.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});const a=[...ps.values()],r=c.getBoundingClientRect(),sx=c.width/r.width,sy=c.height/r.height;if(a.length>=2&&pinch){st.z=Math.max(.25,Math.min(12,pz*(dist(a[0],a[1])/pinch)));redraw(k);e.preventDefault()}else if(drag&&a.length===1){st.x+=(e.clientX-lx)*sx;st.y+=(e.clientY-ly)*sy;lx=e.clientX;ly=e.clientY;redraw(k);e.preventDefault()}});c.addEventListener('pointerup',e=>{ps.delete(e.pointerId);if(ps.size===0){drag=false;const r=c.getBoundingClientRect(),x=(e.clientX-r.left)*(c.width/r.width),y=(e.clientY-r.top)*(c.height/r.height),pts=st.p;if(pts.length){let es=pts.map(p=>p[0]),ns=pts.map(p=>p[1]),miE=Math.min(...es),maE=Math.max(...es),miN=Math.min(...ns),maN=Math.max(...ns),scale=Math.min((c.width-140)/Math.max(1,maE-miE),(c.height-140)/Math.max(1,maN-miN))*st.z,best=null,bd=25;pts.forEach(p=>{const X=c.width/2+st.x+(p[0]-(miE+maE)/2)*scale,Y=c.height/2+st.y-(p[1]-(miN+maN)/2)*scale,d=Math.hypot(X-x,Y-y);if(d<bd){bd=d;best=p}});if(best){st.sel=best;redraw(k)}}}if(ps.size<2)pinch=0});c.addEventListener('wheel',e=>{e.preventDefault();st.z=Math.max(.25,Math.min(12,st.z*(e.deltaY<0?1.12:1/1.12)));redraw(k)},{passive:false})}
+window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan);v7DateDefault('qcDate');renderSavedJobs()});
+</script>
+
+
+/* ===== v8 JOB + POINT WORKSPACE ===== */
+const POINTS_KEY='norrisbox_survey_points_v1';
+const CURRENT_JOB_KEY='norrisbox_current_job_v1';
+function getPoints(){try{return JSON.parse(localStorage.getItem(POINTS_KEY)||'[]')}catch(e){return []}}
+function setPoints(v){localStorage.setItem(POINTS_KEY,JSON.stringify(v))}
+function currentJob(){try{return JSON.parse(localStorage.getItem(CURRENT_JOB_KEY)||'null')}catch(e){return null}}
+function setCurrentJob(j){if(j)localStorage.setItem(CURRENT_JOB_KEY,JSON.stringify(j));else localStorage.removeItem(CURRENT_JOB_KEY);renderDashboard()}
+function openJobManager(){iphoneShow('jobs')}
+function jobIcon(j){return j?.type==='quickclose'?'✓':j?.type==='strata'?'▦':'💾'}
+function jobTitle(j){return j?.name||j?.project||j?.jobNumber||'Untitled Job'}
+function openSavedJobFromDashboard(id){const j=getStrataJobs().find(x=>x.id===id);if(!j)return;if(j.type==='quickclose')loadQuickCloseJob(id);else loadStrataJob(id);setCurrentJob({id,type:j.type,name:jobTitle(j)});}
+function renderDashboard(){
+  const card=document.getElementById('currentJobCard'); if(!card)return;
+  const cj=currentJob();
+  if(!cj){card.className='current-job-card empty';card.innerHTML='<div class="current-job-label">CURRENT JOB</div><div class="current-job-name">No job selected</div><div class="current-job-meta">Open a saved job or save a new Quick Close / Strata job to make it your current job.</div><div class="current-job-actions"><button class="btn primary" onclick="iphoneShow(\'jobs\')">Open Saved Jobs</button></div>'}
+  else {card.className='current-job-card';card.innerHTML=`<div class="current-job-top"><div><div class="current-job-label">CURRENT JOB</div><div class="current-job-name">${escapeHtml(cj.name||'Current Job')}</div><div class="current-job-meta">${escapeHtml(cj.type==='quickclose'?'Quick Close':'Strata / Job')}</div></div><span style="font-size:22px">${jobIcon(cj)}</span></div><div class="current-job-actions"><button class="btn primary" onclick="openSavedJobFromDashboard('${cj.id}')">Open Job</button><button class="btn secondary" onclick="setCurrentJob(null)">Clear</button></div></div>`}
+  const list=document.getElementById('dashboardRecentJobs'); if(!list)return;
+  const jobs=getStrataJobs().sort((a,b)=>new Date(b.updated||b.created||0)-new Date(a.updated||a.created||0)).slice(0,4);
+  list.innerHTML=jobs.length?jobs.map(j=>`<div class="recent-job"><div class="recent-job-icon">${jobIcon(j)}</div><div class="recent-job-info"><div class="recent-job-name">${escapeHtml(jobTitle(j))}</div><div class="recent-job-meta">${escapeHtml(j.project||j.address||j.jobNumber||'Saved job')} · ${escapeHtml(j.updated?new Date(j.updated).toLocaleDateString():'')}</div></div><button class="btn secondary" onclick="openSavedJobFromDashboard('${j.id}')">Open</button></div>`).join(''):'<div class="point-empty">No saved jobs yet.</div>';
+}
+function nextPointNo(){const ps=getPoints();const nums=ps.map(p=>Number(p.number)).filter(Number.isFinite);return nums.length?Math.max(...nums)+1:1}
+function addSurveyPoint(){
+  const no=prompt('Point number:',String(nextPointNo())); if(no===null)return;
+  const e=prompt('Easting:',''); if(e===null)return;
+  const n=prompt('Northing:',''); if(n===null)return;
+  const ee=Number(e),nn=Number(n);if(!Number.isFinite(ee)||!Number.isFinite(nn)){alert('Enter valid Easting and Northing values.');return}
+  const desc=prompt('Description (optional):','')??'';
+  const ps=getPoints();if(ps.some(p=>String(p.number)===String(no).trim())){alert('That point number already exists.');return}
+  ps.push({id:'pt_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),number:String(no).trim()||String(nextPointNo()),e:ee,n:nn,desc:desc.trim(),created:new Date().toISOString()});setPoints(ps);renderPoints();renderDashboard();
+}
+function editSurveyPoint(id){const ps=getPoints(),p=ps.find(x=>x.id===id);if(!p)return;const e=prompt('Easting:',p.e);if(e===null)return;const n=prompt('Northing:',p.n);if(n===null)return;const ee=Number(e),nn=Number(n);if(!Number.isFinite(ee)||!Number.isFinite(nn)){alert('Invalid coordinate.');return}const d=prompt('Description:',p.desc||'');if(d===null)return;p.e=ee;p.n=nn;p.desc=d.trim();p.updated=new Date().toISOString();setPoints(ps);renderPoints()}
+function deleteSurveyPoint(id){const p=getPoints().find(x=>x.id===id);if(!p)return;if(!confirm(`Delete point ${p.number}?`))return;setPoints(getPoints().filter(x=>x.id!==id));renderPoints()}
+function useSurveyPoint(id){const p=getPoints().find(x=>x.id===id);if(!p)return;const target=prompt('Use this point in:\n1 = B&D From Coords (Point A)\n2 = Coords From B&D (Start Point)','1');if(target==='1'){document.getElementById('ce1').value=p.e;document.getElementById('cn1').value=p.n;iphoneShow('coords');calcCoords()}else if(target==='2'){document.getElementById('be').value=p.e;document.getElementById('bn').value=p.n;iphoneShow('bd');calcBD()}}
+function renderPoints(){const list=document.getElementById('pointList');if(!list)return;const q=(document.getElementById('pointSearch')?.value||'').toLowerCase().trim();let ps=getPoints().filter(p=>[p.number,p.e,p.n,p.desc].join(' ').toLowerCase().includes(q));ps.sort((a,b)=>String(a.number).localeCompare(String(b.number),undefined,{numeric:true}));document.getElementById('pointCount').textContent=getPoints().length;const last=getPoints().slice().sort((a,b)=>new Date(b.created||0)-new Date(a.created||0))[0];document.getElementById('pointLast').textContent=last?String(last.number):'—';list.innerHTML=ps.length?ps.map(p=>`<div class="point-row"><div class="point-no">P${escapeHtml(p.number)}</div><div class="point-main"><b>${escapeHtml(p.desc||'Survey Point')}</b><small>E ${Number(p.e).toFixed(3)} · N ${Number(p.n).toFixed(3)}</small></div><div class="point-actions"><button class="btn secondary" onclick="useSurveyPoint('${p.id}')">Use</button><button class="btn secondary" onclick="editSurveyPoint('${p.id}')">Edit</button><button class="btn danger" onclick="deleteSurveyPoint('${p.id}')">×</button></div></div>`).join(''):'<div class="point-empty">No points found. Add your first survey point.</div>'}
+function clearPointSearch(){const x=document.getElementById('pointSearch');if(x)x.value='';renderPoints()}
+function exportPoints(){const data={version:1,exported:new Date().toISOString(),points:getPoints()};downloadJson('surveyors-toolbox-points.json',data)}
+function importPoints(e){const file=e.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);const incoming=Array.isArray(data)?data:data.points;if(!Array.isArray(incoming))throw Error();const map=new Map(getPoints().map(p=>[p.id,p]));incoming.forEach(p=>{if(p&&p.id&&Number.isFinite(Number(p.e))&&Number.isFinite(Number(p.n)))map.set(p.id,p)});setPoints([...map.values()]);renderPoints();alert('Points imported successfully.')}catch(err){alert('Could not import that points file.')}};reader.readAsText(file);e.target.value=''}
+function downloadJson(name,obj){const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function backupAllData(){const data={app:'Surveyor’s Toolbox',version:8,exported:new Date().toISOString(),jobs:getStrataJobs(),points:getPoints(),currentJob:currentJob()};downloadJson('surveyors-toolbox-backup.json',data)}
+function restoreAllData(e){const file=e.target.files?.[0];if(!file)return;if(!confirm('Restore this backup? Existing jobs and points with matching IDs will be replaced.')){e.target.value='';return}const reader=new FileReader();reader.onload=()=>{try{const d=JSON.parse(reader.result);if(!d||(!Array.isArray(d.jobs)&&!Array.isArray(d.points)))throw Error();if(Array.isArray(d.jobs)){const map=new Map(getStrataJobs().map(j=>[j.id,j]));d.jobs.forEach(j=>{if(j&&j.id)map.set(j.id,j)});setStrataJobs([...map.values()])}if(Array.isArray(d.points)){const map=new Map(getPoints().map(p=>[p.id,p]));d.points.forEach(p=>{if(p&&p.id)map.set(p.id,p)});setPoints([...map.values()])}if(d.currentJob)setCurrentJob(d.currentJob);renderSavedJobs();renderPoints();renderDashboard();alert('Backup restored successfully.')}catch(err){alert('That backup file could not be restored.')}};reader.readAsText(file);e.target.value=''}
+
+<!-- iPhone PWA navigation -->
+<nav id="iphoneNav" aria-label="Surveyor Toolbox">
+  <button data-target="bd" onclick="iphoneShow('bd',this)"><span class="ico">📐</span>B&D</button>
+  <button data-target="traverse" onclick="iphoneShow('traverse',this)"><span class="ico">↗</span>Traverse</button>
+  <button data-target="quick" onclick="iphoneShow('quick',this)"><span class="ico">✓</span>Close</button>
+  <button data-target="area" onclick="iphoneShow('area',this)"><span class="ico">▱</span>Area</button>
+  <button data-target="more" onclick="iphoneMoreOpen()"><span class="ico">•••</span>More</button>
+</nav>
+
+<div id="iphoneMore" onclick="if(event.target===this) iphoneMoreClose()">
+  <div class="sheet">
+    <h3>Surveyor's Toolbox</h3>
+    <div class="tools">
+      <button onclick="iphoneShow('dashboard');iphoneMoreClose()">🏠 Home</button>
+      <button onclick="iphoneShow('coords');iphoneMoreClose()">Coords from B&D</button>
+      <button onclick="iphoneShow('points');iphoneMoreClose()">📍 Point Manager</button>
+      <button onclick="iphoneShow('strata');iphoneMoreClose()">Strata Areas</button>
+      <button onclick="iphoneShow('jobs');iphoneMoreClose()">Saved Jobs</button>
+      <button onclick="iphoneShow('scale');iphoneMoreClose()">Scale</button>
+      <button onclick="iphoneShow('convert');iphoneMoreClose()">Conversions</button>
+      <button onclick="backupAllData();iphoneMoreClose()">⬇ Backup All</button>
+      <button onclick="document.getElementById('restoreAllFile').click();iphoneMoreClose()">⬆ Restore Backup</button>
+    </div>
+    <button style="width:100%;margin-top:10px" onclick="iphoneMoreClose()">Close</button>
+  </div>
+</div>
+<input id="restoreAllFile" type="file" accept="application/json,.json" hidden onchange="restoreAllData(event)">
+
+<script>
+(function(){
+  function setActive(btn){
+    document.querySelectorAll('#iphoneNav button').forEach(function(b){b.classList.remove('active')});
+    if(btn) btn.classList.add('active');
+  }
+  window.iphoneShow = function(id, btn){
+    var map={dashboard:'dashboard',home:'dashboard',bd:'bd',traverse:'traverse',quick:'misclose',area:'area',coords:'coords',jobs:'jobs',strata:'strata',scale:'scale',convert:'convert',points:'points'};
+    var targetId=map[id] || id;
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+    var el=document.getElementById(targetId);
+    if(el) el.classList.add('active');
+    setActive(document.querySelector('#iphoneNav button[data-target="'+(map[id]||'')+'"]'));
+    if(targetId==='traverse' && typeof window.calcTraverse==='function') window.calcTraverse();
+    if(targetId==='misclose' && typeof window.calcQuickClose==='function') window.calcQuickClose();
+    if(targetId==='area' && typeof window.calcBearingArea==='function') window.calcBearingArea();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+  window.iphoneMoreOpen = function(){
+    document.getElementById('iphoneMore').classList.add('open');
+  };
+  window.iphoneMoreClose = function(){
+    document.getElementById('iphoneMore').classList.remove('open');
+  };
+  window.addEventListener('load', function(){
+    iphoneShow('dashboard');
+    renderDashboard();
+    renderPoints();
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('./sw.js').catch(function(){});
+    }
+  });
+})();
+</script>
+
+</body></html>
