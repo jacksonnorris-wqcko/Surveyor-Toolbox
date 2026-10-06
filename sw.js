@@ -1,8 +1,9 @@
-const CACHE = 'surveyors-toolbox-iphone-v8-fixed';
+const CACHE = 'surveyors-toolbox-iphone-v8-1';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
+    './v8-workspace.js',
   './sw.js',
   './icons/icon-192.png',
   './icons/icon-512.png'
