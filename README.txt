@@ -1,12 +1,7 @@
-# Surveyor's Toolbox — iPhone PWA
+Surveyor’s Toolbox — iPhone PWA v6
 
-1. Upload this folder to an HTTPS web host.
-2. Open `index.html` from the hosted address in Safari on iPhone.
-3. Tap Share → Add to Home Screen.
-4. Launch Surveyor's Toolbox from the iPhone Home Screen.
+Built By Jackson 2026
 
-The app is configured for portrait iPhone use, standalone display, safe-area support,
-large touch targets, an iPhone bottom navigation bar, and offline caching after the
-first successful load.
+Replace the root index.html and sw.js on GitHub Pages with the files in this package. Keep manifest.json and icons.
 
-For testing, HTTPS hosting is required for the service worker/PWA installation.
+v6 focuses on a cleaner native-app style mobile layout, stronger branding, touch-friendly controls, improved Traverse plan sizing, pinch zoom/pan and visual polish.

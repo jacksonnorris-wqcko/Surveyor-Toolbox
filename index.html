@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Surveyor's Toolbox v2</title>
+<title>Surveyor’s Toolbox</title>
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -367,6 +367,52 @@ input, select, textarea{
 @media (min-width:701px){
   #iphoneNav,#iphoneMore{display:none !important}
 }
+
+/* v6 visual polish */
+@media (max-width:700px){
+  body{background:#f3f6f8;}
+  .main{padding:0 10px calc(92px + var(--ios-safe-bottom)) !important;}
+  .topbar{
+    margin:0 -10px 14px !important;
+    padding:10px 14px !important;
+    min-height:68px !important;
+    border-bottom:1px solid #dfe5ea !important;
+    box-shadow:0 2px 12px rgba(18,30,42,.07);
+  }
+  .mobile-brand-mark{width:42px;height:42px;border-radius:12px;font-size:22px;background:linear-gradient(145deg,#17212b,#263746);}
+  .mobile-brand-title{font-size:18px;letter-spacing:-.35px;}
+  .mobile-brand-sub{font-size:10.5px;color:#647180;}
+  .topbar .brandtag{font-size:9px;padding:6px 8px;}
+  .page h1{font-size:25px !important;font-weight:850 !important;}
+  .page .sub{margin-bottom:12px;}
+  .card{box-shadow:0 2px 12px rgba(18,30,42,.055) !important;border-color:#dfe5ea !important;}
+  .eyebrow{font-size:10px;letter-spacing:1.15px;}
+  .toolbar{gap:7px;}
+  .toolbar .btn{flex:1 1 auto;}
+  .workspace-left>.card{height:auto !important;min-height:0 !important;}
+  .workspace-right>.live-card{border-radius:14px !important;}
+  .workspace-right .plot-head{background:#fff;}
+  .plot-head b{font-size:14px;}
+  .plot-head span{font-weight:600;color:#87919d;}
+  .live-card canvas{min-height:360px !important;aspect-ratio:1.18 / 1 !important;}
+  .plan-tools{background:#f8fafb !important;border-bottom:1px solid #e4e9ee !important;}
+  .plan-tools button{box-shadow:0 1px 2px rgba(0,0,0,.05);background:#fff !important;}
+  .plan-tools button:active{transform:scale(.97);background:#eef3f7 !important;}
+  .status{border-radius:10px;padding:11px 12px;}
+  .results .result{background:#f8fafb;}
+  #iphoneNav{padding-top:8px !important;box-shadow:0 -5px 24px rgba(0,0,0,.18) !important;}
+  #iphoneNav button{border-radius:11px !important;transition:transform .12s ease,background .12s ease;}
+  #iphoneNav button:active{transform:scale(.96);}
+  #iphoneNav button.active{background:rgba(255,255,255,.15) !important;}
+  #iphoneNav .ico{font-size:21px;}
+  /* Make the More sheet feel like a native iOS action sheet. */
+  #iphoneMore .sheet{padding-top:8px;}
+  #iphoneMore .sheet:before{content:"";display:block;width:38px;height:4px;border-radius:99px;background:#cbd2d9;margin:2px auto 12px;}
+  #iphoneMore .tools button{background:#f6f8fa;border-color:#dfe5ea;}
+  /* Better table scrolling on small screens. */
+  .scroll-table{border-radius:10px;-webkit-overflow-scrolling:touch;}
+  .scroll-table table{min-width:680px;}
+}
 </style>
 
 </head>
@@ -446,7 +492,7 @@ input, select, textarea{
   <label><input type="checkbox" id="trShowDistances" onchange="calcTraverse()"> Distances</label>
   <label><input type="checkbox" id="trShowPoints" checked onchange="calcTraverse()"> Point numbers</label>
   <label><input type="checkbox" id="trShowCoords" onchange="calcTraverse()"> Coordinates</label>
-  <span class="muted" style="margin-left:auto">Mouse wheel = zoom · Drag = pan</span>
+  <span class="muted" style="margin-left:auto">Pinch = zoom · Drag = pan</span>
 </div>
       <canvas id="plot" width="1000" height="700"></canvas>
     </div>
