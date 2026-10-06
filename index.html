@@ -205,8 +205,27 @@ input, select, textarea{
     font-size:12px !important;
   }
   .grid,.workspace{
+    display:grid !important;
     grid-template-columns:1fr !important;
     gap:12px !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+  .workspace-left,.workspace-right{
+    width:100% !important;
+    min-width:0 !important;
+  }
+  .workspace-right>.live-card{
+    height:auto !important;
+    min-height:0 !important;
+    width:100% !important;
+  }
+  .live-card canvas{
+    display:block !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:260px !important;
+    aspect-ratio:10 / 7;
   }
   .card{
     width:100% !important;
@@ -639,7 +658,14 @@ input, select, textarea{
 
 
 <script>
-function show(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
+function show(id,btn){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  const page=document.getElementById(id);
+  if(!page)return;
+  page.classList.add('active');
+  document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
+  if(btn && btn.classList) btn.classList.add('active');
+}
 function num(id){return parseFloat(document.getElementById(id).value)||0}
 function dms(deg){
   deg=((deg%360)+360)%360;
@@ -1724,13 +1750,9 @@ window.addEventListener('DOMContentLoaded',function(){
     if(btn) btn.classList.add('active');
   }
   window.iphoneShow = function(id, btn){
-    if(typeof window.show === 'function'){
-      window.show(id, btn || null);
-    } else {
-      document.querySelectorAll('.page').forEach(function(p){p.style.display='none'});
-      var el=document.getElementById(id);
-      if(el) el.style.display='block';
-    }
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+    var el=document.getElementById(id);
+    if(el) el.classList.add('active');
     var map={bd:'bd',traverse:'traverse',quick:'misclose',area:'area'};
     setActive(document.querySelector('#iphoneNav button[data-target="'+(map[id]||'')+'"]'));
     if(id==='traverse' && typeof window.calcTraverse==='function') window.calcTraverse();

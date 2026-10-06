@@ -1,4 +1,4 @@
-const CACHE = 'surveyors-toolbox-iphone-v2';
+const CACHE = 'surveyors-toolbox-iphone-v3';
 const ASSETS = [
   './',
   './index.html',
