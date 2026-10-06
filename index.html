@@ -424,6 +424,41 @@ input, select, textarea{
 @media(min-width:701px){.qc-job-meta{grid-template-columns:repeat(3,1fr)}.field-plan-tools{display:flex;align-items:center;gap:7px;padding:7px 10px;border-bottom:1px solid var(--line);background:#f7f9fb;color:#687687;font-size:11px}.field-plan-tools button{border:1px solid #cbd5de;background:#fff;border-radius:6px;padding:4px 10px;font-weight:700;cursor:pointer}.field-plan-tools span{margin-left:auto}}
 .saved-job{background:#fff;border:1px solid var(--line);border-radius:13px;margin:9px 0;padding:14px!important;box-shadow:0 2px 8px rgba(22,34,48,.04)}.saved-job-info{flex:1}.saved-job-meta{line-height:1.5}.jobs-toolbar-v7{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;margin-bottom:10px}.jobs-filter{display:flex;gap:7px;overflow:auto;padding-bottom:4px;margin-bottom:8px}.jobs-filter button{border:1px solid #d3dae1;background:#fff;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:750;white-space:nowrap}.jobs-filter button.active{background:#17212b;color:#fff;border-color:#17212b}.jobs-count{font-size:11px;color:var(--muted);margin:4px 0 8px}.plan-readout{position:absolute;left:10px;bottom:10px;z-index:2;padding:7px 9px;border-radius:9px;background:rgba(255,255,255,.94);border:1px solid #d7dee6;box-shadow:0 2px 8px rgba(0,0,0,.08);font-size:11px;font-weight:700;color:#334454;pointer-events:none}.live-card{position:relative}
 </style>
+<style id="v8-3-polish">
+@media(max-width:700px){
+  .main{padding-bottom:calc(118px + var(--ios-safe-bottom)) !important;}
+  .plan-tools{flex-wrap:nowrap !important;overflow-x:auto !important;white-space:nowrap !important;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .plan-tools::-webkit-scrollbar{display:none}
+  .plan-tools label{flex:0 0 auto !important;margin-left:0 !important;}
+  .plan-tools span{flex:0 0 auto !important;margin-left:0 !important;}
+  .calc-toolbar{margin-bottom:8px !important;}
+  .calc-toolbar .btn{flex:1 1 0 !important;}
+  .strata-table-wrap{border-radius:12px !important;-webkit-overflow-scrolling:touch;}
+  .strata-table{min-width:980px !important;}
+  .strata-table th:first-child,.strata-table td:first-child{position:sticky;left:0;z-index:3;background:#f7f9fb;}
+  .strata-table th:last-child,.strata-table td:last-child{position:sticky;right:0;z-index:3;background:#fff0e1;}
+  .strata-table th:first-child,.strata-table th:last-child{z-index:5;}
+  .point-search-row{align-items:stretch;}
+  .point-search-row input{min-width:0 !important;}
+  .page-head-row{gap:10px;}
+  .page-head-row .btn{min-width:110px;}
+}
+.app-modal{display:none;position:fixed;inset:0;z-index:11000;}
+.app-modal.open{display:flex;align-items:flex-end;justify-content:center;}
+.app-modal-backdrop{position:absolute;inset:0;background:rgba(10,18,26,.48);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);}
+.app-modal-card{position:relative;width:min(560px,calc(100% - 24px));margin:12px;background:#fff;border:1px solid #dfe5ea;border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.25);overflow:hidden;}
+.app-modal-card.compact{max-width:440px;}
+.app-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 16px 10px;border-bottom:1px solid #edf0f3;}
+.app-modal-head h2{margin:0;font-size:19px;letter-spacing:-.3px;}
+.modal-close{border:0;background:#eef2f5;color:#334454;width:36px;height:36px;border-radius:50%;font-size:24px;line-height:1;cursor:pointer;}
+.app-modal-body{padding:14px 16px 4px;}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.app-modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 16px calc(14px + var(--ios-safe-bottom,0px));border-top:1px solid #edf0f3;}
+.use-point-actions{display:grid;gap:9px;padding:16px;}
+.tool-choice{display:grid;grid-template-columns:42px 1fr;grid-template-rows:auto auto;column-gap:10px;text-align:left;padding:13px;border:1px solid #d9e1e8;border-radius:13px;background:#f8fafb;cursor:pointer;}
+.tool-choice span{grid-row:1/3;font-size:25px;align-self:center;text-align:center}.tool-choice b{font-size:14px}.tool-choice small{font-size:11px;color:#687687;margin-top:3px;}
+@media(max-width:700px){.app-modal.open{align-items:flex-end}.app-modal-card{width:100%;margin:0;border-radius:20px 20px 0 0;border-left:0;border-right:0;border-bottom:0}.modal-grid{grid-template-columns:1fr}.app-modal-head{padding-top:20px}.app-modal-card:before{content:"";display:block;width:38px;height:4px;border-radius:99px;background:#cbd2d9;position:absolute;top:8px;left:50%;transform:translateX(-50%);}.tool-choice{min-height:68px}.app-modal-actions .btn{min-height:48px !important;}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -460,8 +495,8 @@ input, select, textarea{
   <div id="currentJobCard" class="current-job-card"></div>
   <div class="dash-section-title"><span>Quick Tools</span><small>Tap to open</small></div>
   <div class="quick-tools-grid">
-    <button onclick="iphoneShow('bd')"><span>📐</span><b>B&D From Coords</b><small>Calculate bearing & distance</small></button>
-    <button onclick="iphoneShow('coords')"><span>🎯</span><b>Coords From B&D</b><small>Calculate destination point</small></button>
+    <button onclick="iphoneShow('coords')"><span>📐</span><b>B&D From Coords</b><small>Calculate bearing & distance</small></button>
+    <button onclick="iphoneShow('bd')"><span>🎯</span><b>Coords From B&D</b><small>Calculate destination point</small></button>
     <button onclick="iphoneShow('traverse')"><span>↗</span><b>Traverse</b><small>Build and plot a traverse</small></button>
     <button onclick="iphoneShow('quick')"><span>✓</span><b>Quick Close</b><small>Calculate closing line</small></button>
     <button onclick="iphoneShow('area')"><span>▱</span><b>Area</b><small>Calculate parcel area</small></button>
@@ -476,7 +511,7 @@ input, select, textarea{
 <section id="points" class="page">
   <div class="page-head-row"><div><h1>Point Manager</h1><div class="sub">Keep your survey coordinates in one place and reuse them across calculations.</div></div><button class="btn primary" onclick="addSurveyPoint()">＋ Add Point</button></div>
   <div class="point-summary"><div><small>POINTS</small><strong id="pointCount">0</strong></div><div><small>LAST ADDED</small><strong id="pointLast">—</strong></div><button class="btn secondary" onclick="exportPoints()">⇩ Export</button><button class="btn secondary" onclick="document.getElementById('pointImportFile').click()">⇧ Import</button><input id="pointImportFile" type="file" accept="application/json,.json" hidden onchange="importPoints(event)"></div>
-  <div class="card point-list-card"><div class="point-search-row"><input id="pointSearch" placeholder="Search point number, description or coordinate..." oninput="renderPoints()"><button class="btn secondary" onclick="clearPointSearch()">Clear</button></div><div id="pointList"></div></div>
+  <div class="card point-list-card"><div class="point-search-row"><input id="pointSearch" placeholder="Search points..." oninput="renderPoints()"><button class="btn secondary" onclick="clearPointSearch()">Clear</button></div><div id="pointList"></div></div>
 </section>
 
 <section id="coords" class="page">
@@ -484,7 +519,7 @@ input, select, textarea{
 <div class="grid">
 <div class="card"><h2>Point A</h2><label>Easting</label><input id="ce1" value="500"><label>Northing</label><input id="cn1" value="1000"></div>
 <div class="card"><h2>Point B</h2><label>Easting</label><input id="ce2" value="666"><label>Northing</label><input id="cn2" value="777"></div>
-<div class="card full"><button class="btn primary" onclick="calcCoords()">CALCULATE</button>
+<div class="card full"><div class="toolbar calc-toolbar"><button class="btn primary" onclick="calcCoords()">CALCULATE</button><button class="btn secondary" onclick="swapCoords()">⇄ Swap Points</button></div><div id="coordsStatus" class="status" hidden></div>
 <div class="results"><div class="result"><small>Distance</small><strong id="crDist">278.002 m</strong></div><div class="result"><small>Bearing</small><strong id="crBear">323d20'10"</strong></div><div class="result"><small>Δ Easting</small><strong id="crE">166.000 m</strong></div><div class="result"><small>Δ Northing</small><strong id="crN">-223.000 m</strong></div></div></div>
 </div></section>
 
@@ -492,7 +527,7 @@ input, select, textarea{
 <h1>Bearing & Distance</h1><div class="sub">Enter a bearing and distance to calculate the destination coordinate.</div>
 <div class="grid"><div class="card"><h2>Start Point</h2><label>Easting</label><input id="be" value="500"><label>Northing</label><input id="bn" value="1000"></div>
 <div class="card"><h2>Line</h2><label>Bearing (e.g. 137d13'15")</label><input id="bb" value="137d13'15&quot;"><label>Distance (m)</label><input id="bdist" value="52.438"></div>
-<div class="card full"><button class="btn primary" onclick="calcBD()">CALCULATE</button><div class="results"><div class="result"><small>End Easting</small><strong id="bE">—</strong></div><div class="result"><small>End Northing</small><strong id="bN">—</strong></div><div class="result"><small>Departure</small><strong id="bDep">—</strong></div><div class="result"><small>Latitude</small><strong id="bLat">—</strong></div></div></div></div>
+<div class="card full"><button class="btn primary" onclick="calcBD()">CALCULATE</button><div id="bdStatus" class="status" hidden></div><div class="results"><div class="result"><small>End Easting</small><strong id="bE">—</strong></div><div class="result"><small>End Northing</small><strong id="bN">—</strong></div><div class="result"><small>Departure</small><strong id="bDep">—</strong></div><div class="result"><small>Latitude</small><strong id="bLat">—</strong></div></div></div></div>
 </section>
 
 <section id="traverse" class="page">
@@ -1945,7 +1980,7 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
 
 <!-- iPhone PWA navigation -->
 <nav id="iphoneNav" aria-label="Surveyor Toolbox">
-  <button data-target="bd" onclick="iphoneShow('bd',this)"><span class="ico">📐</span>B&D</button>
+  <button data-target="coords" onclick="iphoneShow('coords',this)"><span class="ico">📐</span>B&D</button>
   <button data-target="traverse" onclick="iphoneShow('traverse',this)"><span class="ico">↗</span>Traverse</button>
   <button data-target="quick" onclick="iphoneShow('quick',this)"><span class="ico">✓</span>Close</button>
   <button data-target="area" onclick="iphoneShow('area',this)"><span class="ico">▱</span>Area</button>
@@ -1957,7 +1992,7 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
     <h3>Surveyor's Toolbox</h3>
     <div class="tools">
       <button onclick="iphoneShow('dashboard');iphoneMoreClose()">🏠 Home</button>
-      <button onclick="iphoneShow('coords');iphoneMoreClose()">Coords from B&D</button>
+      <button onclick="iphoneShow('bd');iphoneMoreClose()">Coords from B&D</button>
       <button onclick="iphoneShow('points');iphoneMoreClose()">📍 Point Manager</button>
       <button onclick="iphoneShow('strata');iphoneMoreClose()">Strata Areas</button>
       <button onclick="iphoneShow('jobs');iphoneMoreClose()">Saved Jobs</button>
@@ -1967,6 +2002,25 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
       <button onclick="document.getElementById('restoreAllFile').click();iphoneMoreClose()">⬆ Restore Backup</button>
     </div>
     <button style="width:100%;margin-top:10px" onclick="iphoneMoreClose()">Close</button>
+  </div>
+</div>
+<div id="pointModal" class="app-modal" aria-hidden="true">
+  <div class="app-modal-backdrop" onclick="closePointModal()"></div>
+  <div class="app-modal-card" role="dialog" aria-modal="true" aria-labelledby="pointModalTitle">
+    <div class="app-modal-head"><div><div class="eyebrow">Point Manager</div><h2 id="pointModalTitle">Add Survey Point</h2></div><button class="modal-close" type="button" onclick="closePointModal()">×</button></div>
+    <div class="app-modal-body">
+      <div class="modal-grid"><div><label>Point Number</label><input id="pointFormNo" inputmode="text"></div><div><label>Description</label><input id="pointFormDesc" placeholder="Optional"></div></div>
+      <div class="modal-grid"><div><label>Easting</label><input id="pointFormE" inputmode="decimal"></div><div><label>Northing</label><input id="pointFormN" inputmode="decimal"></div></div>
+      <div id="pointFormError" class="status warn" hidden></div>
+    </div>
+    <div class="app-modal-actions"><button class="btn secondary" type="button" onclick="closePointModal()">Cancel</button><button class="btn primary" type="button" onclick="savePointModal()">Save Point</button></div>
+  </div>
+</div>
+<div id="pointUseModal" class="app-modal" aria-hidden="true">
+  <div class="app-modal-backdrop" onclick="closePointUseModal()"></div>
+  <div class="app-modal-card compact" role="dialog" aria-modal="true" aria-labelledby="pointUseTitle">
+    <div class="app-modal-head"><div><div class="eyebrow">Use Survey Point</div><h2 id="pointUseTitle">Choose a calculation</h2></div><button class="modal-close" type="button" onclick="closePointUseModal()">×</button></div>
+    <div class="use-point-actions"><button class="tool-choice" type="button" onclick="usePointAsCoords()"><span>📐</span><b>B&D From Coords</b><small>Use this point as Point A</small></button><button class="tool-choice" type="button" onclick="usePointAsBD()"><span>🎯</span><b>Coords From B&D</b><small>Use this point as the start point</small></button></div>
   </div>
 </div>
 <input id="restoreAllFile" type="file" accept="application/json,.json" hidden onchange="restoreAllData(event)">
@@ -2006,4 +2060,82 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
 })();
 </script>
 
+<script id="v8-3-polish-js">
+(function(){
+  function setStatus(id,msg,type){const el=document.getElementById(id);if(!el)return;el.hidden=!msg;el.textContent=msg||'';el.className='status '+(type||'');}
+  window.swapCoords=function(){
+    const aE=document.getElementById('ce1'),aN=document.getElementById('cn1'),bE=document.getElementById('ce2'),bN=document.getElementById('cn2');
+    [aE.value,bE.value]=[bE.value,aE.value];[aN.value,bN.value]=[bN.value,aN.value];
+    calcCoords();
+  };
+  const baseCalcCoords=window.calcCoords;
+  window.calcCoords=function(){
+    const vals=['ce1','cn1','ce2','cn2'].map(id=>Number(document.getElementById(id)?.value));
+    if(vals.some(v=>!Number.isFinite(v))){setStatus('coordsStatus','Enter valid Easting and Northing values for both points.','warn');return;}
+    setStatus('coordsStatus','', '');baseCalcCoords();
+  };
+  const baseCalcBD=window.calcBD;
+  window.calcBD=function(){
+    const e=Number(document.getElementById('be')?.value),n=Number(document.getElementById('bn')?.value),d=Number(document.getElementById('bdist')?.value),b=parseDMS(document.getElementById('bb')?.value||'');
+    if(!Number.isFinite(e)||!Number.isFinite(n)){setStatus('bdStatus','Enter valid starting Easting and Northing values.','warn');return;}
+    if(!Number.isFinite(b)||b<0||b>=360){setStatus('bdStatus',"Enter a valid bearing from 0d00'00\" to 359d59'59\".",'warn');return;}
+    if(!Number.isFinite(d)||d<0){setStatus('bdStatus','Enter a valid distance of 0 m or greater.','warn');return;}
+    setStatus('bdStatus','');baseCalcBD();
+  };
+  const baseCalcScale=window.calcScale;
+  window.calcScale=function(){const d=Number(document.getElementById('sd')?.value),s=Number(document.getElementById('ss')?.value);if(!Number.isFinite(d)||d<0||!Number.isFinite(s)||s<=0){alert('Enter a valid drawing distance and a scale denominator greater than zero.');return;}baseCalcScale()};
+  const baseConvert=window.convert;
+  window.convert=function(){const v=Number(document.getElementById('cv')?.value);if(!Number.isFinite(v)){alert('Enter a valid number to convert.');return;}baseConvert()};
+  // Replace the mobile navigation state handler so secondary pages keep More selected.
+  const navShow=window.iphoneShow;
+  window.iphoneShow=function(id,btn){
+    navShow(id,btn);
+    const map={dashboard:'dashboard',home:'dashboard',bd:'bd',traverse:'traverse',quick:'misclose',area:'area',coords:'coords',jobs:'jobs',strata:'strata',scale:'scale',convert:'convert',points:'points'};
+    const target=map[id]||id;
+    document.querySelectorAll('#iphoneNav button').forEach(b=>b.classList.remove('active'));
+    const direct=document.querySelector('#iphoneNav button[data-target="'+target+'"]');
+    if(direct)direct.classList.add('active');else document.querySelector('#iphoneNav button[data-target="more"]')?.classList.add('active');
+  };
+  // Point Manager: replace browser prompts with a proper field modal.
+  let editingPointId=null,usingPointId=null;
+  window.openPointModal=function(mode,id){
+    editingPointId=mode==='edit'?id:null;const p=id?getPoints().find(x=>x.id===id):null;
+    document.getElementById('pointModalTitle').textContent=p?'Edit Survey Point':'Add Survey Point';
+    document.getElementById('pointFormNo').value=p?.number||String(nextPointNo());
+    document.getElementById('pointFormE').value=p?.e??'';document.getElementById('pointFormN').value=p?.n??'';document.getElementById('pointFormDesc').value=p?.desc||'';
+    const err=document.getElementById('pointFormError');err.hidden=true;err.textContent='';
+    const modal=document.getElementById('pointModal');modal.classList.add('open');modal.setAttribute('aria-hidden','false');setTimeout(()=>document.getElementById('pointFormNo').focus(),50);
+  };
+  window.closePointModal=function(){document.getElementById('pointModal').classList.remove('open');document.getElementById('pointModal').setAttribute('aria-hidden','true');editingPointId=null};
+  window.savePointModal=function(){
+    const no=document.getElementById('pointFormNo').value.trim(),e=Number(document.getElementById('pointFormE').value),n=Number(document.getElementById('pointFormN').value),desc=document.getElementById('pointFormDesc').value.trim();
+    const err=document.getElementById('pointFormError');
+    if(!no){err.hidden=false;err.textContent='Enter a point number.';return}
+    if(!Number.isFinite(e)||!Number.isFinite(n)){err.hidden=false;err.textContent='Enter valid Easting and Northing values.';return}
+    const ps=getPoints();if(ps.some(p=>String(p.number)===no&&p.id!==editingPointId)){err.hidden=false;err.textContent='That point number already exists.';return}
+    if(editingPointId){const p=ps.find(x=>x.id===editingPointId);if(!p)return;p.number=no;p.e=e;p.n=n;p.desc=desc;p.updated=new Date().toISOString()}else{ps.push({id:'pt_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),number:no,e,n,desc,created:new Date().toISOString()})}
+    setPoints(ps);renderPoints();renderDashboard();closePointModal();
+  };
+  window.addSurveyPoint=function(){openPointModal('add')};
+  window.editSurveyPoint=function(id){openPointModal('edit',id)};
+  window.useSurveyPoint=function(id){
+    const p=getPoints().find(x=>x.id===id);if(!p)return;usingPointId=id;document.getElementById('pointUseTitle').textContent='Use Point '+p.number;document.getElementById('pointUseModal').classList.add('open');document.getElementById('pointUseModal').setAttribute('aria-hidden','false');
+  };
+  window.closePointUseModal=function(){document.getElementById('pointUseModal').classList.remove('open');document.getElementById('pointUseModal').setAttribute('aria-hidden','true');usingPointId=null};
+  window.usePointAsCoords=function(){const p=getPoints().find(x=>x.id===usingPointId);if(!p)return;document.getElementById('ce1').value=p.e;document.getElementById('cn1').value=p.n;closePointUseModal();iphoneShow('coords');calcCoords()};
+  window.usePointAsBD=function(){const p=getPoints().find(x=>x.id===usingPointId);if(!p)return;document.getElementById('be').value=p.e;document.getElementById('bn').value=p.n;closePointUseModal();iphoneShow('bd');calcBD()};
+  // Make the current job follow either save workflow.
+  const saveQC=window.saveQuickCloseJob;window.saveQuickCloseJob=function(saveAs){saveQC(saveAs);const jobs=getStrataJobs();const candidates=jobs.filter(x=>x.type==='quickclose').sort((a,b)=>new Date(b.updated||b.created||0)-new Date(a.updated||a.created||0));const j=candidates[0];if(j)setCurrentJob({id:j.id,type:'quickclose',name:j.name||('Quick Close — '+(j.jobNumber||''))})};
+  // Strict traverse validation: invalid distance should never silently become zero.
+  window.calculateTraverse=function(){
+    const eEl=document.getElementById('te'),nEl=document.getElementById('tn'),body=document.getElementById('trBody'),status=document.getElementById('trStatus');if(!eEl||!nEl||!body)return;
+    let e=Number(eEl.value),n=Number(nEl.value);if(!Number.isFinite(e)||!Number.isFinite(n)){status.textContent='Enter valid starting Easting and Northing values.';status.className='status warn';return}
+    const rows=[...body.querySelectorAll('tr')],pts=[[e,n]];
+    for(let i=0;i<rows.length;i++){const r=rows[i],b=parseDMS(r.querySelector('.tb')?.value||''),d=Number(r.querySelector('.td')?.value);if(!Number.isFinite(b)||b<0||b>=360||!Number.isFinite(d)||d<0){status.textContent='Invalid bearing or distance on line '+(i+1)+'.';status.className='status warn';r.querySelector('.teo').textContent='—';r.querySelector('.tno').textContent='—';return}const rad=b*Math.PI/180;e+=d*Math.sin(rad);n+=d*Math.cos(rad);r.querySelector('.teo').textContent=e.toFixed(3);r.querySelector('.tno').textContent=n.toFixed(3);pts.push([e,n])}
+    status.textContent=rows.length?'Traverse endpoint: E '+e.toFixed(3)+', N '+n.toFixed(3)+'. '+rows.length+' line(s) calculated.':'Add lines first.';status.className='status'+(rows.length?' ok':'');if(typeof window.draw==='function')window.draw(pts);
+  };
+  window.calcTraverse=window.calculateTraverse;
+  window.addEventListener('keydown',e=>{if(e.key==='Escape'){closePointModal();closePointUseModal();iphoneMoreClose?.()}});
+})();
+</script>
 </body></html>
