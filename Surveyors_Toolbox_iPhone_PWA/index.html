@@ -201,6 +201,12 @@ input, select, textarea{
     font-size:20px !important;
     line-height:1.15;
   }
+  .mobile-brand{display:flex;align-items:center;gap:10px;min-width:0}
+  .mobile-brand-mark{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#17212b;color:#fff;font-size:21px;box-shadow:0 2px 7px rgba(0,0,0,.12)}
+  .mobile-brand-title{font-weight:850;font-size:17px;line-height:1.05;letter-spacing:-.2px;color:#17212b;white-space:nowrap}
+  .mobile-brand-sub{font-size:11px;color:#6b7280;margin-top:3px;font-weight:650}
+  .topbar .brandtag{font-size:10px;font-weight:750;color:#66717d;background:#f1f4f7;border:1px solid #e1e6eb;border-radius:999px;padding:6px 9px;white-space:nowrap}
+
   .topbar small{
     font-size:12px !important;
   }
@@ -219,14 +225,27 @@ input, select, textarea{
     height:auto !important;
     min-height:0 !important;
     width:100% !important;
+    padding:0 !important;
+    overflow:hidden !important;
   }
+  .workspace-right .plot-head{padding:12px 14px !important;font-size:14px}
+  .workspace-right .plot-head span{font-size:11px}
   .live-card canvas{
     display:block !important;
     width:100% !important;
     height:auto !important;
-    min-height:260px !important;
+    min-height:320px !important;
     aspect-ratio:10 / 7;
+    background:#fff;
   }
+  .plan-tools{padding:8px 10px !important;gap:6px !important}
+  .plan-tools button{min-height:42px !important;min-width:44px !important;padding:5px 11px !important}
+  .plan-tools .muted{display:none !important}
+  .plan-tools label{font-size:11px;margin-left:2px}
+  .plan-tools label:nth-of-type(3),.plan-tools label:nth-of-type(4){display:none}
+
+  .page h1{font-size:24px !important;letter-spacing:-.4px;margin-bottom:4px}
+  .page .sub{font-size:13px;line-height:1.45;color:#687381;margin-bottom:14px}
   .card{
     width:100% !important;
     min-width:0 !important;
@@ -284,7 +303,7 @@ input, select, textarea{
     display:grid;
     grid-template-columns:repeat(5,1fr);
     gap:4px;
-    padding:8px 8px calc(8px + var(--ios-safe-bottom));
+    padding:7px 8px calc(7px + var(--ios-safe-bottom));
     background:rgba(18,27,36,.96);
     backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px);
@@ -295,8 +314,8 @@ input, select, textarea{
     border:0;
     background:transparent;
     color:#cbd5df;
-    min-height:54px;
-    padding:5px 2px;
+    min-height:52px;
+    padding:4px 2px;
     font-weight:700;
     font-size:11px !important;
     line-height:1.1;
@@ -368,7 +387,13 @@ input, select, textarea{
       <div class="nav-spacer"></div>
       <button class="nav-item shortcuts-nav" data-page="shortcuts" type="button">⌨️ <span>Shortcuts</span></button>
 </aside>
-<main class="main"><div class="topbar"><div class="crumb">Surveyor’s Toolbox / <b>Calculation Workspace</b><span class="iphone-build-label">iPhone build</span></div><div class="brandtag">Professional prototype</div></div>
+<main class="main"><div class="topbar">
+  <div class="mobile-brand">
+    <div class="mobile-brand-mark">📐</div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026</div></div>
+  </div>
+  <div class="brandtag">Survey tools</div>
+</div>
 
 <section id="coords" class="page active">
 <h1>B&D</h1><div class="sub">Bearing & Distance calculator.</div>
@@ -1668,52 +1693,79 @@ window.addEventListener('DOMContentLoaded',function(){
   const canvas=document.getElementById('plot');
   if(!canvas)return;
 
-  let dragging=false, lastX=0, lastY=0;
+  // Desktop: wheel zoom + drag. iPhone/iPad: one-finger pan + two-finger pinch zoom.
+  const pointers=new Map();
+  let dragging=false,lastX=0,lastY=0;
+  let pinchStartDist=0,pinchStartZoom=1,pinchMidX=0,pinchMidY=0;
+
+  function dist(a,b){return Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)}
+  function mid(a,b){return {x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2}}
 
   canvas.addEventListener('pointerdown',function(e){
-    if(e.button!==0)return;
-    dragging=true;
-    lastX=e.clientX;
-    lastY=e.clientY;
-    canvas.setPointerCapture?.(e.pointerId);
-    canvas.classList.add('dragging');
+    pointers.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});
+    try{canvas.setPointerCapture(e.pointerId)}catch(_){}
+    if(pointers.size===1){
+      dragging=true; lastX=e.clientX; lastY=e.clientY;
+      canvas.classList.add('dragging');
+    } else if(pointers.size===2){
+      const ps=[...pointers.values()];
+      pinchStartDist=dist(ps[0],ps[1]);
+      pinchStartZoom=window.__traverseZoom||1;
+      const m=mid(ps[0],ps[1]); pinchMidX=m.x; pinchMidY=m.y;
+      dragging=false;
+    }
     e.preventDefault();
   });
 
   canvas.addEventListener('pointermove',function(e){
-    if(!dragging)return;
+    if(!pointers.has(e.pointerId))return;
+    pointers.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});
+    const ps=[...pointers.values()];
     const rect=canvas.getBoundingClientRect();
-    const sx=canvas.width/rect.width;
-    const sy=canvas.height/rect.height;
-    window.__traversePanX += (e.clientX-lastX)*sx;
-    window.__traversePanY += (e.clientY-lastY)*sy;
-    lastX=e.clientX;
-    lastY=e.clientY;
-    calcTraverse();
-    e.preventDefault();
-  });
+    const sx=canvas.width/rect.width, sy=canvas.height/rect.height;
 
-  function stopDrag(e){
-    if(!dragging)return;
-    dragging=false;
-    if(e && canvas.releasePointerCapture){
-      try{canvas.releasePointerCapture(e.pointerId)}catch(_){ }
+    if(ps.length>=2){
+      const d=dist(ps[0],ps[1]);
+      if(pinchStartDist>0){
+        const z=Math.max(.25,Math.min(12,pinchStartZoom*(d/pinchStartDist)));
+        window.__traverseZoom=z;
+        // Keep the pinch centre visually stable while zooming.
+        const m=mid(ps[0],ps[1]);
+        window.__traversePanX += (m.x-pinchMidX)*sx;
+        window.__traversePanY += (m.y-pinchMidY)*sy;
+        pinchMidX=m.x; pinchMidY=m.y;
+        calcTraverse();
+      }
+      e.preventDefault();
+      return;
     }
-    canvas.classList.remove('dragging');
-  }
 
-  canvas.addEventListener('pointerup',stopDrag);
-  canvas.addEventListener('pointercancel',stopDrag);
-  canvas.addEventListener('pointerleave',function(e){
-    if(e.buttons===0)stopDrag(e);
+    if(dragging && ps.length===1){
+      window.__traversePanX += (e.clientX-lastX)*sx;
+      window.__traversePanY += (e.clientY-lastY)*sy;
+      lastX=e.clientX; lastY=e.clientY;
+      calcTraverse();
+      e.preventDefault();
+    }
   });
+
+  function endPointer(e){
+    pointers.delete(e.pointerId);
+    if(pointers.size<2){pinchStartDist=0}
+    if(pointers.size===1){
+      const p=[...pointers.values()][0]; lastX=p.clientX; lastY=p.clientY; dragging=true;
+    } else {dragging=false;canvas.classList.remove('dragging')}
+    try{canvas.releasePointerCapture(e.pointerId)}catch(_){}
+  }
+  canvas.addEventListener('pointerup',endPointer);
+  canvas.addEventListener('pointercancel',endPointer);
 
   canvas.addEventListener('wheel',function(e){
     e.preventDefault();
-    zoomPlan(e.deltaY<0 ? 1.15 : 1/1.15);
+    zoomPlan(e.deltaY<0 ? 1.12 : 1/1.12);
   },{passive:false});
 
-  ['trShowBearings','trShowDistances','trShowPoints'].forEach(function(id){
+  ['trShowBearings','trShowDistances','trShowPoints','trShowCoords'].forEach(function(id){
     const el=document.getElementById(id);
     if(el)el.addEventListener('change',calcTraverse);
   });
