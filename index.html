@@ -507,8 +507,8 @@ input, select, textarea{
         <div><label>Start Northing</label><input id="tn" value="1000"></div>
       </div>
       <div class="toolbar sticky-actions">
-        <button class="btn primary" onclick="addLine()">＋ Add Line</button>
-        <button class="btn secondary" onclick="calcTraverse()">Calculate</button>
+        <button class="btn primary" onclick="window.addTraverseLine()">＋ Add Line</button>
+        <button class="btn secondary" onclick="window.calculateTraverse()">Calculate</button>
         <button class="btn secondary" onclick="printCurrentPage()">🖨 Print</button>
         <button class="btn danger" onclick="clearTraverse()">Clear</button>
       </div>
@@ -526,10 +526,10 @@ input, select, textarea{
   <button type="button" onclick="zoomPlan(0.8)">−</button>
   <button type="button" onclick="fitPlan()">Fit</button>
   <span style="margin-left:8px">Show:</span>
-  <label><input type="checkbox" id="trShowBearings" onchange="calcTraverse()"> Bearings</label>
-  <label><input type="checkbox" id="trShowDistances" onchange="calcTraverse()"> Distances</label>
-  <label><input type="checkbox" id="trShowPoints" checked onchange="calcTraverse()"> Point numbers</label>
-  <label><input type="checkbox" id="trShowCoords" onchange="calcTraverse()"> Coordinates</label>
+  <label><input type="checkbox" id="trShowBearings" onchange="window.calculateTraverse()"> Bearings</label>
+  <label><input type="checkbox" id="trShowDistances" onchange="window.calculateTraverse()"> Distances</label>
+  <label><input type="checkbox" id="trShowPoints" checked onchange="window.calculateTraverse()"> Point numbers</label>
+  <label><input type="checkbox" id="trShowCoords" onchange="window.calculateTraverse()"> Coordinates</label>
   <span class="muted" style="margin-left:auto">Pinch = zoom · Drag = pan</span>
 </div>
       <canvas id="plot" width="1000" height="700"></canvas>
@@ -1869,6 +1869,79 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
 
 
 <script src="./v8-workspace.js"></script>
+
+<!-- v8.2 traverse reliability patch -->
+<script id="v8-2-traverse-fix">
+(function(){
+  function addTraverseLine(){
+    if(typeof window.addLine==='function') window.addLine();
+    var rows=document.querySelectorAll('#trBody tr');
+    var last=rows[rows.length-1];
+    if(last){
+      var input=last.querySelector('.tb');
+      if(input){input.focus();input.select();}
+    }
+  }
+
+  function calculateTraverse(){
+    var eEl=document.getElementById('te');
+    var nEl=document.getElementById('tn');
+    var body=document.getElementById('trBody');
+    var status=document.getElementById('trStatus');
+    if(!eEl || !nEl || !body || !status) return;
+
+    var e=parseFloat(eEl.value);
+    var n=parseFloat(nEl.value);
+    if(!Number.isFinite(e)) e=0;
+    if(!Number.isFinite(n)) n=0;
+
+    var rows=Array.from(body.querySelectorAll('tr'));
+    var pts=[[e,n]];
+
+    for(var i=0;i<rows.length;i++){
+      var row=rows[i];
+      var bearingInput=row.querySelector('.tb');
+      var distanceInput=row.querySelector('.td');
+      var endE=row.querySelector('.teo');
+      var endN=row.querySelector('.tno');
+      var bearing=typeof window.parseDMS==='function' ? window.parseDMS(bearingInput ? bearingInput.value : '') : NaN;
+      var distance=parseFloat(distanceInput ? distanceInput.value : '');
+
+      if(!Number.isFinite(bearing)){
+        if(status) status.textContent='Invalid bearing on line '+(i+1)+'. Use DMS such as 90d00\'00\".';
+        if(endE) endE.textContent='—';
+        if(endN) endN.textContent='—';
+        return;
+      }
+      if(!Number.isFinite(distance)) distance=0;
+
+      var rad=bearing*Math.PI/180;
+      e += distance*Math.sin(rad);
+      n += distance*Math.cos(rad);
+      if(endE) endE.textContent=e.toFixed(3);
+      if(endN) endN.textContent=n.toFixed(3);
+      pts.push([e,n]);
+    }
+
+    status.textContent=rows.length
+      ? 'Traverse endpoint: E '+e.toFixed(3)+', N '+n.toFixed(3)+'. '+rows.length+' line(s) calculated.'
+      : 'Add lines first.';
+
+    if(typeof window.draw==='function') window.draw(pts);
+  }
+
+  window.addTraverseLine=addTraverseLine;
+  window.calculateTraverse=calculateTraverse;
+  // Keep the existing API used elsewhere in the app, but make it point at
+  // this reliable implementation.
+  window.calcTraverse=calculateTraverse;
+
+  window.addEventListener('load',function(){
+    // Re-run once the iPhone layout and all scripts are loaded.
+    setTimeout(calculateTraverse,0);
+  });
+})();
+</script>
 
 <!-- iPhone PWA navigation -->
 <nav id="iphoneNav" aria-label="Surveyor Toolbox">
