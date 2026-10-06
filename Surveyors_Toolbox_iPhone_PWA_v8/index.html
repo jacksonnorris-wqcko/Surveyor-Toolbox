@@ -1868,6 +1868,7 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
 </script>
 
 
+<script id="v8-job-point-workspace">
 /* ===== v8 JOB + POINT WORKSPACE ===== */
 const POINTS_KEY='norrisbox_survey_points_v1';
 const CURRENT_JOB_KEY='norrisbox_current_job_v1';
@@ -1908,6 +1909,8 @@ function importPoints(e){const file=e.target.files?.[0];if(!file)return;const re
 function downloadJson(name,obj){const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function backupAllData(){const data={app:'Surveyor’s Toolbox',version:8,exported:new Date().toISOString(),jobs:getStrataJobs(),points:getPoints(),currentJob:currentJob()};downloadJson('surveyors-toolbox-backup.json',data)}
 function restoreAllData(e){const file=e.target.files?.[0];if(!file)return;if(!confirm('Restore this backup? Existing jobs and points with matching IDs will be replaced.')){e.target.value='';return}const reader=new FileReader();reader.onload=()=>{try{const d=JSON.parse(reader.result);if(!d||(!Array.isArray(d.jobs)&&!Array.isArray(d.points)))throw Error();if(Array.isArray(d.jobs)){const map=new Map(getStrataJobs().map(j=>[j.id,j]));d.jobs.forEach(j=>{if(j&&j.id)map.set(j.id,j)});setStrataJobs([...map.values()])}if(Array.isArray(d.points)){const map=new Map(getPoints().map(p=>[p.id,p]));d.points.forEach(p=>{if(p&&p.id)map.set(p.id,p)});setPoints([...map.values()])}if(d.currentJob)setCurrentJob(d.currentJob);renderSavedJobs();renderPoints();renderDashboard();alert('Backup restored successfully.')}catch(err){alert('That backup file could not be restored.')}};reader.readAsText(file);e.target.value=''}
+
+</script>
 
 <!-- iPhone PWA navigation -->
 <nav id="iphoneNav" aria-label="Surveyor Toolbox">
