@@ -415,6 +415,11 @@ input, select, textarea{
 }
 </style>
 
+<style id="v7-field-app">
+@media(max-width:700px){.qc-job-meta{grid-template-columns:1fr 1fr!important}.qc-job-meta>div:first-child{grid-column:1/-1}.field-plan-tools{display:flex;align-items:center;gap:7px;padding:8px 10px;border-bottom:1px solid var(--line);background:#f7f9fb;color:#687687;font-size:11px}.field-plan-tools button{min-width:44px!important;min-height:40px!important;padding:5px 10px!important;background:#fff;border:1px solid #cbd5de;border-radius:9px;font-weight:800}.field-plan-tools span{margin-left:auto;text-align:right;line-height:1.2}.live-card canvas{min-height:340px!important;aspect-ratio:10/7}.qc-summary .qc-primary{background:#eef7ff;border-color:#a9d4f5}.qc-summary .qc-primary strong{font-size:20px;color:#0f5f9f}.close-banner{margin-top:9px;padding:11px 13px;border-radius:11px;background:#f5f7f9;border:1px solid var(--line);font-weight:700;font-size:12px;color:#526171}.close-banner.ok{background:#eaf7ef;border-color:#bfe3cc;color:#18864b}.area-summary .area-primary{background:#f0f8f3;border-color:#bfe3cc}.area-summary .area-primary strong{font-size:20px;color:#18864b}.jobs-toolbar-v7{grid-template-columns:1fr!important}.jobs-toolbar-v7 button{width:100%}.saved-job-actions{display:grid!important;grid-template-columns:1fr 1fr 1fr;gap:6px;width:100%}.saved-job-actions .btn{min-height:42px!important;padding:7px 5px!important}.jobs-filter button{min-height:40px!important}.plan-readout{font-size:10px;max-width:78%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+@media(min-width:701px){.qc-job-meta{grid-template-columns:repeat(3,1fr)}.field-plan-tools{display:flex;align-items:center;gap:7px;padding:7px 10px;border-bottom:1px solid var(--line);background:#f7f9fb;color:#687687;font-size:11px}.field-plan-tools button{border:1px solid #cbd5de;background:#fff;border-radius:6px;padding:4px 10px;font-weight:700;cursor:pointer}.field-plan-tools span{margin-left:auto}}
+.saved-job{background:#fff;border:1px solid var(--line);border-radius:13px;margin:9px 0;padding:14px!important;box-shadow:0 2px 8px rgba(22,34,48,.04)}.saved-job-info{flex:1}.saved-job-meta{line-height:1.5}.jobs-toolbar-v7{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;margin-bottom:10px}.jobs-filter{display:flex;gap:7px;overflow:auto;padding-bottom:4px;margin-bottom:8px}.jobs-filter button{border:1px solid #d3dae1;background:#fff;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:750;white-space:nowrap}.jobs-filter button.active{background:#17212b;color:#fff;border-color:#17212b}.jobs-count{font-size:11px;color:var(--muted);margin:4px 0 8px}.plan-readout{position:absolute;left:10px;bottom:10px;z-index:2;padding:7px 9px;border-radius:9px;background:rgba(255,255,255,.94);border:1px solid #d7dee6;box-shadow:0 2px 8px rgba(0,0,0,.08);font-size:11px;font-weight:700;color:#334454;pointer-events:none}.live-card{position:relative}
+</style>
 </head>
 <body>
 <div class="app">
@@ -508,8 +513,11 @@ input, select, textarea{
   <div class="workspace-left">
     <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
       <div class="eyebrow">Traverse Entry</div>
-      <div class="row">
+      <div class="row qc-job-meta">
         <div><label>Job Number</label><input id="qcJobNo" placeholder="e.g. 2385"></div>
+        <div><label>Project / Client</label><input id="qcProject" placeholder="Project name or client"></div>
+        <div><label>Site / Address</label><input id="qcAddress" placeholder="Site address"></div>
+        <div><label>Job Date</label><input id="qcDate" type="date"></div>
         <div><label>Starting Easting</label><input id="qcE" value="500.000"></div>
         <div><label>Starting Northing</label><input id="qcN" value="1000.000"></div>
       </div>
@@ -541,14 +549,7 @@ input, select, textarea{
   </div>
 </div>
 
-<div class="calc-summary">
-  <div class="results">
-    <div class="result"><small>CLOSING BEARING</small><strong id="qcBearing">—</strong></div>
-    <div class="result"><small>CLOSING DISTANCE</small><strong id="qcDistance">—</strong></div>
-    <div class="result"><small>Δ EASTING</small><strong id="qcDeltaE">—</strong></div>
-    <div class="result"><small>Δ NORTHING</small><strong id="qcDeltaN">—</strong></div>
-  </div>
-</div>
+<div class="calc-summary qc-summary"><div class="results"><div class="result qc-primary"><small>CLOSING BEARING</small><strong id="qcBearing">—</strong></div><div class="result qc-primary"><small>CLOSING DISTANCE</small><strong id="qcDistance">—</strong></div><div class="result"><small>Δ EASTING</small><strong id="qcDeltaE">—</strong></div><div class="result"><small>Δ NORTHING</small><strong id="qcDeltaN">—</strong></div></div><div id="qcCloseBanner" class="close-banner">Calculate the close to see the closing line.</div></div>
 
 <div class="card" style="margin-top:12px">
   <div class="eyebrow">Calculation Details</div>
@@ -592,32 +593,20 @@ input, select, textarea{
   <div class="workspace-right">
     <div class="card live-card">
       <div class="plot-head"><b>Boundary Plan</b><span>Live plan view</span></div>
+      <div class="field-plan-tools" data-plan="area"><button type="button" onclick="fieldPlanZoom('area',1.25)">＋</button><button type="button" onclick="fieldPlanZoom('area',0.8)">−</button><button type="button" onclick="fieldPlanFit('area')">Fit</button><span>Pinch to zoom · drag to pan · tap a point</span></div>
       <canvas id="areaPlot" width="1000" height="700"></canvas>
     </div>
   </div>
 </div>
 
-<div class="calc-summary">
-  <div class="results">
-    <div class="result"><small>AREA</small><strong id="bearingAreaOut">—</strong></div>
-    <div class="result"><small>PERIMETER</small><strong id="bearingPeriOut">—</strong></div>
-    <div class="result"><small>LINEAR MISCLOSE</small><strong id="bearingMiscloseOut">—</strong></div>
-    <div class="result"><small>CLOSURE RATIO</small><strong id="bearingRatioOut">—</strong></div>
-  </div>
-</div>
+<div class="calc-summary area-summary"><div class="results"><div class="result area-primary"><small>AREA</small><strong id="bearingAreaOut">—</strong></div><div class="result"><small>PERIMETER</small><strong id="bearingPeriOut">—</strong></div><div class="result"><small>LINEAR MISCLOSE</small><strong id="bearingMiscloseOut">—</strong></div><div class="result"><small>CLOSURE RATIO</small><strong id="bearingRatioOut">—</strong></div></div></div>
 </section>
 
 
 <section id="jobs" class="page">
  <h1>Saved Jobs</h1><div class="sub">Strata and Quick Close jobs are stored locally in this browser on this computer.</div>
  <div class="card">
-  <div class="toolbar">
-   <input id="jobSearch" placeholder="Search jobs by name, project or address..." oninput="renderSavedJobs()" style="max-width:520px">
-   <button class="btn secondary" type="button" onclick="exportStrataJobs()">Export Jobs</button>
-   <button class="btn secondary" type="button" onclick="document.getElementById('jobImportFile').click()">Import Jobs</button>
-   <input id="jobImportFile" type="file" accept="application/json,.json" style="display:none" onchange="importStrataJobs(event)">
-  </div>
-  <div id="savedJobsList"></div>
+  <div class="jobs-toolbar-v7"><input id="jobSearch" placeholder="Search jobs, project, address..." oninput="renderSavedJobs()"><button class="btn secondary" type="button" onclick="exportStrataJobs()">⇩ Export</button><button class="btn secondary" type="button" onclick="document.getElementById('jobImportFile').click()">⇧ Import</button><input id="jobImportFile" type="file" accept="application/json,.json" style="display:none" onchange="importStrataJobs(event)"></div><div class="jobs-filter"><button class="active" data-jobfilter="all" onclick="setJobFilter('all',this)">All</button><button data-jobfilter="quickclose" onclick="setJobFilter('quickclose',this)">Quick Close</button><button data-jobfilter="strata" onclick="setJobFilter('strata',this)">Strata</button></div><div id="jobsCount" class="jobs-count"></div><div id="savedJobsList"></div>
  </div>
 </section>
 
@@ -1816,6 +1805,29 @@ window.addEventListener('DOMContentLoaded',function(){
     if(el)el.addEventListener('change',calcTraverse);
   });
 });
+</script>
+
+<script id="v7-enhancements">
+window.__jobFilter='all';
+function setJobFilter(f,b){window.__jobFilter=f;document.querySelectorAll('.jobs-filter button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');renderSavedJobs()}
+function v7DateDefault(id){const e=document.getElementById(id);if(!e||e.value)return;const d=new Date();e.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+const _cqc=collectQuickCloseJob;collectQuickCloseJob=function(jobNo){const d=_cqc(jobNo);d.project=document.getElementById('qcProject')?.value.trim()||'';d.address=document.getElementById('qcAddress')?.value.trim()||'';d.date=document.getElementById('qcDate')?.value||'';d.name=[jobNo,d.project].filter(Boolean).join(' — ')||('Quick Close — '+jobNo);return d}
+const _lqc=loadQuickCloseJob;loadQuickCloseJob=function(id){_lqc(id);const j=getStrataJobs().find(x=>x.id===id);if(!j)return;document.getElementById('qcProject').value=j.project||'';document.getElementById('qcAddress').value=j.address||'';document.getElementById('qcDate').value=j.date||''}
+const _qcn=quickCloseNewJob;quickCloseNewJob=function(){_qcn();document.getElementById('qcProject').value='';document.getElementById('qcAddress').value='';v7DateDefault('qcDate')}
+const _rsj=renderSavedJobs;renderSavedJobs=function(){const list=document.getElementById('savedJobsList');if(!list)return;const q=(document.getElementById('jobSearch')?.value||'').toLowerCase().trim();let jobs=getStrataJobs();if(window.__jobFilter!=='all')jobs=jobs.filter(j=>j.type===window.__jobFilter);jobs=jobs.filter(j=>[j.name,j.project,j.address,j.jobNumber,j.type].join(' ').toLowerCase().includes(q));jobs.sort((a,b)=>new Date(b.updated||b.created||0)-new Date(a.updated||a.created||0));const count=document.getElementById('jobsCount');if(count)count.textContent=`${jobs.length} saved job${jobs.length===1?'':'s'}`;if(!jobs.length){list.innerHTML='<div class="jobs-empty">No matching jobs. Save a Quick Close or Strata job and it will appear here.</div>';return}list.innerHTML=jobs.map(j=>{const when=j.updated?new Date(j.updated).toLocaleString():'Not yet updated';if(j.type==='quickclose'){const lines=(j.lines||[]).length;return `<div class="saved-job"><div class="saved-job-info"><div class="saved-job-title">🔒 ${escapeHtml(j.name||('Quick Close — '+(j.jobNumber||'')))}</div><div class="saved-job-meta">Job ${escapeHtml(j.jobNumber||'—')} · ${lines} line(s)${j.project?' · '+escapeHtml(j.project):''}${j.address?' · '+escapeHtml(j.address):''} · ${escapeHtml(when)}</div></div><div class="saved-job-actions"><button class="btn primary" onclick="loadQuickCloseJob('${j.id}')">Open</button><button class="btn secondary" onclick="renameQuickCloseJob('${j.id}')">Rename</button><button class="btn danger" onclick="deleteStrataJob('${j.id}')">Delete</button></div></div>`}const units=(j.units||[]).length;return `<div class="saved-job"><div class="saved-job-info"><div class="saved-job-title">▦ ${escapeHtml(j.name||'Strata Job')}</div><div class="saved-job-meta">${escapeHtml(j.project||'No project')} · ${escapeHtml(j.address||'No address')} · ${units} unit(s) · ${escapeHtml(when)}</div></div><div class="saved-job-actions"><button class="btn primary" onclick="loadStrataJob('${j.id}')">Open</button><button class="btn secondary" onclick="renameStrataJob('${j.id}')">Rename</button><button class="btn danger" onclick="deleteStrataJob('${j.id}')">Delete</button></div></div>`}).join('')}
+const _cqc2=calcQuickClose;calcQuickClose=function(){_cqc2();const b=document.getElementById('qcCloseBanner'),be=document.getElementById('qcBearing')?.textContent||'—',di=document.getElementById('qcDistance')?.textContent||'—';if(!b)return;if(be==='—'||di==='—'){b.className='close-banner';b.textContent='Calculate the close to see the closing line.'}else{b.className='close-banner ok';b.textContent=`Closing line: ${be} for ${di} back to the starting point.`}}
+const __plan={traverse:{z:1,x:0,y:0,p:[],sel:null},qc:{z:1,x:0,y:0,p:[],sel:null},area:{z:1,x:0,y:0,p:[],sel:null}};
+function pc(k){return document.getElementById(k==='traverse'?'plot':k==='qc'?'qcPlot':'areaPlot')}
+function fieldPlanZoom(k,f){__plan[k].z=Math.max(.25,Math.min(12,__plan[k].z*f));redraw(k)}function fieldPlanFit(k){__plan[k].z=1;__plan[k].x=0;__plan[k].y=0;__plan[k].sel=null;redraw(k)}function niceStep(r){if(!isFinite(r)||r<=0)return 1;const p=10**Math.floor(Math.log10(r)),n=r/p;return (n<=1?1:n<=2?2:n<=5?5:10)*p}
+function drawField(k,pts){const c=pc(k);if(!c)return;const st=__plan[k];st.p=pts||[];const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);if(!pts?.length){north(ctx,c);return}const es=pts.map(p=>p[0]),ns=pts.map(p=>p[1]),miE=Math.min(...es),maE=Math.max(...es),miN=Math.min(...ns),maN=Math.max(...ns),scale=Math.min((c.width-140)/Math.max(1,maE-miE),(c.height-140)/Math.max(1,maN-miN))*st.z,midE=(miE+maE)/2,midN=(miN+maN)/2,px=e=>c.width/2+st.x+(e-midE)*scale,py=n=>c.height/2+st.y-(n-midN)*scale;grid(ctx,c,st);ctx.beginPath();pts.forEach((p,i)=>{const X=px(p[0]),Y=py(p[1]);i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)});if(k==='area'&&pts.length>2)ctx.closePath();ctx.strokeStyle=k==='area'?'#18864b':'#1677c8';ctx.lineWidth=3;ctx.lineJoin='round';ctx.stroke();if(k==='area'&&pts.length>2){ctx.globalAlpha=.07;ctx.fillStyle='#18864b';ctx.fill();ctx.globalAlpha=1}if(k==='qc'&&pts.length>2){const a=pts[pts.length-2],b=pts[pts.length-1];ctx.save();ctx.setLineDash([8,6]);ctx.strokeStyle='#18864b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(px(a[0]),py(a[1]));ctx.lineTo(px(b[0]),py(b[1]));ctx.stroke();ctx.restore()}pts.forEach((p,i)=>{const X=px(p[0]),Y=py(p[1]);ctx.fillStyle=k==='qc'&&i===pts.length-1?'#18864b':'#17212b';ctx.beginPath();ctx.arc(X,Y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17212b';ctx.font='bold 11px Arial';ctx.textAlign='left';ctx.fillText(i===0?'START':(k==='qc'&&i===pts.length-1?'CLOSE':i),X+8,Y-8)});north(ctx,c);scalebar(ctx,c,scale);readout(k,st.sel||pts[0])}
+function grid(ctx,c,st){ctx.strokeStyle='#e9eef2';ctx.lineWidth=1;const g=55;for(let x=c.width/2+(st.x%g);x<c.width;x+=g){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke()}for(let x=c.width/2+(st.x%g);x>0;x-=g){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke()}for(let y=c.height/2+(st.y%g);y<c.height;y+=g){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke()}for(let y=c.height/2+(st.y%g);y>0;y-=g){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke()}}
+function north(ctx,c){const x=c.width-38,y=36;ctx.strokeStyle='#17212b';ctx.fillStyle='#17212b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y+25);ctx.lineTo(x,y);ctx.stroke();ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-6,y+10);ctx.lineTo(x+6,y+10);ctx.closePath();ctx.fill();ctx.font='bold 11px Arial';ctx.textAlign='center';ctx.fillText('N',x,y-7)}
+function scalebar(ctx,c,scale){const m=niceStep(110/Math.max(scale,.0001)),px=m*scale,x=16,y=c.height-20;ctx.strokeStyle='#17212b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+px,y);ctx.moveTo(x,y-5);ctx.lineTo(x,y+5);ctx.moveTo(x+px,y-5);ctx.lineTo(x+px,y+5);ctx.stroke();ctx.font='10px Arial';ctx.textAlign='left';ctx.fillStyle='#17212b';ctx.fillText(`${m>=1000?(m/1000).toFixed(1)+' km':m.toFixed(m<1?2:0)+' m'}`,x,y-8)}
+function readout(k,p){const c=pc(k);let b=c.parentElement.querySelector('.plan-readout');if(!b){b=document.createElement('div');b.className='plan-readout';c.parentElement.appendChild(b)}b.textContent=p?`E ${p[0].toFixed(3)} · N ${p[1].toFixed(3)}`:'Tap a point for coordinates'}
+function redraw(k){if(k==='traverse')draw(__plan[k].p);else if(k==='qc')drawQuickClose(__plan[k].p);else drawAreaPlot(__plan[k].p)}
+function draw(pts){drawField('traverse',pts)}function drawQuickClose(pts){drawField('qc',pts)}function drawAreaPlot(pts){drawField('area',pts)}
+function attachPlan(k){const c=pc(k);if(!c||c.__v7)return;c.__v7=1;const st=__plan[k],ps=new Map();let drag=false,lx=0,ly=0,pinch=0,pz=1;c.style.touchAction='none';const dist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);c.addEventListener('pointerdown',e=>{ps.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});if(ps.size===1){drag=true;lx=e.clientX;ly=e.clientY}else if(ps.size===2){const a=[...ps.values()];pinch=dist(a[0],a[1]);pz=st.z;drag=false}e.preventDefault()});c.addEventListener('pointermove',e=>{if(!ps.has(e.pointerId))return;ps.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});const a=[...ps.values()],r=c.getBoundingClientRect(),sx=c.width/r.width,sy=c.height/r.height;if(a.length>=2&&pinch){st.z=Math.max(.25,Math.min(12,pz*(dist(a[0],a[1])/pinch)));redraw(k);e.preventDefault()}else if(drag&&a.length===1){st.x+=(e.clientX-lx)*sx;st.y+=(e.clientY-ly)*sy;lx=e.clientX;ly=e.clientY;redraw(k);e.preventDefault()}});c.addEventListener('pointerup',e=>{ps.delete(e.pointerId);if(ps.size===0){drag=false;const r=c.getBoundingClientRect(),x=(e.clientX-r.left)*(c.width/r.width),y=(e.clientY-r.top)*(c.height/r.height),pts=st.p;if(pts.length){let es=pts.map(p=>p[0]),ns=pts.map(p=>p[1]),miE=Math.min(...es),maE=Math.max(...es),miN=Math.min(...ns),maN=Math.max(...ns),scale=Math.min((c.width-140)/Math.max(1,maE-miE),(c.height-140)/Math.max(1,maN-miN))*st.z,best=null,bd=25;pts.forEach(p=>{const X=c.width/2+st.x+(p[0]-(miE+maE)/2)*scale,Y=c.height/2+st.y-(p[1]-(miN+maN)/2)*scale,d=Math.hypot(X-x,Y-y);if(d<bd){bd=d;best=p}});if(best){st.sel=best;redraw(k)}}}if(ps.size<2)pinch=0});c.addEventListener('wheel',e=>{e.preventDefault();st.z=Math.max(.25,Math.min(12,st.z*(e.deltaY<0?1.12:1/1.12)));redraw(k)},{passive:false})}
+window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan);v7DateDefault('qcDate');renderSavedJobs()});
 </script>
 
 <!-- iPhone PWA navigation -->
