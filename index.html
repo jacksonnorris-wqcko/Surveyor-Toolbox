@@ -368,7 +368,7 @@ input, select, textarea{
       <div class="nav-spacer"></div>
       <button class="nav-item shortcuts-nav" data-page="shortcuts" type="button">⌨️ <span>Shortcuts</span></button>
 </aside>
-<main class="main"><div class="topbar"><div class="crumb">Surveyor’s Toolbox / <b>Calculation Workspace</b></div><div class="brandtag">Professional prototype</div></div>
+<main class="main"><div class="topbar"><div class="crumb">Surveyor’s Toolbox / <b>Calculation Workspace</b><span class="iphone-build-label">iPhone build</span></div><div class="brandtag">Professional prototype</div></div>
 
 <section id="coords" class="page active">
 <h1>B&D</h1><div class="sub">Bearing & Distance calculator.</div>
@@ -1750,13 +1750,15 @@ window.addEventListener('DOMContentLoaded',function(){
     if(btn) btn.classList.add('active');
   }
   window.iphoneShow = function(id, btn){
+    var map={bd:'bd',traverse:'traverse',quick:'misclose',area:'area',coords:'coords',jobs:'jobs',strata:'strata',scale:'scale',convert:'convert'};
+    var targetId=map[id] || id;
     document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
-    var el=document.getElementById(id);
+    var el=document.getElementById(targetId);
     if(el) el.classList.add('active');
-    var map={bd:'bd',traverse:'traverse',quick:'misclose',area:'area'};
     setActive(document.querySelector('#iphoneNav button[data-target="'+(map[id]||'')+'"]'));
-    if(id==='traverse' && typeof window.calcTraverse==='function') window.calcTraverse();
-    if(id==='misclose' && typeof window.calcQuickClose==='function') window.calcQuickClose();
+    if(targetId==='traverse' && typeof window.calcTraverse==='function') window.calcTraverse();
+    if(targetId==='misclose' && typeof window.calcQuickClose==='function') window.calcQuickClose();
+    if(targetId==='area' && typeof window.calcBearingArea==='function') window.calcBearingArea();
     window.scrollTo({top:0,behavior:'smooth'});
   };
   window.iphoneMoreOpen = function(){
