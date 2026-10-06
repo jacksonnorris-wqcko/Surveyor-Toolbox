@@ -135,6 +135,10 @@ canvas{display:block;width:100%;height:350px;background:#fbfcfd}
 .plan-tools input{margin:0;width:auto}
 #plot{cursor:grab;touch-action:none}
 #plot.dragging{cursor:grabbing}
+
+/* v8 dashboard + point manager */
+.dash-hero{display:flex;align-items:center;gap:14px;padding:18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,#16212c,#263a4b);color:#fff;box-shadow:0 8px 24px rgba(22,34,48,.14);margin-bottom:12px}.dash-mark{width:52px;height:52px;border-radius:15px;background:#fff;color:#17212b;display:grid;place-items:center;font-size:28px;flex:none}.dash-copy{min-width:0;flex:1}.dash-kicker{font-size:9px;letter-spacing:1.3px;font-weight:800;color:#a9bac9}.dash-hero h1{margin:2px 0 0;font-size:24px;letter-spacing:-.5px}.dash-copy p{margin:3px 0 0;color:#c5d0da;font-size:12px}.dash-job-btn{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;border-radius:11px;padding:10px 12px;font-weight:750;min-height:44px}.current-job-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:14px;box-shadow:var(--shadow);margin-bottom:18px}.current-job-card.empty{background:#f7f9fb}.current-job-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.current-job-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:800}.current-job-name{font-size:17px;font-weight:800;margin-top:3px}.current-job-meta{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45}.current-job-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}.dash-section-title{display:flex;align-items:center;justify-content:space-between;margin:16px 2px 8px;font-size:13px;font-weight:800}.dash-section-title small{font-size:10px;color:var(--muted);font-weight:600}.dash-section-title button{border:0;background:none;color:var(--accent);font-weight:750}.quick-tools-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.quick-tools-grid button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px;text-align:left;box-shadow:var(--shadow);min-height:106px}.quick-tools-grid button span{display:block;font-size:23px;margin-bottom:7px}.quick-tools-grid button b{display:block;font-size:13px}.quick-tools-grid button small{display:block;color:var(--muted);font-size:10px;margin-top:4px;line-height:1.35}.recent-jobs{display:grid;gap:8px}.recent-job{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);background:#fff;border-radius:12px}.recent-job-icon{font-size:20px}.recent-job-info{min-width:0;flex:1}.recent-job-name{font-weight:750;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.recent-job-meta{font-size:10px;color:var(--muted);margin-top:3px}.recent-job button{min-height:38px!important;padding:6px 10px!important}.field-tip{display:flex;gap:9px;align-items:flex-start;padding:12px;border-radius:12px;background:#eef6fb;border:1px solid #cde3f2;color:#4d6374;font-size:11px;line-height:1.45}.field-tip b{color:var(--accent)}.page-head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.point-summary{display:grid;grid-template-columns:1fr 1fr auto auto;gap:8px;margin-bottom:12px}.point-summary>div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}.point-summary small{display:block;color:var(--muted);font-size:9px;font-weight:800}.point-summary strong{display:block;font-size:16px;margin-top:3px}.point-list-card{padding:12px!important}.point-search-row{display:flex;gap:8px;margin-bottom:8px}.point-search-row input{flex:1}.point-row{display:grid;grid-template-columns:62px 1fr auto;gap:10px;align-items:center;padding:12px 2px;border-bottom:1px solid var(--line)}.point-row:last-child{border-bottom:0}.point-no{font-weight:800;color:var(--accent)}.point-main b{display:block;font-size:13px}.point-main small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.point-actions{display:flex;gap:5px}.point-actions button{min-height:38px!important;padding:6px 9px!important}.point-empty{text-align:center;padding:30px 10px;color:var(--muted);font-size:12px}.job-manager-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.jobs-backup-note{font-size:10px;color:var(--muted);margin-top:8px}
+@media(max-width:700px){.dash-hero{padding:14px}.dash-mark{width:46px;height:46px;font-size:24px}.dash-hero h1{font-size:20px}.dash-job-btn{padding:8px 9px}.quick-tools-grid{gap:8px}.quick-tools-grid button{min-height:100px;padding:11px}.point-summary{grid-template-columns:1fr 1fr}.point-summary .btn{width:100%}.page-head-row .btn{flex:none}.point-row{grid-template-columns:48px 1fr}.point-actions{grid-column:2}.point-actions button{flex:1}.current-job-actions .btn{flex:1}}
 </style>
 
 <link rel="manifest" href="./manifest.json">
@@ -446,7 +450,36 @@ input, select, textarea{
   <div class="brandtag">Survey tools</div>
 </div>
 
-<section id="coords" class="page active">
+
+<section id="dashboard" class="page">
+  <div class="dash-hero">
+    <div class="dash-mark">📐</div>
+    <div class="dash-copy"><div class="dash-kicker">FIELD WORKSPACE</div><h1>Surveyor’s Toolbox</h1><p>Built By Jackson 2026</p></div>
+    <button class="dash-job-btn" type="button" onclick="openJobManager()">💾 Jobs</button>
+  </div>
+  <div id="currentJobCard" class="current-job-card"></div>
+  <div class="dash-section-title"><span>Quick Tools</span><small>Tap to open</small></div>
+  <div class="quick-tools-grid">
+    <button onclick="iphoneShow('bd')"><span>📐</span><b>B&D From Coords</b><small>Calculate bearing & distance</small></button>
+    <button onclick="iphoneShow('coords')"><span>🎯</span><b>Coords From B&D</b><small>Calculate destination point</small></button>
+    <button onclick="iphoneShow('traverse')"><span>↗</span><b>Traverse</b><small>Build and plot a traverse</small></button>
+    <button onclick="iphoneShow('quick')"><span>✓</span><b>Quick Close</b><small>Calculate closing line</small></button>
+    <button onclick="iphoneShow('area')"><span>▱</span><b>Area</b><small>Calculate parcel area</small></button>
+    <button onclick="iphoneShow('points')"><span>📍</span><b>Points</b><small>Manage survey coordinates</small></button>
+  </div>
+  <div class="dash-section-title"><span>Recent Jobs</span><button onclick="openJobManager()">View all</button></div>
+  <div id="dashboardRecentJobs" class="recent-jobs"></div>
+  <div class="dash-section-title"><span>Field Notes</span></div>
+  <div class="field-tip"><b>Tip</b><span>Your jobs and points are stored on this device. Use <strong>Backup All</strong> regularly if the data matters.</span></div>
+</section>
+
+<section id="points" class="page">
+  <div class="page-head-row"><div><h1>Point Manager</h1><div class="sub">Keep your survey coordinates in one place and reuse them across calculations.</div></div><button class="btn primary" onclick="addSurveyPoint()">＋ Add Point</button></div>
+  <div class="point-summary"><div><small>POINTS</small><strong id="pointCount">0</strong></div><div><small>LAST ADDED</small><strong id="pointLast">—</strong></div><button class="btn secondary" onclick="exportPoints()">⇩ Export</button><button class="btn secondary" onclick="document.getElementById('pointImportFile').click()">⇧ Import</button><input id="pointImportFile" type="file" accept="application/json,.json" hidden onchange="importPoints(event)"></div>
+  <div class="card point-list-card"><div class="point-search-row"><input id="pointSearch" placeholder="Search point number, description or coordinate..." oninput="renderPoints()"><button class="btn secondary" onclick="clearPointSearch()">Clear</button></div><div id="pointList"></div></div>
+</section>
+
+<section id="coords" class="page">
 <h1>B&D</h1><div class="sub">Bearing & Distance calculator.</div>
 <div class="grid">
 <div class="card"><h2>Point A</h2><label>Easting</label><input id="ce1" value="500"><label>Northing</label><input id="cn1" value="1000"></div>
@@ -606,7 +639,7 @@ input, select, textarea{
 <section id="jobs" class="page">
  <h1>Saved Jobs</h1><div class="sub">Strata and Quick Close jobs are stored locally in this browser on this computer.</div>
  <div class="card">
-  <div class="jobs-toolbar-v7"><input id="jobSearch" placeholder="Search jobs, project, address..." oninput="renderSavedJobs()"><button class="btn secondary" type="button" onclick="exportStrataJobs()">⇩ Export</button><button class="btn secondary" type="button" onclick="document.getElementById('jobImportFile').click()">⇧ Import</button><input id="jobImportFile" type="file" accept="application/json,.json" style="display:none" onchange="importStrataJobs(event)"></div><div class="jobs-filter"><button class="active" data-jobfilter="all" onclick="setJobFilter('all',this)">All</button><button data-jobfilter="quickclose" onclick="setJobFilter('quickclose',this)">Quick Close</button><button data-jobfilter="strata" onclick="setJobFilter('strata',this)">Strata</button></div><div id="jobsCount" class="jobs-count"></div><div id="savedJobsList"></div>
+  <div class="jobs-toolbar-v7"><input id="jobSearch" placeholder="Search jobs, project, address..." oninput="renderSavedJobs()"><button class="btn secondary" type="button" onclick="exportStrataJobs()">⇩ Export</button><button class="btn secondary" type="button" onclick="document.getElementById('jobImportFile').click()">⇧ Import</button><button class="btn primary" type="button" onclick="backupAllData()">⬇ Backup All</button><input id="jobImportFile" type="file" accept="application/json,.json" style="display:none" onchange="importStrataJobs(event)"></div><div class="jobs-filter"><button class="active" data-jobfilter="all" onclick="setJobFilter('all',this)">All</button><button data-jobfilter="quickclose" onclick="setJobFilter('quickclose',this)">Quick Close</button><button data-jobfilter="strata" onclick="setJobFilter('strata',this)">Strata</button></div><div id="jobsCount" class="jobs-count"></div><div id="savedJobsList"></div>
  </div>
 </section>
 
@@ -1338,11 +1371,13 @@ function saveStrataJob(saveAs=false){
   }
   existing.project=data.project; existing.address=data.address; existing.date=data.date; existing.units=data.units; existing.updated=new Date().toISOString();
   setStrataJobs(jobs); currentStrataJobId=jobId;
+  setCurrentJob({id:jobId,type:'strata',name:existing.name});
   renderSavedJobs();
   document.getElementById('strataStatus').textContent='Saved job: '+existing.name;
 }
 function loadStrataJob(id){
   const job=getStrataJobs().find(j=>j.id===id); if(!job)return;
+  if(typeof setCurrentJob==='function') setCurrentJob({id:job.id,type:job.type||'strata',name:job.name||'Strata Job'});
   currentStrataJobId=id;
   document.getElementById('strataProject').value=job.project||'';
   document.getElementById('strataAddress').value=job.address||'';
@@ -1416,6 +1451,7 @@ function saveQuickCloseJob(saveAs=false){
   existing.updated=new Date().toISOString();
   setStrataJobs(jobs);
   renderSavedJobs();
+  setCurrentJob({id:existing.id,type:'quickclose',name:existing.name||('Quick Close — '+jobNo)});
   document.getElementById('qcStatus').textContent='Saved Quick Close job: '+jobNo;
 }
 
@@ -1442,6 +1478,7 @@ function quickCloseNewJob(){
 
 function loadQuickCloseJob(id){
   const job=getStrataJobs().find(j=>j.id===id); if(!job)return;
+  if(typeof setCurrentJob==='function') setCurrentJob({id:job.id,type:'quickclose',name:job.name||('Quick Close — '+(job.jobNumber||''))});
   currentQuickCloseJobId=id;
   document.getElementById('qcJobNo').value=job.jobNumber||job.project||'';
   document.getElementById('qcE').value=job.startE||'';
@@ -1830,6 +1867,48 @@ function attachPlan(k){const c=pc(k);if(!c||c.__v7)return;c.__v7=1;const st=__pl
 window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan);v7DateDefault('qcDate');renderSavedJobs()});
 </script>
 
+
+/* ===== v8 JOB + POINT WORKSPACE ===== */
+const POINTS_KEY='norrisbox_survey_points_v1';
+const CURRENT_JOB_KEY='norrisbox_current_job_v1';
+function getPoints(){try{return JSON.parse(localStorage.getItem(POINTS_KEY)||'[]')}catch(e){return []}}
+function setPoints(v){localStorage.setItem(POINTS_KEY,JSON.stringify(v))}
+function currentJob(){try{return JSON.parse(localStorage.getItem(CURRENT_JOB_KEY)||'null')}catch(e){return null}}
+function setCurrentJob(j){if(j)localStorage.setItem(CURRENT_JOB_KEY,JSON.stringify(j));else localStorage.removeItem(CURRENT_JOB_KEY);renderDashboard()}
+function openJobManager(){iphoneShow('jobs')}
+function jobIcon(j){return j?.type==='quickclose'?'✓':j?.type==='strata'?'▦':'💾'}
+function jobTitle(j){return j?.name||j?.project||j?.jobNumber||'Untitled Job'}
+function openSavedJobFromDashboard(id){const j=getStrataJobs().find(x=>x.id===id);if(!j)return;if(j.type==='quickclose')loadQuickCloseJob(id);else loadStrataJob(id);setCurrentJob({id,type:j.type,name:jobTitle(j)});}
+function renderDashboard(){
+  const card=document.getElementById('currentJobCard'); if(!card)return;
+  const cj=currentJob();
+  if(!cj){card.className='current-job-card empty';card.innerHTML='<div class="current-job-label">CURRENT JOB</div><div class="current-job-name">No job selected</div><div class="current-job-meta">Open a saved job or save a new Quick Close / Strata job to make it your current job.</div><div class="current-job-actions"><button class="btn primary" onclick="iphoneShow(\'jobs\')">Open Saved Jobs</button></div>'}
+  else {card.className='current-job-card';card.innerHTML=`<div class="current-job-top"><div><div class="current-job-label">CURRENT JOB</div><div class="current-job-name">${escapeHtml(cj.name||'Current Job')}</div><div class="current-job-meta">${escapeHtml(cj.type==='quickclose'?'Quick Close':'Strata / Job')}</div></div><span style="font-size:22px">${jobIcon(cj)}</span></div><div class="current-job-actions"><button class="btn primary" onclick="openSavedJobFromDashboard('${cj.id}')">Open Job</button><button class="btn secondary" onclick="setCurrentJob(null)">Clear</button></div></div>`}
+  const list=document.getElementById('dashboardRecentJobs'); if(!list)return;
+  const jobs=getStrataJobs().sort((a,b)=>new Date(b.updated||b.created||0)-new Date(a.updated||a.created||0)).slice(0,4);
+  list.innerHTML=jobs.length?jobs.map(j=>`<div class="recent-job"><div class="recent-job-icon">${jobIcon(j)}</div><div class="recent-job-info"><div class="recent-job-name">${escapeHtml(jobTitle(j))}</div><div class="recent-job-meta">${escapeHtml(j.project||j.address||j.jobNumber||'Saved job')} · ${escapeHtml(j.updated?new Date(j.updated).toLocaleDateString():'')}</div></div><button class="btn secondary" onclick="openSavedJobFromDashboard('${j.id}')">Open</button></div>`).join(''):'<div class="point-empty">No saved jobs yet.</div>';
+}
+function nextPointNo(){const ps=getPoints();const nums=ps.map(p=>Number(p.number)).filter(Number.isFinite);return nums.length?Math.max(...nums)+1:1}
+function addSurveyPoint(){
+  const no=prompt('Point number:',String(nextPointNo())); if(no===null)return;
+  const e=prompt('Easting:',''); if(e===null)return;
+  const n=prompt('Northing:',''); if(n===null)return;
+  const ee=Number(e),nn=Number(n);if(!Number.isFinite(ee)||!Number.isFinite(nn)){alert('Enter valid Easting and Northing values.');return}
+  const desc=prompt('Description (optional):','')??'';
+  const ps=getPoints();if(ps.some(p=>String(p.number)===String(no).trim())){alert('That point number already exists.');return}
+  ps.push({id:'pt_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),number:String(no).trim()||String(nextPointNo()),e:ee,n:nn,desc:desc.trim(),created:new Date().toISOString()});setPoints(ps);renderPoints();renderDashboard();
+}
+function editSurveyPoint(id){const ps=getPoints(),p=ps.find(x=>x.id===id);if(!p)return;const e=prompt('Easting:',p.e);if(e===null)return;const n=prompt('Northing:',p.n);if(n===null)return;const ee=Number(e),nn=Number(n);if(!Number.isFinite(ee)||!Number.isFinite(nn)){alert('Invalid coordinate.');return}const d=prompt('Description:',p.desc||'');if(d===null)return;p.e=ee;p.n=nn;p.desc=d.trim();p.updated=new Date().toISOString();setPoints(ps);renderPoints()}
+function deleteSurveyPoint(id){const p=getPoints().find(x=>x.id===id);if(!p)return;if(!confirm(`Delete point ${p.number}?`))return;setPoints(getPoints().filter(x=>x.id!==id));renderPoints()}
+function useSurveyPoint(id){const p=getPoints().find(x=>x.id===id);if(!p)return;const target=prompt('Use this point in:\n1 = B&D From Coords (Point A)\n2 = Coords From B&D (Start Point)','1');if(target==='1'){document.getElementById('ce1').value=p.e;document.getElementById('cn1').value=p.n;iphoneShow('coords');calcCoords()}else if(target==='2'){document.getElementById('be').value=p.e;document.getElementById('bn').value=p.n;iphoneShow('bd');calcBD()}}
+function renderPoints(){const list=document.getElementById('pointList');if(!list)return;const q=(document.getElementById('pointSearch')?.value||'').toLowerCase().trim();let ps=getPoints().filter(p=>[p.number,p.e,p.n,p.desc].join(' ').toLowerCase().includes(q));ps.sort((a,b)=>String(a.number).localeCompare(String(b.number),undefined,{numeric:true}));document.getElementById('pointCount').textContent=getPoints().length;const last=getPoints().slice().sort((a,b)=>new Date(b.created||0)-new Date(a.created||0))[0];document.getElementById('pointLast').textContent=last?String(last.number):'—';list.innerHTML=ps.length?ps.map(p=>`<div class="point-row"><div class="point-no">P${escapeHtml(p.number)}</div><div class="point-main"><b>${escapeHtml(p.desc||'Survey Point')}</b><small>E ${Number(p.e).toFixed(3)} · N ${Number(p.n).toFixed(3)}</small></div><div class="point-actions"><button class="btn secondary" onclick="useSurveyPoint('${p.id}')">Use</button><button class="btn secondary" onclick="editSurveyPoint('${p.id}')">Edit</button><button class="btn danger" onclick="deleteSurveyPoint('${p.id}')">×</button></div></div>`).join(''):'<div class="point-empty">No points found. Add your first survey point.</div>'}
+function clearPointSearch(){const x=document.getElementById('pointSearch');if(x)x.value='';renderPoints()}
+function exportPoints(){const data={version:1,exported:new Date().toISOString(),points:getPoints()};downloadJson('surveyors-toolbox-points.json',data)}
+function importPoints(e){const file=e.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);const incoming=Array.isArray(data)?data:data.points;if(!Array.isArray(incoming))throw Error();const map=new Map(getPoints().map(p=>[p.id,p]));incoming.forEach(p=>{if(p&&p.id&&Number.isFinite(Number(p.e))&&Number.isFinite(Number(p.n)))map.set(p.id,p)});setPoints([...map.values()]);renderPoints();alert('Points imported successfully.')}catch(err){alert('Could not import that points file.')}};reader.readAsText(file);e.target.value=''}
+function downloadJson(name,obj){const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function backupAllData(){const data={app:'Surveyor’s Toolbox',version:8,exported:new Date().toISOString(),jobs:getStrataJobs(),points:getPoints(),currentJob:currentJob()};downloadJson('surveyors-toolbox-backup.json',data)}
+function restoreAllData(e){const file=e.target.files?.[0];if(!file)return;if(!confirm('Restore this backup? Existing jobs and points with matching IDs will be replaced.')){e.target.value='';return}const reader=new FileReader();reader.onload=()=>{try{const d=JSON.parse(reader.result);if(!d||(!Array.isArray(d.jobs)&&!Array.isArray(d.points)))throw Error();if(Array.isArray(d.jobs)){const map=new Map(getStrataJobs().map(j=>[j.id,j]));d.jobs.forEach(j=>{if(j&&j.id)map.set(j.id,j)});setStrataJobs([...map.values()])}if(Array.isArray(d.points)){const map=new Map(getPoints().map(p=>[p.id,p]));d.points.forEach(p=>{if(p&&p.id)map.set(p.id,p)});setPoints([...map.values()])}if(d.currentJob)setCurrentJob(d.currentJob);renderSavedJobs();renderPoints();renderDashboard();alert('Backup restored successfully.')}catch(err){alert('That backup file could not be restored.')}};reader.readAsText(file);e.target.value=''}
+
 <!-- iPhone PWA navigation -->
 <nav id="iphoneNav" aria-label="Surveyor Toolbox">
   <button data-target="bd" onclick="iphoneShow('bd',this)"><span class="ico">📐</span>B&D</button>
@@ -1843,15 +1922,20 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
   <div class="sheet">
     <h3>Surveyor's Toolbox</h3>
     <div class="tools">
+      <button onclick="iphoneShow('dashboard');iphoneMoreClose()">🏠 Home</button>
       <button onclick="iphoneShow('coords');iphoneMoreClose()">Coords from B&D</button>
+      <button onclick="iphoneShow('points');iphoneMoreClose()">📍 Point Manager</button>
       <button onclick="iphoneShow('strata');iphoneMoreClose()">Strata Areas</button>
       <button onclick="iphoneShow('jobs');iphoneMoreClose()">Saved Jobs</button>
       <button onclick="iphoneShow('scale');iphoneMoreClose()">Scale</button>
       <button onclick="iphoneShow('convert');iphoneMoreClose()">Conversions</button>
+      <button onclick="backupAllData();iphoneMoreClose()">⬇ Backup All</button>
+      <button onclick="document.getElementById('restoreAllFile').click();iphoneMoreClose()">⬆ Restore Backup</button>
     </div>
     <button style="width:100%;margin-top:10px" onclick="iphoneMoreClose()">Close</button>
   </div>
 </div>
+<input id="restoreAllFile" type="file" accept="application/json,.json" hidden onchange="restoreAllData(event)">
 
 <script>
 (function(){
@@ -1860,7 +1944,7 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
     if(btn) btn.classList.add('active');
   }
   window.iphoneShow = function(id, btn){
-    var map={bd:'bd',traverse:'traverse',quick:'misclose',area:'area',coords:'coords',jobs:'jobs',strata:'strata',scale:'scale',convert:'convert'};
+    var map={dashboard:'dashboard',home:'dashboard',bd:'bd',traverse:'traverse',quick:'misclose',area:'area',coords:'coords',jobs:'jobs',strata:'strata',scale:'scale',convert:'convert',points:'points'};
     var targetId=map[id] || id;
     document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
     var el=document.getElementById(targetId);
@@ -1878,8 +1962,9 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
     document.getElementById('iphoneMore').classList.remove('open');
   };
   window.addEventListener('load', function(){
-    var first=document.querySelector('#iphoneNav button[data-target="bd"]');
-    if(first) first.classList.add('active');
+    iphoneShow('dashboard');
+    renderDashboard();
+    renderPoints();
     if('serviceWorker' in navigator){
       navigator.serviceWorker.register('./sw.js').catch(function(){});
     }
