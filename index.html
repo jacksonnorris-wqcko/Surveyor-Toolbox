@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
+<meta name="app-version" content="8.4">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -459,11 +460,17 @@ input, select, textarea{
 .tool-choice span{grid-row:1/3;font-size:25px;align-self:center;text-align:center}.tool-choice b{font-size:14px}.tool-choice small{font-size:11px;color:#687687;margin-top:3px;}
 @media(max-width:700px){.app-modal.open{align-items:flex-end}.app-modal-card{width:100%;margin:0;border-radius:20px 20px 0 0;border-left:0;border-right:0;border-bottom:0}.modal-grid{grid-template-columns:1fr}.app-modal-head{padding-top:20px}.app-modal-card:before{content:"";display:block;width:38px;height:4px;border-radius:99px;background:#cbd2d9;position:absolute;top:8px;left:50%;transform:translateX(-50%);}.tool-choice{min-height:68px}.app-modal-actions .btn{min-height:48px !important;}}
 </style>
+<style>
+#appUpdateNotice{position:fixed;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;max-width:calc(100vw - 28px);padding:10px 14px;border-radius:12px;background:#16212c;color:#fff;box-shadow:0 6px 24px #0003;font-size:13px;text-align:center}
+#appUpdateNotice[hidden]{display:none}
+@media(min-width:901px){#appUpdateNotice{bottom:20px}}
+</style>
 </head>
 <body>
+<div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
 <div class="app">
 <aside class="side">
-<div class="logo">📐 Surveyor’s Toolbox<small>Built By Jackson 2026</small></div>
+<div class="logo">📐 Surveyor’s Toolbox<small>Built By Jackson 2026 · v8.4 · Auto-updates</small></div>
 <div class="nav"><div class="section">Survey</div>
 <button class="active" onclick="show('coords',this)">📍 B&D From Coords</button>
 <button onclick="show('bd',this)">🎯 Coords From B&D</button>
@@ -2053,8 +2060,39 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
     iphoneShow('dashboard');
     renderDashboard();
     renderPoints();
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('./sw.js').catch(function(){});
+    var updateNotice = document.getElementById('appUpdateNotice');
+    try {
+      if (sessionStorage.getItem('surveyorsToolboxUpdated') === '1') {
+        sessionStorage.removeItem('surveyorsToolboxUpdated');
+        if (updateNotice) {
+          updateNotice.hidden = false;
+          updateNotice.textContent = 'Surveyor’s Toolbox has been updated.';
+          window.setTimeout(function(){ updateNotice.hidden = true; }, 4500);
+        }
+      }
+    } catch (_) {}
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+      // Check on every app open and whenever the app returns to the foreground.
+      // updateViaCache:none prevents a stale HTTP cache from hiding a new sw.js.
+      var hadController = !!navigator.serviceWorker.controller;
+      var reloadingForUpdate = false;
+      navigator.serviceWorker.addEventListener('controllerchange', function(){
+        if (!hadController || reloadingForUpdate) return;
+        reloadingForUpdate = true;
+        try { sessionStorage.setItem('surveyorsToolboxUpdated', '1'); } catch (_) {}
+        location.reload();
+      });
+      navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'})
+        .then(function(registration){
+          var check = function(){
+            if (navigator.onLine && registration && typeof registration.update === 'function') {
+              registration.update().catch(function(){});
+            }
+          };
+          check();
+          document.addEventListener('visibilitychange', function(){ if (!document.hidden) check(); });
+          window.addEventListener('online', check);
+        }).catch(function(){});
     }
   });
 })();
