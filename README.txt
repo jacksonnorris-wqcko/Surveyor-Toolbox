@@ -1,5 +1,7 @@
-Surveyor’s Toolbox — iPhone PWA v8.10
+Surveyor’s Toolbox — iPhone PWA v8.11
 Built By Jackson 2026
+
+v8.11 redesigns the B&D print diagram to prevent labels colliding on narrow or steep triangles. The coordinate geometry is automatically rotated so its longest side is horizontal while preserving true scale. The diagram uses numbered markers on each line and a dedicated side schedule with horizontal, clearly separated values: blue for grid bearing and grid distance, burnt orange for scaled ground distance. Mark names remain on the point markers.
 
 v8.10 improves the B&D calculation print diagram. The diagram is larger and more readable, with line-aligned annotation cards. Blue labels show each line's grid bearing and grid distance together; burnt-orange labels show the scale-factor-adjusted ground distance. Mark labels and point positions remain based on the entered coordinates.
 
