@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="8.4">
+<meta name="app-version" content="8.5">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -306,7 +306,7 @@ input, select, textarea{
     bottom:0;
     z-index:9999;
     display:grid;
-    grid-template-columns:repeat(5,1fr);
+    grid-template-columns:repeat(3,1fr);
     gap:4px;
     padding:7px 8px calc(7px + var(--ios-safe-bottom));
     background:rgba(18,27,36,.96);
@@ -470,13 +470,11 @@ input, select, textarea{
 <div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
 <div class="app">
 <aside class="side">
-<div class="logo">📐 Surveyor’s Toolbox<small>Built By Jackson 2026 · v8.4 · Auto-updates</small></div>
+<div class="logo">📐 Surveyor’s Toolbox<small>Built By Jackson 2026 · v8.5 · Auto-updates</small></div>
 <div class="nav"><div class="section">Survey</div>
 <button class="active" onclick="show('coords',this)">📍 B&D From Coords</button>
 <button onclick="show('bd',this)">🎯 Coords From B&D</button>
-<button onclick="show('traverse',this)">📏 Traverse</button>
 <button onclick="show('misclose',this)">🔒 Quick Close</button>
-<button onclick="show('area',this)">▱ Area</button>
 <button onclick="show('strata',this)">▦ Strata Areas</button><button onclick="show('jobs',this)">💾 Saved Jobs</button><div class="section">Geometry & Tools</div>
 <button onclick="show('scale',this)">↔ Scale</button>
 <button onclick="show('convert',this)">🔄 Conversions</button></div>
@@ -487,7 +485,7 @@ input, select, textarea{
 <main class="main"><div class="topbar">
   <div class="mobile-brand">
     <div class="mobile-brand-mark">📐</div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.5</div></div>
   </div>
   <div class="brandtag">Survey tools</div>
 </div>
@@ -504,9 +502,7 @@ input, select, textarea{
   <div class="quick-tools-grid">
     <button onclick="iphoneShow('coords')"><span>📐</span><b>B&D From Coords</b><small>Calculate bearing & distance</small></button>
     <button onclick="iphoneShow('bd')"><span>🎯</span><b>Coords From B&D</b><small>Calculate destination point</small></button>
-    <button onclick="iphoneShow('traverse')"><span>↗</span><b>Traverse</b><small>Build and plot a traverse</small></button>
     <button onclick="iphoneShow('quick')"><span>✓</span><b>Quick Close</b><small>Calculate closing line</small></button>
-    <button onclick="iphoneShow('area')"><span>▱</span><b>Area</b><small>Calculate parcel area</small></button>
     <button onclick="iphoneShow('points')"><span>📍</span><b>Points</b><small>Manage survey coordinates</small></button>
   </div>
   <div class="dash-section-title"><span>Recent Jobs</span><button onclick="openJobManager()">View all</button></div>
@@ -537,47 +533,6 @@ input, select, textarea{
 <div class="card full"><button class="btn primary" onclick="calcBD()">CALCULATE</button><div id="bdStatus" class="status" hidden></div><div class="results"><div class="result"><small>End Easting</small><strong id="bE">—</strong></div><div class="result"><small>End Northing</small><strong id="bN">—</strong></div><div class="result"><small>Departure</small><strong id="bDep">—</strong></div><div class="result"><small>Latitude</small><strong id="bLat">—</strong></div></div></div></div>
 </section>
 
-<section id="traverse" class="page">
-<h1>Traverse Calculator</h1>
-<div class="sub">Build a traverse and watch the calculated plan update.</div>
-<div class="workspace">
-  <div class="workspace-left">
-    <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
-      <div class="eyebrow">Traverse Entry</div>
-      <div class="row">
-        <div><label>Start Easting</label><input id="te" value="500"></div>
-        <div><label>Start Northing</label><input id="tn" value="1000"></div>
-      </div>
-      <div class="toolbar sticky-actions">
-        <button class="btn primary" onclick="window.addTraverseLine()">＋ Add Line</button>
-        <button class="btn secondary" onclick="window.calculateTraverse()">Calculate</button>
-        <button class="btn secondary" onclick="printCurrentPage()">🖨 Print</button>
-        <button class="btn danger" onclick="clearTraverse()">Clear</button>
-      </div>
-      <div class="scroll-table">
-        <table><thead><tr><th>Line</th><th>Bearing</th><th>Distance</th><th>End E</th><th>End N</th><th></th></tr></thead><tbody id="trBody"></tbody></table>
-      </div>
-      <div id="trStatus" class="status">Add lines to build your traverse.</div>
-    </div>
-  </div>
-  <div class="workspace-right">
-    <div class="card live-card">
-      <div class="plot-head"><b>Traverse Plan</b><span>Live plan view</span></div>
-<div class="plan-tools">
-  <button type="button" onclick="zoomPlan(1.25)">＋</button>
-  <button type="button" onclick="zoomPlan(0.8)">−</button>
-  <button type="button" onclick="fitPlan()">Fit</button>
-  <span style="margin-left:8px">Show:</span>
-  <label><input type="checkbox" id="trShowBearings" onchange="window.calculateTraverse()"> Bearings</label>
-  <label><input type="checkbox" id="trShowDistances" onchange="window.calculateTraverse()"> Distances</label>
-  <label><input type="checkbox" id="trShowPoints" checked onchange="window.calculateTraverse()"> Point numbers</label>
-  <label><input type="checkbox" id="trShowCoords" onchange="window.calculateTraverse()"> Coordinates</label>
-  <span class="muted" style="margin-left:auto">Pinch = zoom · Drag = pan</span>
-</div>
-      <canvas id="plot" width="1000" height="700"></canvas>
-    </div>
-  </div>
-</div>
 </section>
 
 <section id="misclose" class="page">
@@ -587,7 +542,7 @@ input, select, textarea{
 <div class="workspace">
   <div class="workspace-left">
     <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
-      <div class="eyebrow">Traverse Entry</div>
+      <div class="eyebrow">Known Line Entry</div>
       <div class="row qc-job-meta">
         <div><label>Job Number</label><input id="qcJobNo" placeholder="e.g. 2385"></div>
         <div><label>Project / Client</label><input id="qcProject" placeholder="Project name or client"></div>
@@ -638,43 +593,6 @@ input, select, textarea{
 </div>
 </section>
 
-<section id="area" class="page">
-<h1>Area from Bearing & Distance</h1>
-<div class="sub">Enter the boundary traverse in order. The plan and closure update from the same data.</div>
-
-<div class="workspace">
-  <div class="workspace-left">
-    <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
-      <div class="eyebrow">Boundary Traverse</div>
-      <div class="row">
-        <div><label>Starting Easting</label><input id="aeStart" value="500.000"></div>
-        <div><label>Starting Northing</label><input id="anStart" value="1000.000"></div>
-      </div>
-      <div class="toolbar sticky-actions">
-        <button class="btn primary" onclick="addAreaLine()">＋ Add Line</button>
-        <button class="btn secondary" onclick="calcBearingArea()">Calculate Area</button>
-        <button class="btn danger" onclick="clearAreaLines()">Clear</button>
-      </div>
-      <div class="scroll-table">
-        <table>
-          <thead><tr><th>Line</th><th>Bearing</th><th>Distance</th><th>End E</th><th>End N</th><th></th></tr></thead>
-          <tbody id="areaBody"></tbody>
-        </table>
-      </div>
-      <div id="areaStatus" class="status">Enter the boundary bearings and distances, then calculate.</div>
-    </div>
-  </div>
-
-  <div class="workspace-right">
-    <div class="card live-card">
-      <div class="plot-head"><b>Boundary Plan</b><span>Live plan view</span></div>
-      <div class="field-plan-tools" data-plan="area"><button type="button" onclick="fieldPlanZoom('area',1.25)">＋</button><button type="button" onclick="fieldPlanZoom('area',0.8)">−</button><button type="button" onclick="fieldPlanFit('area')">Fit</button><span>Pinch to zoom · drag to pan · tap a point</span></div>
-      <canvas id="areaPlot" width="1000" height="700"></canvas>
-    </div>
-  </div>
-</div>
-
-<div class="calc-summary area-summary"><div class="results"><div class="result area-primary"><small>AREA</small><strong id="bearingAreaOut">—</strong></div><div class="result"><small>PERIMETER</small><strong id="bearingPeriOut">—</strong></div><div class="result"><small>LINEAR MISCLOSE</small><strong id="bearingMiscloseOut">—</strong></div><div class="result"><small>CLOSURE RATIO</small><strong id="bearingRatioOut">—</strong></div></div></div>
 </section>
 
 
@@ -723,7 +641,7 @@ input, select, textarea{
     </div>
 
     <div class="shortcut-card">
-      <h3>Traverse / Area / Quick Close</h3>
+      <h3>Quick Close</h3>
       <div class="shortcut-row">
         <span class="shortcut-key">Ctrl + Enter</span>
         <span class="shortcut-desc">Add a new line and focus its bearing</span>
@@ -736,7 +654,7 @@ input, select, textarea{
   </div>
 
   <div class="shortcut-note">
-    <strong>Tip:</strong> Use <strong>Ctrl + Enter</strong> while entering a traverse to quickly add the next line without reaching for the mouse. Deleted lines are automatically renumbered.
+    <strong>Tip:</strong> Use <strong>Ctrl + Enter</strong> in Quick Close to add the next known line. Deleted lines are automatically renumbered.
   </div>
 </section>
 
@@ -846,149 +764,6 @@ function parseDMS(value){
 function calcCoords(){let e1=num('ce1'),n1=num('cn1'),e2=num('ce2'),n2=num('cn2'),de=e2-e1,dn=n2-n1;let dist=Math.hypot(de,dn),b=Math.atan2(de,dn)*180/Math.PI;if(b<0)b+=360;crDist.textContent=dist.toFixed(3)+' m';crBear.textContent=dms(b);crE.textContent=de.toFixed(3)+' m';crN.textContent=dn.toFixed(3)+' m'}
 
 function calcBD(){let e=num('be'),n=num('bn'),b=parseDMS(document.getElementById('bb').value),d=num('bdist'),r=b*Math.PI/180,de=d*Math.sin(r),dn=d*Math.cos(r);bE.textContent=(e+de).toFixed(3)+' m';bN.textContent=(n+dn).toFixed(3)+' m';bDep.textContent=de.toFixed(3)+' m';bLat.textContent=dn.toFixed(3)+' m'}
-let lineNo=0;
-function addLine(){
-  lineNo++;
-  const body=document.getElementById('trBody');
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td>${lineNo}</td><td><input class="tb" value="90d00'00&quot;"></td><td><input class="td" value="50"></td><td class="teo">—</td><td class="tno">—</td><td><button class="btn danger" onclick="this.closest('tr').remove()">×</button></td>`;
-  body.appendChild(tr);
-}
-function calcTraverse(){
-  let e=num('te'),n=num('tn');
-  const rows=[...document.querySelectorAll('#trBody tr')],pts=[[e,n]];
-  rows.forEach(r=>{
-    const b=parseDMS(r.querySelector('.tb').value);
-    const d=parseFloat(r.querySelector('.td').value)||0;
-    const rad=b*Math.PI/180;
-    e+=d*Math.sin(rad); n+=d*Math.cos(rad);
-    r.querySelector('.teo').textContent=e.toFixed(3);
-    r.querySelector('.tno').textContent=n.toFixed(3);
-    pts.push([e,n]);
-  });
-  const status=document.getElementById('trStatus');
-  status.textContent=rows.length?`Traverse endpoint: E ${e.toFixed(3)}, N ${n.toFixed(3)}. ${rows.length} line(s) calculated.`:'Add lines first.';
-  draw(pts);
-}
-function clearTraverse(){
-  document.getElementById('trBody').innerHTML='';
-  lineNo=0;
-  document.getElementById('trStatus').textContent='Add lines to build your traverse.';
-  draw([]);
-}
-function draw(pts){
-  const c=document.getElementById('plot');
-  if(!c)return;
-  const ctx=c.getContext('2d');
-  ctx.clearRect(0,0,c.width,c.height);
-  if(!pts || !pts.length)return;
-
-  const showBear=document.getElementById('trShowBearings')?.checked ?? false;
-  const showDist=document.getElementById('trShowDistances')?.checked ?? false;
-  const showPts=document.getElementById('trShowPoints')?.checked ?? true;
-  const showCoords=document.getElementById('trShowCoords')?.checked ?? false;
-  const zoom=window.__traverseZoom || 1;
-  const panX=window.__traversePanX || 0;
-  const panY=window.__traversePanY || 0;
-
-  const es=pts.map(p=>p[0]), ns=pts.map(p=>p[1]);
-  const minE=Math.min(...es),maxE=Math.max(...es),minN=Math.min(...ns),maxN=Math.max(...ns);
-  const rangeE=Math.max(1,maxE-minE),rangeN=Math.max(1,maxN-minN);
-  const base=Math.min((c.width-80)/rangeE,(c.height-80)/rangeN);
-  const scale=base*zoom;
-  const midE=(minE+maxE)/2,midN=(minN+maxN)/2;
-  const px=e=>c.width/2+panX+(e-midE)*scale;
-  const py=n=>c.height/2+panY-(n-midN)*scale;
-
-  ctx.strokeStyle='#1769aa';ctx.lineWidth=3;ctx.lineJoin='round';ctx.lineCap='round';
-  ctx.beginPath();
-  pts.forEach((p,i)=>{
-    const x=px(p[0]),y=py(p[1]);
-    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
-  });
-  ctx.stroke();
-
-  if(showPts){
-    const pointFont=Math.min(28,Math.max(10,12*zoom));
-    ctx.font=`bold ${pointFont}px Arial`;
-    ctx.textAlign='left';ctx.textBaseline='middle';
-
-    pts.forEach((p,i)=>{
-      const x=px(p[0]),y=py(p[1]);
-      ctx.fillStyle='#1769aa';
-      ctx.beginPath();ctx.arc(x,y,Math.max(4,5*zoom),0,Math.PI*2);ctx.fill();
-
-      const label=String(i+1),w=ctx.measureText(label).width;
-      const h=Math.max(18,pointFont+6);
-      ctx.fillStyle='rgba(255,255,255,.96)';
-      ctx.fillRect(x+8*zoom,y-h/2,w+8*zoom,h);
-      ctx.fillStyle='#17212b';
-      ctx.fillText(label,x+11*zoom,y);
-    });
-  }
-
-  if(showCoords){
-    const coordFont=Math.min(24,Math.max(8,10*zoom));
-    ctx.font=`${coordFont}px Arial`;
-    ctx.textAlign='left';ctx.textBaseline='top';
-    pts.forEach((p,i)=>{
-      const x=px(p[0]),y=py(p[1]);
-      const text=`E ${p[0].toFixed(3)}  N ${p[1].toFixed(3)}`;
-      const w=ctx.measureText(text).width;
-      const h=coordFont+8;
-      const ox=10*zoom, oy=10*zoom;
-      ctx.fillStyle='rgba(255,255,255,.96)';
-      ctx.fillRect(x+ox,y+oy,w+8*zoom,h);
-      ctx.strokeStyle='#d5dce4';ctx.lineWidth=1;
-      ctx.strokeRect(x+ox,y+oy,w+8*zoom,h);
-      ctx.fillStyle='#374151';
-      ctx.fillText(text,x+ox+4*zoom,y+oy+4*zoom);
-    });
-  }
-
-  if(showBear||showDist){
-    const labelFont=Math.min(30,Math.max(9,11*zoom));
-    ctx.font=`${labelFont}px Arial`;
-    ctx.textAlign='center';ctx.textBaseline='middle';
-
-    for(let i=0;i<pts.length-1;i++){
-      const a=pts[i],b=pts[i+1];
-      const de=b[0]-a[0],dn=b[1]-a[1],len=Math.hypot(de,dn);
-      if(!len)continue;
-
-      const parts=[];
-      if(showBear)parts.push(dms((Math.atan2(de,dn)*180/Math.PI+360)%360));
-      if(showDist)parts.push(len.toFixed(3)+' m');
-
-      const x1=px(a[0]),y1=py(a[1]),x2=px(b[0]),y2=py(b[1]);
-      const mx=(x1+x2)/2,my=(y1+y2)/2;
-      const screenLen=Math.hypot(x2-x1,y2-y1)||1;
-      const side=i%2===0?1:-1;
-      const offset=18*zoom;
-      const offX=(-(y2-y1)/screenLen)*offset*side;
-      const offY=((x2-x1)/screenLen)*offset*side;
-      const text=parts.join('  •  ');
-      const w=ctx.measureText(text).width;
-      const h=Math.max(20,labelFont+10);
-      const x=mx+offX,y=my+offY;
-
-      ctx.fillStyle='rgba(255,255,255,.96)';
-      ctx.fillRect(x-w/2-6*zoom,y-h/2,w+12*zoom,h);
-      ctx.strokeStyle='#d5dce4';ctx.lineWidth=1;
-      ctx.strokeRect(x-w/2-6*zoom,y-h/2,w+12*zoom,h);
-      ctx.fillStyle='#374151';
-      ctx.fillText(text,x,y);
-    }
-  }
-
-  ctx.strokeStyle='#111827';ctx.fillStyle='#111827';ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.moveTo(c.width-35,48);ctx.lineTo(c.width-35,18);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(c.width-35,18);ctx.lineTo(c.width-40,27);ctx.lineTo(c.width-30,27);ctx.closePath();ctx.fill();
-  ctx.font='bold 11px Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  ctx.fillText('N',c.width-35,13);
-}
-
-let qcLineNo=0;
 function addQuickCloseLine(bearing="90d00'00\"",distance="50"){
   qcLineNo++;
   const tr=document.createElement('tr');
@@ -1241,148 +1016,6 @@ function drawQuickClose(pts){
   ctx.beginPath();ctx.moveTo(c.width-55,65);ctx.lineTo(c.width-55,105);ctx.stroke();
   ctx.beginPath();ctx.moveTo(c.width-55,65);ctx.lineTo(c.width-61,77);ctx.moveTo(c.width-55,65);ctx.lineTo(c.width-49,77);ctx.stroke();
   ctx.fillStyle='#17212b';ctx.font='12px Arial';ctx.fillText('N',c.width-61,55);
-}
-
-let areaLineNo=0;
-
-function addAreaLine(bearing="90d00'00\"",distance="50"){
-  areaLineNo++;
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td>${areaLineNo}</td>
-    <td><input class="abearing"></td>
-    <td><input class="adistance"></td>
-    <td class="aendE">—</td>
-    <td class="aendN">—</td>
-    <td><button class="btn danger" onclick="this.closest('tr').remove()">×</button></td>`;
-  tr.querySelector('.abearing').value=bearing;
-  tr.querySelector('.adistance').value=distance;
-  document.getElementById('areaBody').appendChild(tr);
-}
-
-function clearAreaLines(){
-  areaBody.innerHTML='';
-  areaLineNo=0;
-  bearingAreaOut.textContent='—';
-  bearingPeriOut.textContent='—';
-  bearingMiscloseOut.textContent='—';
-  bearingRatioOut.textContent='—';
-  areaStatus.textContent='Enter the boundary bearings and distances, then calculate.';
-  drawAreaPlot([]);
-}
-
-function calcBearingArea(){
-  let e=parseFloat(aeStart.value)||0;
-  let n=parseFloat(anStart.value)||0;
-  const startE=e, startN=n;
-  const rows=[...document.querySelectorAll('#areaBody tr')];
-  const pts=[[e,n]];
-  let perimeter=0;
-
-  for(let i=0;i<rows.length;i++){
-    const r=rows[i];
-    const b=parseDMS(r.querySelector('.abearing').value);
-    const d=Number(r.querySelector('.adistance').value);
-
-    if(!Number.isFinite(b) || !Number.isFinite(d) || d<0){
-      areaStatus.textContent=`Invalid bearing or distance on line ${i+1}.`;
-      areaStatus.className='status warn';
-      bearingAreaOut.textContent='—';
-      bearingMiscloseOut.textContent='—';
-      bearingRatioOut.textContent='—';
-      return;
-    }
-
-    const rad=b*Math.PI/180;
-    e += d*Math.sin(rad);
-    n += d*Math.cos(rad);
-    perimeter += d;
-
-    r.querySelector('.aendE').textContent=e.toFixed(3);
-    r.querySelector('.aendN').textContent=n.toFixed(3);
-    pts.push([e,n]);
-  }
-
-  if(rows.length<3){
-    areaStatus.textContent='At least 3 boundary lines are required.';
-    areaStatus.className='status warn';
-    return;
-  }
-
-  // Shoelace area using internally calculated coordinates.
-  let twiceArea=0;
-  for(let i=0;i<pts.length-1;i++){
-    twiceArea += pts[i][0]*pts[i+1][1] - pts[i+1][0]*pts[i][1];
-  }
-
-  // Include the closing segment back to the start.
-  twiceArea += pts[pts.length-1][0]*startN - startE*pts[pts.length-1][1];
-
-  const area=Math.abs(twiceArea/2);
-  let closeE=e-startE;
-  let closeN=n-startN;
-  // Remove floating-point noise from exact closures (e.g. sin(90°) / cos(90°).
-  if(Math.abs(closeE)<1e-9) closeE=0;
-  if(Math.abs(closeN)<1e-9) closeN=0;
-  const misclose=Math.hypot(closeE,closeN);
-  const ratio=misclose>0 ? perimeter/misclose : Infinity;
-
-  bearingAreaOut.textContent=area.toFixed(3)+' m²';
-  bearingPeriOut.textContent=perimeter.toFixed(3)+' m';
-  bearingMiscloseOut.textContent=misclose.toFixed(3)+' m';
-  bearingRatioOut.textContent=misclose<0.0005?'CLOSED':`1 : ${Math.round(ratio).toLocaleString()}`;
-
-  // A land boundary does not need to close mathematically before an area
-  // can be calculated. The area is calculated from the entered traverse and
-  // the straight closing line back to the starting point. The misclose and
-  // closure ratio are reported separately for checking.
-  if(misclose < 0.005){
-    areaStatus.textContent=`✓ Area calculated. Traverse closes within ${misclose.toFixed(3)} m.`;
-    areaStatus.className='status ok';
-  }else{
-    areaStatus.textContent=`Area calculated. Traverse misclose: ${misclose.toFixed(3)} m (ΔE ${closeE.toFixed(3)} m, ΔN ${closeN.toFixed(3)} m).`;
-    areaStatus.className='status';
-  }
-
-  drawAreaPlot(pts);
-}
-
-function drawAreaPlot(pts){
-  const c=document.getElementById('areaPlot');
-  const ctx=c.getContext('2d');
-  ctx.clearRect(0,0,c.width,c.height);
-
-  if(!pts.length)return;
-
-  const es=pts.map(p=>p[0]);
-  const ns=pts.map(p=>p[1]);
-  const minE=Math.min(...es),maxE=Math.max(...es);
-  const minN=Math.min(...ns),maxN=Math.max(...ns);
-  const sx=(c.width-70)/Math.max(1,maxE-minE);
-  const sy=(c.height-70)/Math.max(1,maxN-minN);
-  const scale=Math.min(sx,sy);
-  const ox=35-minE*scale;
-  const oy=35+maxN*scale;
-
-  ctx.beginPath();
-  pts.forEach((p,i)=>{
-    const px=ox+p[0]*scale;
-    const py=oy-p[1]*scale;
-    i?ctx.lineTo(px,py):ctx.moveTo(px,py);
-  });
-  ctx.closePath();
-  ctx.strokeStyle='#4ade80';
-  ctx.lineWidth=3;
-  ctx.stroke();
-
-  pts.forEach((p,i)=>{
-    const px=ox+p[0]*scale;
-    const py=oy-p[1]*scale;
-    ctx.fillStyle='#fff';
-    ctx.beginPath();
-    ctx.arc(px,py,4,0,Math.PI*2);
-    ctx.fill();
-    ctx.fillText(i===pts.length-1?'END':i===0?'START':i,px+7,py-7);
-  });
 }
 
 function calcArc(){let r=num('ar'),a=num('aa')*Math.PI/180;al.textContent=(r*a).toFixed(3)+' m';ac.textContent=(2*r*Math.sin(a/2)).toFixed(3)+' m';as.textContent=(r*(1-Math.cos(a/2))).toFixed(3)+' m';arad.textContent=a.toFixed(6)}
@@ -1677,9 +1310,7 @@ document.addEventListener('keydown', function(e){
   if(e.key === 'Enter' && !e.ctrlKey && !e.altKey && !e.metaKey){
     if(tag === 'input'){
       e.preventDefault();
-      if(id === 'traverse') calcTraverse();
-      else if(id === 'misclose') calcQuickClose();
-      else if(id === 'area') calcBearingArea();
+      if(id === 'misclose') calcQuickClose();
       else if(id === 'coords') calcCoords();
       else if(id === 'bd') calcBD();
       else if(id === 'scale') calcScale();
@@ -1689,34 +1320,15 @@ document.addEventListener('keydown', function(e){
     return;
   }
 
-  // Ctrl+Enter = add a new traverse line and focus its bearing.
+  // Ctrl+Enter = add a new Quick Close line and focus its bearing.
   if(e.key === 'Enter' && e.ctrlKey && !e.altKey && !e.metaKey){
-    if(id === 'traverse' || id === 'misclose' || id === 'area'){
+    if(id === 'misclose'){
       e.preventDefault();
-      let body, addFn, selector;
-      if(id === 'traverse'){
-        body = document.getElementById('trBody');
-        addFn = addLine;
-        selector = '.tb';
-      } else if(id === 'misclose'){
-        body = document.getElementById('qcBody');
-        addFn = addQuickCloseLine;
-        selector = '.qcbearing';
-      } else {
-        body = document.getElementById('areaBody');
-        addFn = addAreaLine;
-        selector = '.abearing';
-      }
-      addFn();
-      const rows = body.querySelectorAll('tr');
+      addQuickCloseLine();
+      const rows = document.getElementById('qcBody').querySelectorAll('tr');
       const last = rows[rows.length - 1];
-      if(last){
-        const input = last.querySelector(selector);
-        if(input){
-          input.focus();
-          input.select();
-        }
-      }
+      const input = last && last.querySelector('.qcbearing');
+      if(input){input.focus();input.select();}
     }
     return;
   }
@@ -1730,17 +1342,14 @@ document.addEventListener('keydown', function(e){
     return;
   }
 
-  // Delete removes the currently focused traverse line.
+  // Delete removes the currently focused Quick Close line.
   if(e.key === 'Delete' && tag === 'input'){
     let row = el.closest('tr');
     if(row){
       const body = row.parentElement;
-      const isTraverseRow =
-        (id === 'traverse' && body && body.id === 'trBody') ||
-        (id === 'misclose' && body && body.id === 'qcBody') ||
-        (id === 'area' && body && body.id === 'areaBody');
+      const isQuickCloseRow = id === 'misclose' && body && body.id === 'qcBody';
 
-      if(isTraverseRow){
+      if(isQuickCloseRow){
         e.preventDefault();
         row.remove();
 
@@ -1749,16 +1358,14 @@ document.addEventListener('keydown', function(e){
           if(r.cells[0]) r.cells[0].textContent = i + 1;
         });
 
-        if(id === 'traverse') lineNo = body.querySelectorAll('tr').length;
         if(id === 'misclose') qcLineNo = body.querySelectorAll('tr').length;
-        if(id === 'area') areaLineNo = body.querySelectorAll('tr').length;
       }
     }
   }
 });
 
 const units={metres:1,millimetres:.001,kilometres:1000,feet:.3048,chains:20.1168};function convert(){let v=num('cv'),a=document.getElementById('cf').value,b=document.getElementById('ct').value;co.textContent=(v*units[a]/units[b]).toFixed(6)+' '+b}
-for(let i=0;i<4;i++)addLine();addAreaLine('90d00\'00\"','50');addAreaLine('180d00\'00\"','30');addAreaLine('270d00\'00\"','50');addAreaLine('0d00\'00\"','30');calcCoords();addQuickCloseLine('90d00\'00\"','50');addQuickCloseLine('180d00\'00\"','30');addQuickCloseLine('270d00\'00\"','50');calcQuickClose();calcBearingArea();strataInit();renderSavedJobs();
+calcCoords();addQuickCloseLine('90d00\'00\"','50');addQuickCloseLine('180d00\'00\"','30');addQuickCloseLine('270d00\'00\"','50');calcQuickClose();strataInit();renderSavedJobs();
 
 // Explicit Shortcuts navigation handler.
 document.addEventListener('DOMContentLoaded', function(){
@@ -1783,107 +1390,7 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 
-window.__traverseZoom=1;
-window.__traversePanX=0;
-window.__traversePanY=0;
 
-function zoomPlan(factor){
-  const old=window.__traverseZoom||1;
-  window.__traverseZoom=Math.max(0.25,Math.min(12,old*factor));
-  calcTraverse();
-}
-
-function fitPlan(){
-  window.__traverseZoom=1;
-  window.__traversePanX=0;
-  window.__traversePanY=0;
-  calcTraverse();
-}
-
-window.__traversePanX = window.__traversePanX || 0;
-window.__traversePanY = window.__traversePanY || 0;
-
-window.addEventListener('DOMContentLoaded',function(){
-  const canvas=document.getElementById('plot');
-  if(!canvas)return;
-
-  // Desktop: wheel zoom + drag. iPhone/iPad: one-finger pan + two-finger pinch zoom.
-  const pointers=new Map();
-  let dragging=false,lastX=0,lastY=0;
-  let pinchStartDist=0,pinchStartZoom=1,pinchMidX=0,pinchMidY=0;
-
-  function dist(a,b){return Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)}
-  function mid(a,b){return {x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2}}
-
-  canvas.addEventListener('pointerdown',function(e){
-    pointers.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});
-    try{canvas.setPointerCapture(e.pointerId)}catch(_){}
-    if(pointers.size===1){
-      dragging=true; lastX=e.clientX; lastY=e.clientY;
-      canvas.classList.add('dragging');
-    } else if(pointers.size===2){
-      const ps=[...pointers.values()];
-      pinchStartDist=dist(ps[0],ps[1]);
-      pinchStartZoom=window.__traverseZoom||1;
-      const m=mid(ps[0],ps[1]); pinchMidX=m.x; pinchMidY=m.y;
-      dragging=false;
-    }
-    e.preventDefault();
-  });
-
-  canvas.addEventListener('pointermove',function(e){
-    if(!pointers.has(e.pointerId))return;
-    pointers.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});
-    const ps=[...pointers.values()];
-    const rect=canvas.getBoundingClientRect();
-    const sx=canvas.width/rect.width, sy=canvas.height/rect.height;
-
-    if(ps.length>=2){
-      const d=dist(ps[0],ps[1]);
-      if(pinchStartDist>0){
-        const z=Math.max(.25,Math.min(12,pinchStartZoom*(d/pinchStartDist)));
-        window.__traverseZoom=z;
-        // Keep the pinch centre visually stable while zooming.
-        const m=mid(ps[0],ps[1]);
-        window.__traversePanX += (m.x-pinchMidX)*sx;
-        window.__traversePanY += (m.y-pinchMidY)*sy;
-        pinchMidX=m.x; pinchMidY=m.y;
-        calcTraverse();
-      }
-      e.preventDefault();
-      return;
-    }
-
-    if(dragging && ps.length===1){
-      window.__traversePanX += (e.clientX-lastX)*sx;
-      window.__traversePanY += (e.clientY-lastY)*sy;
-      lastX=e.clientX; lastY=e.clientY;
-      calcTraverse();
-      e.preventDefault();
-    }
-  });
-
-  function endPointer(e){
-    pointers.delete(e.pointerId);
-    if(pointers.size<2){pinchStartDist=0}
-    if(pointers.size===1){
-      const p=[...pointers.values()][0]; lastX=p.clientX; lastY=p.clientY; dragging=true;
-    } else {dragging=false;canvas.classList.remove('dragging')}
-    try{canvas.releasePointerCapture(e.pointerId)}catch(_){}
-  }
-  canvas.addEventListener('pointerup',endPointer);
-  canvas.addEventListener('pointercancel',endPointer);
-
-  canvas.addEventListener('wheel',function(e){
-    e.preventDefault();
-    zoomPlan(e.deltaY<0 ? 1.12 : 1/1.12);
-  },{passive:false});
-
-  ['trShowBearings','trShowDistances','trShowPoints','trShowCoords'].forEach(function(id){
-    const el=document.getElementById(id);
-    if(el)el.addEventListener('change',calcTraverse);
-  });
-});
 </script>
 
 <script id="v7-enhancements">
@@ -1895,102 +1402,27 @@ const _lqc=loadQuickCloseJob;loadQuickCloseJob=function(id){_lqc(id);const j=get
 const _qcn=quickCloseNewJob;quickCloseNewJob=function(){_qcn();document.getElementById('qcProject').value='';document.getElementById('qcAddress').value='';v7DateDefault('qcDate')}
 const _rsj=renderSavedJobs;renderSavedJobs=function(){const list=document.getElementById('savedJobsList');if(!list)return;const q=(document.getElementById('jobSearch')?.value||'').toLowerCase().trim();let jobs=getStrataJobs();if(window.__jobFilter!=='all')jobs=jobs.filter(j=>j.type===window.__jobFilter);jobs=jobs.filter(j=>[j.name,j.project,j.address,j.jobNumber,j.type].join(' ').toLowerCase().includes(q));jobs.sort((a,b)=>new Date(b.updated||b.created||0)-new Date(a.updated||a.created||0));const count=document.getElementById('jobsCount');if(count)count.textContent=`${jobs.length} saved job${jobs.length===1?'':'s'}`;if(!jobs.length){list.innerHTML='<div class="jobs-empty">No matching jobs. Save a Quick Close or Strata job and it will appear here.</div>';return}list.innerHTML=jobs.map(j=>{const when=j.updated?new Date(j.updated).toLocaleString():'Not yet updated';if(j.type==='quickclose'){const lines=(j.lines||[]).length;return `<div class="saved-job"><div class="saved-job-info"><div class="saved-job-title">🔒 ${escapeHtml(j.name||('Quick Close — '+(j.jobNumber||'')))}</div><div class="saved-job-meta">Job ${escapeHtml(j.jobNumber||'—')} · ${lines} line(s)${j.project?' · '+escapeHtml(j.project):''}${j.address?' · '+escapeHtml(j.address):''} · ${escapeHtml(when)}</div></div><div class="saved-job-actions"><button class="btn primary" onclick="loadQuickCloseJob('${j.id}')">Open</button><button class="btn secondary" onclick="renameQuickCloseJob('${j.id}')">Rename</button><button class="btn danger" onclick="deleteStrataJob('${j.id}')">Delete</button></div></div>`}const units=(j.units||[]).length;return `<div class="saved-job"><div class="saved-job-info"><div class="saved-job-title">▦ ${escapeHtml(j.name||'Strata Job')}</div><div class="saved-job-meta">${escapeHtml(j.project||'No project')} · ${escapeHtml(j.address||'No address')} · ${units} unit(s) · ${escapeHtml(when)}</div></div><div class="saved-job-actions"><button class="btn primary" onclick="loadStrataJob('${j.id}')">Open</button><button class="btn secondary" onclick="renameStrataJob('${j.id}')">Rename</button><button class="btn danger" onclick="deleteStrataJob('${j.id}')">Delete</button></div></div>`}).join('')}
 const _cqc2=calcQuickClose;calcQuickClose=function(){_cqc2();const b=document.getElementById('qcCloseBanner'),be=document.getElementById('qcBearing')?.textContent||'—',di=document.getElementById('qcDistance')?.textContent||'—';if(!b)return;if(be==='—'||di==='—'){b.className='close-banner';b.textContent='Calculate the close to see the closing line.'}else{b.className='close-banner ok';b.textContent=`Closing line: ${be} for ${di} back to the starting point.`}}
-const __plan={traverse:{z:1,x:0,y:0,p:[],sel:null},qc:{z:1,x:0,y:0,p:[],sel:null},area:{z:1,x:0,y:0,p:[],sel:null}};
-function pc(k){return document.getElementById(k==='traverse'?'plot':k==='qc'?'qcPlot':'areaPlot')}
-function fieldPlanZoom(k,f){__plan[k].z=Math.max(.25,Math.min(12,__plan[k].z*f));redraw(k)}function fieldPlanFit(k){__plan[k].z=1;__plan[k].x=0;__plan[k].y=0;__plan[k].sel=null;redraw(k)}function niceStep(r){if(!isFinite(r)||r<=0)return 1;const p=10**Math.floor(Math.log10(r)),n=r/p;return (n<=1?1:n<=2?2:n<=5?5:10)*p}
-function drawField(k,pts){const c=pc(k);if(!c)return;const st=__plan[k];st.p=pts||[];const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);if(!pts?.length){north(ctx,c);return}const es=pts.map(p=>p[0]),ns=pts.map(p=>p[1]),miE=Math.min(...es),maE=Math.max(...es),miN=Math.min(...ns),maN=Math.max(...ns),scale=Math.min((c.width-140)/Math.max(1,maE-miE),(c.height-140)/Math.max(1,maN-miN))*st.z,midE=(miE+maE)/2,midN=(miN+maN)/2,px=e=>c.width/2+st.x+(e-midE)*scale,py=n=>c.height/2+st.y-(n-midN)*scale;grid(ctx,c,st);ctx.beginPath();pts.forEach((p,i)=>{const X=px(p[0]),Y=py(p[1]);i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)});if(k==='area'&&pts.length>2)ctx.closePath();ctx.strokeStyle=k==='area'?'#18864b':'#1677c8';ctx.lineWidth=3;ctx.lineJoin='round';ctx.stroke();if(k==='area'&&pts.length>2){ctx.globalAlpha=.07;ctx.fillStyle='#18864b';ctx.fill();ctx.globalAlpha=1}if(k==='qc'&&pts.length>2){const a=pts[pts.length-2],b=pts[pts.length-1];ctx.save();ctx.setLineDash([8,6]);ctx.strokeStyle='#18864b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(px(a[0]),py(a[1]));ctx.lineTo(px(b[0]),py(b[1]));ctx.stroke();ctx.restore()}pts.forEach((p,i)=>{const X=px(p[0]),Y=py(p[1]);ctx.fillStyle=k==='qc'&&i===pts.length-1?'#18864b':'#17212b';ctx.beginPath();ctx.arc(X,Y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17212b';ctx.font='bold 11px Arial';ctx.textAlign='left';ctx.fillText(i===0?'START':(k==='qc'&&i===pts.length-1?'CLOSE':i),X+8,Y-8)});north(ctx,c);scalebar(ctx,c,scale);readout(k,st.sel||pts[0])}
+const __plan={qc:{z:1,x:0,y:0,p:[],sel:null}};
+function pc(){return document.getElementById('qcPlot')}
+function niceStep(r){if(!isFinite(r)||r<=0)return 1;const p=10**Math.floor(Math.log10(r)),n=r/p;return (n<=1?1:n<=2?2:n<=5?5:10)*p}
+function drawField(k,pts){const c=pc(k);if(!c)return;const st=__plan[k];st.p=pts||[];const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);if(!pts?.length){north(ctx,c);return}const es=pts.map(p=>p[0]),ns=pts.map(p=>p[1]),miE=Math.min(...es),maE=Math.max(...es),miN=Math.min(...ns),maN=Math.max(...ns),scale=Math.min((c.width-140)/Math.max(1,maE-miE),(c.height-140)/Math.max(1,maN-miN))*st.z,midE=(miE+maE)/2,midN=(miN+maN)/2,px=e=>c.width/2+st.x+(e-midE)*scale,py=n=>c.height/2+st.y-(n-midN)*scale;grid(ctx,c,st);ctx.beginPath();pts.forEach((p,i)=>{const X=px(p[0]),Y=py(p[1]);i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)});ctx.strokeStyle='#1677c8';ctx.lineWidth=3;ctx.lineJoin='round';ctx.stroke();if(k==='qc'&&pts.length>2){const a=pts[pts.length-2],b=pts[pts.length-1];ctx.save();ctx.setLineDash([8,6]);ctx.strokeStyle='#18864b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(px(a[0]),py(a[1]));ctx.lineTo(px(b[0]),py(b[1]));ctx.stroke();ctx.restore()}pts.forEach((p,i)=>{const X=px(p[0]),Y=py(p[1]);ctx.fillStyle=k==='qc'&&i===pts.length-1?'#18864b':'#17212b';ctx.beginPath();ctx.arc(X,Y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17212b';ctx.font='bold 11px Arial';ctx.textAlign='left';ctx.fillText(i===0?'START':(k==='qc'&&i===pts.length-1?'CLOSE':i),X+8,Y-8)});north(ctx,c);scalebar(ctx,c,scale);readout(k,st.sel||pts[0])}
 function grid(ctx,c,st){ctx.strokeStyle='#e9eef2';ctx.lineWidth=1;const g=55;for(let x=c.width/2+(st.x%g);x<c.width;x+=g){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke()}for(let x=c.width/2+(st.x%g);x>0;x-=g){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke()}for(let y=c.height/2+(st.y%g);y<c.height;y+=g){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke()}for(let y=c.height/2+(st.y%g);y>0;y-=g){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke()}}
 function north(ctx,c){const x=c.width-38,y=36;ctx.strokeStyle='#17212b';ctx.fillStyle='#17212b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y+25);ctx.lineTo(x,y);ctx.stroke();ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-6,y+10);ctx.lineTo(x+6,y+10);ctx.closePath();ctx.fill();ctx.font='bold 11px Arial';ctx.textAlign='center';ctx.fillText('N',x,y-7)}
 function scalebar(ctx,c,scale){const m=niceStep(110/Math.max(scale,.0001)),px=m*scale,x=16,y=c.height-20;ctx.strokeStyle='#17212b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+px,y);ctx.moveTo(x,y-5);ctx.lineTo(x,y+5);ctx.moveTo(x+px,y-5);ctx.lineTo(x+px,y+5);ctx.stroke();ctx.font='10px Arial';ctx.textAlign='left';ctx.fillStyle='#17212b';ctx.fillText(`${m>=1000?(m/1000).toFixed(1)+' km':m.toFixed(m<1?2:0)+' m'}`,x,y-8)}
 function readout(k,p){const c=pc(k);let b=c.parentElement.querySelector('.plan-readout');if(!b){b=document.createElement('div');b.className='plan-readout';c.parentElement.appendChild(b)}b.textContent=p?`E ${p[0].toFixed(3)} · N ${p[1].toFixed(3)}`:'Tap a point for coordinates'}
-function redraw(k){if(k==='traverse')draw(__plan[k].p);else if(k==='qc')drawQuickClose(__plan[k].p);else drawAreaPlot(__plan[k].p)}
-function draw(pts){drawField('traverse',pts)}function drawQuickClose(pts){drawField('qc',pts)}function drawAreaPlot(pts){drawField('area',pts)}
+function redraw(){drawQuickClose(__plan.qc.p)}
+function drawQuickClose(pts){drawField('qc',pts)}
 function attachPlan(k){const c=pc(k);if(!c||c.__v7)return;c.__v7=1;const st=__plan[k],ps=new Map();let drag=false,lx=0,ly=0,pinch=0,pz=1;c.style.touchAction='none';const dist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);c.addEventListener('pointerdown',e=>{ps.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});if(ps.size===1){drag=true;lx=e.clientX;ly=e.clientY}else if(ps.size===2){const a=[...ps.values()];pinch=dist(a[0],a[1]);pz=st.z;drag=false}e.preventDefault()});c.addEventListener('pointermove',e=>{if(!ps.has(e.pointerId))return;ps.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});const a=[...ps.values()],r=c.getBoundingClientRect(),sx=c.width/r.width,sy=c.height/r.height;if(a.length>=2&&pinch){st.z=Math.max(.25,Math.min(12,pz*(dist(a[0],a[1])/pinch)));redraw(k);e.preventDefault()}else if(drag&&a.length===1){st.x+=(e.clientX-lx)*sx;st.y+=(e.clientY-ly)*sy;lx=e.clientX;ly=e.clientY;redraw(k);e.preventDefault()}});c.addEventListener('pointerup',e=>{ps.delete(e.pointerId);if(ps.size===0){drag=false;const r=c.getBoundingClientRect(),x=(e.clientX-r.left)*(c.width/r.width),y=(e.clientY-r.top)*(c.height/r.height),pts=st.p;if(pts.length){let es=pts.map(p=>p[0]),ns=pts.map(p=>p[1]),miE=Math.min(...es),maE=Math.max(...es),miN=Math.min(...ns),maN=Math.max(...ns),scale=Math.min((c.width-140)/Math.max(1,maE-miE),(c.height-140)/Math.max(1,maN-miN))*st.z,best=null,bd=25;pts.forEach(p=>{const X=c.width/2+st.x+(p[0]-(miE+maE)/2)*scale,Y=c.height/2+st.y-(p[1]-(miN+maN)/2)*scale,d=Math.hypot(X-x,Y-y);if(d<bd){bd=d;best=p}});if(best){st.sel=best;redraw(k)}}}if(ps.size<2)pinch=0});c.addEventListener('wheel',e=>{e.preventDefault();st.z=Math.max(.25,Math.min(12,st.z*(e.deltaY<0?1.12:1/1.12)));redraw(k)},{passive:false})}
-window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan);v7DateDefault('qcDate');renderSavedJobs()});
+window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');renderSavedJobs()});
 </script>
 
 
 <script src="./v8-workspace.js"></script>
 
-<!-- v8.2 traverse reliability patch -->
-<script id="v8-2-traverse-fix">
-(function(){
-  function addTraverseLine(){
-    if(typeof window.addLine==='function') window.addLine();
-    var rows=document.querySelectorAll('#trBody tr');
-    var last=rows[rows.length-1];
-    if(last){
-      var input=last.querySelector('.tb');
-      if(input){input.focus();input.select();}
-    }
-  }
-
-  function calculateTraverse(){
-    var eEl=document.getElementById('te');
-    var nEl=document.getElementById('tn');
-    var body=document.getElementById('trBody');
-    var status=document.getElementById('trStatus');
-    if(!eEl || !nEl || !body || !status) return;
-
-    var e=parseFloat(eEl.value);
-    var n=parseFloat(nEl.value);
-    if(!Number.isFinite(e)) e=0;
-    if(!Number.isFinite(n)) n=0;
-
-    var rows=Array.from(body.querySelectorAll('tr'));
-    var pts=[[e,n]];
-
-    for(var i=0;i<rows.length;i++){
-      var row=rows[i];
-      var bearingInput=row.querySelector('.tb');
-      var distanceInput=row.querySelector('.td');
-      var endE=row.querySelector('.teo');
-      var endN=row.querySelector('.tno');
-      var bearing=typeof window.parseDMS==='function' ? window.parseDMS(bearingInput ? bearingInput.value : '') : NaN;
-      var distance=parseFloat(distanceInput ? distanceInput.value : '');
-
-      if(!Number.isFinite(bearing)){
-        if(status) status.textContent='Invalid bearing on line '+(i+1)+'. Use DMS such as 90d00\'00\".';
-        if(endE) endE.textContent='—';
-        if(endN) endN.textContent='—';
-        return;
-      }
-      if(!Number.isFinite(distance)) distance=0;
-
-      var rad=bearing*Math.PI/180;
-      e += distance*Math.sin(rad);
-      n += distance*Math.cos(rad);
-      if(endE) endE.textContent=e.toFixed(3);
-      if(endN) endN.textContent=n.toFixed(3);
-      pts.push([e,n]);
-    }
-
-    status.textContent=rows.length
-      ? 'Traverse endpoint: E '+e.toFixed(3)+', N '+n.toFixed(3)+'. '+rows.length+' line(s) calculated.'
-      : 'Add lines first.';
-
-    if(typeof window.draw==='function') window.draw(pts);
-  }
-
-  window.addTraverseLine=addTraverseLine;
-  window.calculateTraverse=calculateTraverse;
-  // Keep the existing API used elsewhere in the app, but make it point at
-  // this reliable implementation.
-  window.calcTraverse=calculateTraverse;
-
-  window.addEventListener('load',function(){
-    // Re-run once the iPhone layout and all scripts are loaded.
-    setTimeout(calculateTraverse,0);
-  });
-})();
-</script>
-
 <!-- iPhone PWA navigation -->
 <nav id="iphoneNav" aria-label="Surveyor Toolbox">
   <button data-target="coords" onclick="iphoneShow('coords',this)"><span class="ico">📐</span>B&D</button>
-  <button data-target="traverse" onclick="iphoneShow('traverse',this)"><span class="ico">↗</span>Traverse</button>
   <button data-target="quick" onclick="iphoneShow('quick',this)"><span class="ico">✓</span>Close</button>
-  <button data-target="area" onclick="iphoneShow('area',this)"><span class="ico">▱</span>Area</button>
   <button data-target="more" onclick="iphoneMoreOpen()"><span class="ico">•••</span>More</button>
 </nav>
 
@@ -2039,15 +1471,14 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
     if(btn) btn.classList.add('active');
   }
   window.iphoneShow = function(id, btn){
-    var map={dashboard:'dashboard',home:'dashboard',bd:'bd',traverse:'traverse',quick:'misclose',area:'area',coords:'coords',jobs:'jobs',strata:'strata',scale:'scale',convert:'convert',points:'points'};
+    var map={dashboard:'dashboard',home:'dashboard',bd:'bd',quick:'misclose',coords:'coords',jobs:'jobs',strata:'strata',scale:'scale',convert:'convert',points:'points'};
     var targetId=map[id] || id;
     document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
     var el=document.getElementById(targetId);
     if(el) el.classList.add('active');
-    setActive(document.querySelector('#iphoneNav button[data-target="'+(map[id]||'')+'"]'));
-    if(targetId==='traverse' && typeof window.calcTraverse==='function') window.calcTraverse();
+    var activeTarget=(id==='quick'||id==='misclose')?'quick':(map[id]||'');
+    setActive(document.querySelector('#iphoneNav button[data-target="'+activeTarget+'"]'));
     if(targetId==='misclose' && typeof window.calcQuickClose==='function') window.calcQuickClose();
-    if(targetId==='area' && typeof window.calcBearingArea==='function') window.calcBearingArea();
     window.scrollTo({top:0,behavior:'smooth'});
   };
   window.iphoneMoreOpen = function(){
@@ -2128,8 +1559,8 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
   const navShow=window.iphoneShow;
   window.iphoneShow=function(id,btn){
     navShow(id,btn);
-    const map={dashboard:'dashboard',home:'dashboard',bd:'bd',traverse:'traverse',quick:'misclose',area:'area',coords:'coords',jobs:'jobs',strata:'strata',scale:'scale',convert:'convert',points:'points'};
-    const target=map[id]||id;
+    const map={dashboard:'dashboard',home:'dashboard',bd:'bd',quick:'misclose',coords:'coords',jobs:'jobs',strata:'strata',scale:'scale',convert:'convert',points:'points'};
+    const target=(id==='quick'||id==='misclose')?'quick':(map[id]||id);
     document.querySelectorAll('#iphoneNav button').forEach(b=>b.classList.remove('active'));
     const direct=document.querySelector('#iphoneNav button[data-target="'+target+'"]');
     if(direct)direct.classList.add('active');else document.querySelector('#iphoneNav button[data-target="more"]')?.classList.add('active');
@@ -2164,15 +1595,7 @@ window.addEventListener('load',()=>{['traverse','qc','area'].forEach(attachPlan)
   window.usePointAsBD=function(){const p=getPoints().find(x=>x.id===usingPointId);if(!p)return;document.getElementById('be').value=p.e;document.getElementById('bn').value=p.n;closePointUseModal();iphoneShow('bd');calcBD()};
   // Make the current job follow either save workflow.
   const saveQC=window.saveQuickCloseJob;window.saveQuickCloseJob=function(saveAs){saveQC(saveAs);const jobs=getStrataJobs();const candidates=jobs.filter(x=>x.type==='quickclose').sort((a,b)=>new Date(b.updated||b.created||0)-new Date(a.updated||a.created||0));const j=candidates[0];if(j)setCurrentJob({id:j.id,type:'quickclose',name:j.name||('Quick Close — '+(j.jobNumber||''))})};
-  // Strict traverse validation: invalid distance should never silently become zero.
-  window.calculateTraverse=function(){
-    const eEl=document.getElementById('te'),nEl=document.getElementById('tn'),body=document.getElementById('trBody'),status=document.getElementById('trStatus');if(!eEl||!nEl||!body)return;
-    let e=Number(eEl.value),n=Number(nEl.value);if(!Number.isFinite(e)||!Number.isFinite(n)){status.textContent='Enter valid starting Easting and Northing values.';status.className='status warn';return}
-    const rows=[...body.querySelectorAll('tr')],pts=[[e,n]];
-    for(let i=0;i<rows.length;i++){const r=rows[i],b=parseDMS(r.querySelector('.tb')?.value||''),d=Number(r.querySelector('.td')?.value);if(!Number.isFinite(b)||b<0||b>=360||!Number.isFinite(d)||d<0){status.textContent='Invalid bearing or distance on line '+(i+1)+'.';status.className='status warn';r.querySelector('.teo').textContent='—';r.querySelector('.tno').textContent='—';return}const rad=b*Math.PI/180;e+=d*Math.sin(rad);n+=d*Math.cos(rad);r.querySelector('.teo').textContent=e.toFixed(3);r.querySelector('.tno').textContent=n.toFixed(3);pts.push([e,n])}
-    status.textContent=rows.length?'Traverse endpoint: E '+e.toFixed(3)+', N '+n.toFixed(3)+'. '+rows.length+' line(s) calculated.':'Add lines first.';status.className='status'+(rows.length?' ok':'');if(typeof window.draw==='function')window.draw(pts);
-  };
-  window.calcTraverse=window.calculateTraverse;
+
   window.addEventListener('keydown',e=>{if(e.key==='Escape'){closePointModal();closePointUseModal();iphoneMoreClose?.()}});
 })();
 </script>
