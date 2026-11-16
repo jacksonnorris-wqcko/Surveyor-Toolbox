@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="8.8">
+<meta name="app-version" content="8.9">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -876,6 +876,46 @@ canvas{background:#fbfcfa}
 }
 </style>
 
+
+<style id="v8-9-coords-print-css">
+#coords .coords-pointc-fields{grid-template-columns:1fr 1fr 1fr}
+#coords .coords-pointc-fields[hidden]{display:none!important}
+#coords .coords-mark-name{margin-bottom:2px}
+#coordsPrintSheet{display:none}
+#coords .coords-print-button{white-space:nowrap}
+@media(max-width:650px){
+ #coords .coords-pointc-fields{grid-template-columns:1fr}
+}
+@page coordsReport{size:A4 landscape;margin:12mm}
+#coordsPrintSheet{page:coordsReport}
+@media print{
+ body.coords-printing{background:#fff!important;padding:0!important;margin:0!important}
+ body.coords-printing .side,
+ body.coords-printing .topbar,
+ body.coords-printing #iphoneNav,
+ body.coords-printing #iphoneMore,
+ body.coords-printing .app-modal{display:none!important}
+ body.coords-printing .main{margin:0!important;padding:0!important;width:100%!important;max-width:none!important}
+ body.coords-printing .page{display:none!important}
+ body.coords-printing #coords.page.active{display:block!important;width:100%!important;margin:0!important;padding:0!important}
+ body.coords-printing #coords.page.active>:not(#coordsPrintSheet){display:none!important}
+ body.coords-printing #coordsPrintSheet{display:block!important;color:#17212b;background:#fff;font-family:Arial,Helvetica,sans-serif;font-size:10pt}
+ #coordsPrintSheet *{box-sizing:border-box}
+ #coordsPrintSheet .print-title{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #314e45;padding-bottom:7px;margin-bottom:12px}
+ #coordsPrintSheet h1{font-size:18pt;letter-spacing:0;margin:0;color:#233d35}
+ #coordsPrintSheet .print-factor{font-size:9pt;color:#475a53;font-weight:700}
+ #coordsPrintSheet .print-section-title{font-size:9pt;text-transform:uppercase;letter-spacing:.8px;font-weight:700;color:#55665f;margin:10px 0 5px}
+ #coordsPrintSheet table{width:100%;border-collapse:collapse;border:1px solid #cfd8d2;border-radius:0;font-size:9pt}
+ #coordsPrintSheet th{background:#edf2ef!important;color:#40554b!important;border:1px solid #cfd8d2;padding:7px 8px;text-align:left;font-size:8pt;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+ #coordsPrintSheet td{border:1px solid #dce3de;padding:7px 8px;background:#fff!important}
+ #coordsPrintSheet .print-point-name{font-weight:700}
+ #coordsPrintSheet .print-lines td:nth-child(4){font-weight:700;color:#245d45}
+ #coordsPrintSheet .print-diagram-wrap{margin-top:12px;border:1px solid #dce3de;padding:5px 10px;height:330px;break-inside:avoid}
+ #coordsPrintSheet .print-diagram-wrap svg{display:block;width:100%;height:100%}
+ #coordsPrintSheet .print-diagram-caption{font-size:8pt;color:#718078;margin-top:4px}
+}
+</style>
+
 </head>
 <body>
 <div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
@@ -883,7 +923,7 @@ canvas{background:#fbfcfa}
 <aside class="side">
 <div class="logo">
   <span class="logo-mark">⌖</span>
-  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.8</small></span>
+  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.9</small></span>
 </div>
 <div class="nav">
 <div class="section">Workspace</div>
@@ -910,11 +950,11 @@ canvas{background:#fbfcfa}
   <div class="desktop-context"><span class="desktop-context-mark">⌖</span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
     <div class="mobile-brand-mark">⌖</div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.8</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.9</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.8</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.9</small></span>
   </div>
 </div>
 
@@ -948,19 +988,20 @@ canvas{background:#fbfcfa}
 <section id="coords" class="page">
 <h1>B&D</h1><div class="sub">Calculate bearings and distances between survey mark coordinates.</div>
 <div class="grid">
-<div class="card"><h2>Point A</h2><label>Easting</label><input id="ce1" value="500" inputmode="decimal"><label>Northing</label><input id="cn1" value="1000" inputmode="decimal"></div>
-<div class="card"><h2>Point B</h2><label>Easting</label><input id="ce2" value="666" inputmode="decimal"><label>Northing</label><input id="cn2" value="777" inputmode="decimal"></div>
+<div class="card"><h2>Point A</h2><label for="coordsName1">Mark name</label><input id="coordsName1" maxlength="40" placeholder="e.g. PM 104"><label>Easting</label><input id="ce1" value="500" inputmode="decimal"><label>Northing</label><input id="cn1" value="1000" inputmode="decimal"></div>
+<div class="card"><h2>Point B</h2><label for="coordsName2">Mark name</label><input id="coordsName2" maxlength="40" placeholder="e.g. PM 105"><label>Easting</label><input id="ce2" value="666" inputmode="decimal"><label>Northing</label><input id="cn2" value="777" inputmode="decimal"></div>
 <div class="card full coords-pointc-card">
   <div class="coords-pointc-head">
     <div><h2>Point C <span class="coords-optional">OPTIONAL</span></h2><p class="muted">Enable Point C to calculate all three sides between the survey marks.</p></div>
     <label class="coords-enable"><input id="coordsUseC" type="checkbox" onchange="toggleCoordsPointC()"> Use Point C</label>
   </div>
   <div id="coordsPointCFields" class="coords-pointc-fields" hidden>
+    <div><label for="coordsName3">Mark name</label><input id="coordsName3" maxlength="40" placeholder="e.g. PM 106"></div>
     <div><label for="ce3">Easting</label><input id="ce3" inputmode="decimal" placeholder="Point C Easting"></div>
     <div><label for="cn3">Northing</label><input id="cn3" inputmode="decimal" placeholder="Point C Northing"></div>
   </div>
 </div>
-<div class="card full"><div class="toolbar calc-toolbar"><button class="btn primary" onclick="calcCoords()">CALCULATE</button><button class="btn secondary" onclick="swapCoords()">⇄ Swap A / B</button></div><div id="coordsStatus" class="status" hidden></div>
+<div class="card full"><div class="toolbar calc-toolbar"><button class="btn primary" onclick="calcCoords()">CALCULATE</button><button class="btn secondary" onclick="swapCoords()">⇄ Swap A / B</button><button class="btn secondary" type="button" onclick="printCoordsCalculation()">▤ PRINT CALCULATION</button></div><div id="coordsStatus" class="status" hidden></div>
 <div class="results"><div class="result"><small>A→B Distance</small><strong id="crDist">278.002 m</strong></div><div class="result"><small>A→B Bearing</small><strong id="crBear">323d20'10"</strong></div><div class="result"><small>Δ Easting</small><strong id="crE">166.000 m</strong></div><div class="result"><small>Δ Northing</small><strong id="crN">-223.000 m</strong></div></div>
 <div class="coords-scale-panel">
   <div class="coords-scale-heading"><h3>Scale factor</h3><span>Apply after calculating</span></div>
@@ -977,7 +1018,9 @@ canvas{background:#fbfcfa}
   </div>
 </div>
 </div>
-</div></section>
+</div>
+<div id="coordsPrintSheet" aria-hidden="true"></div>
+</section>
 
 <section id="bd" class="page">
 <h1>Bearing & Distance</h1><div class="sub">Enter a bearing and distance to calculate the destination coordinate.</div>
@@ -2073,7 +2116,14 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     if(!eText||!nText||!Number.isFinite(e)||!Number.isFinite(n)){
       return {error:'Enter valid Easting and Northing coordinates for Point '+label+'.'};
     }
-    return {label:label,e:e,n:n};
+    var nameEl=document.getElementById('coordsName'+prefix);
+    var markName=nameEl?nameEl.value.trim():'';
+    return {label:markName||'Point '+label,e:e,n:n};
+  }
+  function escapeCoordsText(value){
+    return String(value??'').replace(/[&<>"']/g,function(ch){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+    });
   }
   function getScaleFactor(){
     var el=document.getElementById('coordsScaleFactor');
@@ -2088,7 +2138,7 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     body.innerHTML=lastLines.map(function(line){
       var scaled=line.distance*factor;
       return '<tr>'+
-        '<td>'+line.from+' → '+line.to+'</td>'+
+        '<td>'+escapeCoordsText(line.from)+' → '+escapeCoordsText(line.to)+'</td>'+
         '<td>'+line.bearing+'</td>'+
         '<td>'+line.distance.toFixed(3)+'</td>'+
         '<td>'+scaled.toFixed(3)+'</td>'+
@@ -2155,6 +2205,120 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     }
     renderLines(factor);
     setCoordsStatus('Scale factor '+factor.toFixed(8)+' applied to '+lastLines.length+' line'+(lastLines.length===1?'':'s')+'.','ok');
+  };
+})();
+</script>
+
+
+<script id="v8-9-coords-print-js">
+(function(){
+  function byId(id){return document.getElementById(id)}
+  function escapeHTML(value){
+    return String(value??'').replace(/[&<>"']/g,function(ch){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+    });
+  }
+  function fmt(value){return Number(value).toFixed(3)}
+  function readPoint(key,index){
+    var eText=byId('ce'+index).value.trim();
+    var nText=byId('cn'+index).value.trim();
+    var e=Number(eText),n=Number(nText);
+    if(!eText||!nText||!Number.isFinite(e)||!Number.isFinite(n)){
+      throw new Error('Enter valid Easting and Northing values for Point '+key+'.');
+    }
+    var nameInput=byId('coordsName'+index);
+    var markName=nameInput?nameInput.value.trim():'';
+    return {key:key,markName:markName,displayName:markName||'Point '+key,e:e,n:n};
+  }
+  function makeDiagram(points,lines){
+    var w=980,h=330,pad=82;
+    var minE=Math.min.apply(null,points.map(p=>p.e));
+    var maxE=Math.max.apply(null,points.map(p=>p.e));
+    var minN=Math.min.apply(null,points.map(p=>p.n));
+    var maxN=Math.max.apply(null,points.map(p=>p.n));
+    var spanE=Math.max(maxE-minE,0.001),spanN=Math.max(maxN-minN,0.001);
+    var scale=Math.min((w-2*pad)/spanE,(h-2*pad)/spanN);
+    var usedW=(maxE-minE)*scale,usedH=(maxN-minN)*scale;
+    var offX=(w-usedW)/2,offY=(h-usedH)/2;
+    points.forEach(function(p){
+      p.x=offX+(p.e-minE)*scale;
+      p.y=h-offY-(p.n-minN)*scale;
+    });
+    var cx=points.reduce((sum,p)=>sum+p.x,0)/points.length;
+    var cy=points.reduce((sum,p)=>sum+p.y,0)/points.length;
+    var shapes='';
+    lines.forEach(function(line){
+      var from=points.find(p=>p.key===line.fromKey);
+      var to=points.find(p=>p.key===line.toKey);
+      shapes+='<line x1="'+from.x+'" y1="'+from.y+'" x2="'+to.x+'" y2="'+to.y+'" stroke="#263e35" stroke-width="2.8" stroke-linecap="round"/>';
+      var mx=(from.x+to.x)/2,my=(from.y+to.y)/2,dx=to.x-from.x,dy=to.y-from.y;
+      var len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len;
+      if((mx-cx)*nx+(my-cy)*ny<0){nx=-nx;ny=-ny}
+      var lx=mx+nx*15,ly=my+ny*15;
+      shapes+='<text x="'+lx+'" y="'+ly+'" text-anchor="middle" font-size="15" font-weight="700" fill="#263e35" stroke="#fff" stroke-width="5" paint-order="stroke">'+fmt(line.scaled)+' m</text>';
+    });
+    points.forEach(function(p){
+      var dx=p.x-cx,dy=p.y-cy,len=Math.hypot(dx,dy)||1;
+      var tx=p.x+(dx/len)*22,ty=p.y+(dy/len)*22;
+      var anchor=dx<-8?'end':dx>8?'start':'middle';
+      var label=p.key+(p.markName?' — '+p.markName:'');
+      shapes+='<circle cx="'+p.x+'" cy="'+p.y+'" r="5.5" fill="#263e35" stroke="#fff" stroke-width="2"/>';
+      shapes+='<text x="'+tx+'" y="'+(ty+4)+'" text-anchor="'+anchor+'" font-size="16" font-weight="700" fill="#172a23" stroke="#fff" stroke-width="5" paint-order="stroke">'+escapeHTML(label)+'</text>';
+    });
+    shapes+='<g transform="translate(930 28)" stroke="#263e35" fill="#263e35" stroke-width="2"><path d="M0 25 V0 M-6 9 L0 0 L6 9" fill="none"/><text x="0" y="-7" text-anchor="middle" font-size="13" stroke="none">N</text></g>';
+    return '<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Survey point line diagram">'+shapes+'</svg>';
+  }
+
+  window.printCoordsCalculation=function(){
+    try{
+      var points=[readPoint('A',1),readPoint('B',2)];
+      if(byId('coordsUseC').checked)points.push(readPoint('C',3));
+      var factorText=byId('coordsScaleFactor').value.trim();
+      var factor=Number(factorText);
+      if(!factorText||!Number.isFinite(factor)||factor<=0)throw new Error('Enter a scale factor greater than zero.');
+      var keys=points.length===3?[['A','B'],['B','C'],['C','A']]:[['A','B']];
+      var lines=keys.map(function(pair){
+        var from=points.find(p=>p.key===pair[0]),to=points.find(p=>p.key===pair[1]);
+        var de=to.e-from.e,dn=to.n-from.n,distance=Math.hypot(de,dn);
+        if(distance===0)throw new Error('Points '+pair[0]+' and '+pair[1]+' have identical coordinates.');
+        var bearing=(Math.atan2(de,dn)*180/Math.PI+360)%360;
+        return {fromKey:pair[0],toKey:pair[1],from:from,to:to,de:de,dn:dn,distance:distance,scaled:distance*factor,bearing:dms(bearing)};
+      });
+
+      var pointRows=points.map(function(p){
+        return '<tr><td class="print-point-name">Point '+p.key+(p.markName?' — '+escapeHTML(p.markName):'')+'</td><td>'+fmt(p.e)+'</td><td>'+fmt(p.n)+'</td></tr>';
+      }).join('');
+      var lineRows=lines.map(function(line){
+        var label=line.from.displayName+' → '+line.to.displayName;
+        return '<tr><td>'+escapeHTML(label)+'</td><td>'+line.bearing+'</td><td>'+fmt(line.distance)+'</td><td>'+fmt(line.scaled)+'</td><td>'+fmt(line.de)+'</td><td>'+fmt(line.dn)+'</td></tr>';
+      }).join('');
+
+      var sheet=byId('coordsPrintSheet');
+      sheet.innerHTML=
+        '<div class="print-title"><h1>B&amp;D Coordinate Calculation</h1><div class="print-factor">Scale factor × '+escapeHTML(factorText)+'</div></div>'+
+        '<div class="print-section-title">Survey points</div>'+
+        '<table class="print-points"><thead><tr><th>Point</th><th>Easting (m)</th><th>Northing (m)</th></tr></thead><tbody>'+pointRows+'</tbody></table>'+
+        '<div class="print-section-title">Bearings and distances</div>'+
+        '<table class="print-lines"><thead><tr><th>Line</th><th>Bearing</th><th>Grid distance (m)</th><th>Scaled distance (m)</th><th>Δ Easting (m)</th><th>Δ Northing (m)</th></tr></thead><tbody>'+lineRows+'</tbody></table>'+
+        '<div class="print-section-title">Line diagram</div>'+
+        '<div class="print-diagram-wrap">'+makeDiagram(points,lines)+'</div>'+
+        '<div class="print-diagram-caption">Diagram is proportioned from the entered coordinates. Distances shown on the diagram are scale-factor-adjusted.</div>';
+
+      if(typeof window.calcCoords==='function')window.calcCoords();
+      document.body.classList.add('coords-printing');
+      window.print();
+    }catch(error){
+      var status=byId('coordsStatus');
+      if(status){status.hidden=false;status.className='status warn';status.textContent=error.message||'Unable to prepare the printout.'}
+    }
+  };
+  window.addEventListener('afterprint',function(){document.body.classList.remove('coords-printing')});
+
+  var oldSwap=window.swapCoords;
+  window.swapCoords=function(){
+    var a=byId('coordsName1'),b=byId('coordsName2');
+    if(a&&b){var value=a.value;a.value=b.value;b.value=value}
+    oldSwap();
   };
 })();
 </script>
