@@ -1059,6 +1059,7 @@ canvas{background:#fbfcfa}
  #misclose .qc-main-result strong{font-size:21px}
 }
 @media print{
+ #misclose .qc-main-actions,#misclose .qc-quick-actions{display:none!important}
  #misclose .qc-job-details:not([open])> :not(summary){display:block!important}
  #misclose .qc-more-tools,#misclose .qc-job-details>summary{display:none!important}
  #misclose .qc-table-scroll{max-height:none;overflow:visible}
@@ -1209,7 +1210,7 @@ canvas{background:#fbfcfa}
     <div class="qc-entry-card card">
       <div class="qc-panel-heading">
         <div><div class="qc-kicker">01 / INPUT</div><h2>Traverse lines</h2><p>Set the start coordinate, then enter each known bearing and distance.</p></div>
-        <span class="qc-count-pill" id="qcLineCount">0 LINES</span>
+        <span class="qc-count-pill">KNOWN LINES</span>
       </div>
 
       <div class="qc-start-panel">
