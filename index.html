@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="8.12">
+<meta name="app-version" content="8.13">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -883,6 +883,8 @@ canvas{background:#fbfcfa}
 #coords .coords-mark-name{margin-bottom:2px}
 #coordsPrintSheet{display:none}
 #coords .coords-print-button{white-space:nowrap}
+#coords .coords-dxf-note{margin:-5px 0 12px;padding:9px 11px;border:1px solid #d8e2dc;border-radius:7px;background:#f4f7f4;color:#586960;font-size:11px;line-height:1.45}
+#coords .coords-dxf-note strong{color:#314e45}
 @media(max-width:650px){
  #coords .coords-pointc-fields{grid-template-columns:1fr}
 }
@@ -928,7 +930,7 @@ canvas{background:#fbfcfa}
 <aside class="side">
 <div class="logo">
   <span class="logo-mark">⌖</span>
-  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.12</small></span>
+  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.13</small></span>
 </div>
 <div class="nav">
 <div class="section">Workspace</div>
@@ -955,11 +957,11 @@ canvas{background:#fbfcfa}
   <div class="desktop-context"><span class="desktop-context-mark">⌖</span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
     <div class="mobile-brand-mark">⌖</div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.12</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.13</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.12</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.13</small></span>
   </div>
 </div>
 
@@ -1006,7 +1008,7 @@ canvas{background:#fbfcfa}
     <div><label for="cn3">Northing</label><input id="cn3" inputmode="decimal" placeholder="Point C Northing"></div>
   </div>
 </div>
-<div class="card full"><div class="toolbar calc-toolbar"><button class="btn primary" onclick="calcCoords()">CALCULATE</button><button class="btn secondary" onclick="swapCoords()">⇄ Swap A / B</button><button class="btn secondary" type="button" onclick="printCoordsCalculation()">▤ PRINT CALCULATION</button><button class="btn secondary" type="button" onclick="exportCoordsDXF()">⇩ EXPORT DXF</button></div><div id="coordsStatus" class="status" hidden></div>
+<div class="card full"><div class="toolbar calc-toolbar"><button class="btn primary" onclick="calcCoords()">CALCULATE</button><button class="btn secondary" onclick="swapCoords()">⇄ Swap A / B</button><button class="btn secondary" type="button" onclick="printCoordsCalculation()">▤ PRINT CALCULATION</button><button class="btn secondary" type="button" onclick="exportCoordsDXF()">⇩ EXPORT DXF</button></div><div class="coords-dxf-note"><strong>DXF export:</strong> Uses the original grid coordinates. The scale factor is not applied.</div><div id="coordsStatus" class="status" hidden></div>
 <div class="results"><div class="result"><small>A→B Distance</small><strong id="crDist">278.002 m</strong></div><div class="result"><small>A→B Bearing</small><strong id="crBear">323d20'10"</strong></div><div class="result"><small>Δ Easting</small><strong id="crE">166.000 m</strong></div><div class="result"><small>Δ Northing</small><strong id="crN">-223.000 m</strong></div></div>
 <div class="coords-scale-panel">
   <div class="coords-scale-heading"><h3>Scale factor</h3><span>Apply after calculating</span></div>
