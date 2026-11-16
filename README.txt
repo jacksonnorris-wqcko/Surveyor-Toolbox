@@ -1,9 +1,11 @@
-Surveyor’s Toolbox — iPhone PWA v8.6
+Surveyor’s Toolbox — iPhone PWA v8.7
 Built By Jackson 2026
 
-v8.6 is a complete visual redesign of the Surveyor’s Toolbox interface. The new field-workstation design updates the desktop sidebar, top bar, dashboard, calculator panels, forms, result cards, tables, job lists, point manager, strata workspace, overlays, and iPhone navigation. Existing calculator behaviour, element IDs, localStorage keys, saved jobs, points, and backup/restore workflows are retained.
+v8.7 fixes Quick Close line entry by restoring its line counter, which was accidentally removed during the v8.5 calculator cleanup. The permanent desktop Point Manager sidebar shortcut introduced in v8.6 has been removed; Point Manager remains available from the existing dashboard tool and iPhone More menu.
 
-v8.5 removed the standalone Traverse and Area calculators. Quick Close remains available for known-line entry and closing calculations.
+v8.6 introduced the visual redesign across desktop and iPhone, including the evergreen field-workstation theme, refreshed navigation, dashboard, calculator panels, forms, result cards, tables, job lists, point manager, strata workspace and overlays.
+
+The standalone Traverse and Area calculators remain removed. Quick Close, B&D calculators, Strata Areas, Point Manager, Saved Jobs, Scale, Conversions, and existing local data are retained.
 
 The automatic updater remains enabled. The app checks for a new service worker on open, when returning to the foreground, and when connectivity returns. Updated builds activate automatically and reload once. Network-first page loading keeps GitHub Pages releases fresh; the last cached app shell remains available offline. User jobs and points remain in localStorage and are not cleared by app updates.
 
