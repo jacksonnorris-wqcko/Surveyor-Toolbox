@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="8.10">
+<meta name="app-version" content="8.11">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -910,7 +910,7 @@ canvas{background:#fbfcfa}
  #coordsPrintSheet td{border:1px solid #dce3de;padding:7px 8px;background:#fff!important}
  #coordsPrintSheet .print-point-name{font-weight:700}
  #coordsPrintSheet .print-lines td:nth-child(4){font-weight:700;color:#245d45}
- #coordsPrintSheet .print-diagram-wrap{margin-top:8px;border:1px solid #dce3de;padding:4px 8px;height:430px;break-inside:avoid;display:flex;align-items:center;justify-content:center;overflow:hidden}
+ #coordsPrintSheet .print-diagram-wrap{margin-top:8px;border:1px solid #dce3de;padding:4px 8px;height:465px;break-inside:avoid;display:flex;align-items:center;justify-content:center;overflow:hidden}
  #coordsPrintSheet .print-diagram-wrap svg{display:block;width:100%;height:100%;max-width:100%;max-height:100%}
  #coordsPrintSheet .print-diagram-caption{font-size:8pt;color:#718078;margin-top:4px}
  #coordsPrintSheet .print-diagram-legend{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin:0 0 5px;font-size:8.5pt;font-weight:700}
@@ -928,7 +928,7 @@ canvas{background:#fbfcfa}
 <aside class="side">
 <div class="logo">
   <span class="logo-mark">⌖</span>
-  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.10</small></span>
+  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.11</small></span>
 </div>
 <div class="nav">
 <div class="section">Workspace</div>
@@ -955,11 +955,11 @@ canvas{background:#fbfcfa}
   <div class="desktop-context"><span class="desktop-context-mark">⌖</span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
     <div class="mobile-brand-mark">⌖</div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.10</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.11</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.10</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.11</small></span>
   </div>
 </div>
 
@@ -2236,73 +2236,91 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     return {key:key,markName:markName,displayName:markName||'Point '+key,e:e,n:n};
   }
   function makeDiagram(points,lines){
-    // A larger coordinate-proportioned drawing with readable, line-aligned
-    // grid and ground annotations. Blue = grid; burnt orange = scaled ground.
-    var w=1400,h=560,pad=150;
-    var minE=Math.min.apply(null,points.map(p=>p.e));
-    var maxE=Math.max.apply(null,points.map(p=>p.e));
-    var minN=Math.min.apply(null,points.map(p=>p.n));
-    var maxN=Math.max.apply(null,points.map(p=>p.n));
-    var spanE=Math.max(maxE-minE,0.001),spanN=Math.max(maxN-minN,0.001);
-    var scale=Math.min((w-2*pad)/spanE,(h-2*pad)/spanN);
-    var usedW=(maxE-minE)*scale,usedH=(maxN-minN)*scale;
-    var offX=(w-usedW)/2,offY=(h-usedH)/2;
+    // Rotate the coordinate geometry so its longest line is horizontal,
+    // while preserving the true equal scale of Easting and Northing.
+    var w=1600,h=650,plot={x:55,y:55,w:900,h:535};
+    var longest=lines.reduce(function(best,line){
+      var from=points.find(p=>p.key===line.fromKey),to=points.find(p=>p.key===line.toKey);
+      var len=Math.hypot(to.e-from.e,to.n-from.n);
+      return !best||len>best.len?{from:from,to:to,len:len}:best;
+    },null);
+    var theta=Math.atan2(longest.to.n-longest.from.n,longest.to.e-longest.from.e);
+    var cos=Math.cos(theta),sin=Math.sin(theta);
     points.forEach(function(p){
-      p.x=offX+(p.e-minE)*scale;
-      p.y=h-offY-(p.n-minN)*scale;
+      p.rx=p.e*cos+p.n*sin;
+      p.ry=-p.e*sin+p.n*cos;
+    });
+    var minX=Math.min.apply(null,points.map(p=>p.rx));
+    var maxX=Math.max.apply(null,points.map(p=>p.rx));
+    var minY=Math.min.apply(null,points.map(p=>p.ry));
+    var maxY=Math.max.apply(null,points.map(p=>p.ry));
+    var spanX=Math.max(maxX-minX,0.001),spanY=Math.max(maxY-minY,0.001);
+    var scale=Math.min((plot.w-170)/spanX,(plot.h-130)/spanY);
+    var usedW=spanX*scale,usedH=spanY*scale;
+    var offX=plot.x+(plot.w-usedW)/2,offY=plot.y+(plot.h-usedH)/2;
+    points.forEach(function(p){
+      p.x=offX+(p.rx-minX)*scale;
+      p.y=h-offY-(p.ry-minY)*scale;
     });
     var cx=points.reduce((sum,p)=>sum+p.x,0)/points.length;
     var cy=points.reduce((sum,p)=>sum+p.y,0)/points.length;
-    var gridColour='#1769aa',groundColour='#bf5726',lineColour='#344b43';
+    var blue='#1769aa',orange='#bf5726',ink='#344b43',muted='#65756d';
     var shapes='';
+    shapes+='<rect x="20" y="20" width="970" height="610" rx="16" fill="#fbfcfb" stroke="#dce4df" stroke-width="2"/>';
+    shapes+='<text x="55" y="48" font-size="15" font-weight="800" letter-spacing="1.3" fill="'+muted+'">SURVEY GEOMETRY · TRUE PROPORTION</text>';
 
-    // Draw all linework first so the annotation cards remain crisp and legible.
     lines.forEach(function(line){
-      var from=points.find(p=>p.key===line.fromKey);
-      var to=points.find(p=>p.key===line.toKey);
-      shapes+='<line x1="'+from.x+'" y1="'+from.y+'" x2="'+to.x+'" y2="'+to.y+'" stroke="'+lineColour+'" stroke-width="4" stroke-linecap="round"/>';
+      var from=points.find(p=>p.key===line.fromKey),to=points.find(p=>p.key===line.toKey);
+      shapes+='<line x1="'+from.x+'" y1="'+from.y+'" x2="'+to.x+'" y2="'+to.y+'" stroke="'+ink+'" stroke-width="5" stroke-linecap="round"/>';
     });
 
-    lines.forEach(function(line){
-      var from=points.find(p=>p.key===line.fromKey);
-      var to=points.find(p=>p.key===line.toKey);
-      var dx=to.x-from.x,dy=to.y-from.y;
-      var len=Math.hypot(dx,dy)||1;
-      var angle=Math.atan2(dy,dx)*180/Math.PI;
-      // Keep the annotation upright while still parallel to its line.
-      var readableAngle=angle;
-      if(readableAngle>90)readableAngle-=180;
-      if(readableAngle<-90)readableAngle+=180;
-
+    // Numbered markers avoid putting long rotated text on top of narrow lines.
+    lines.forEach(function(line,index){
+      var from=points.find(p=>p.key===line.fromKey),to=points.find(p=>p.key===line.toKey);
       var mx=(from.x+to.x)/2,my=(from.y+to.y)/2;
+      var dx=to.x-from.x,dy=to.y-from.y,len=Math.hypot(dx,dy)||1;
       var nx=-dy/len,ny=dx/len;
-      // Place the annotation to the outside of the triangle.
-      if((mx-cx)*nx+(my-cy)*ny<0){nx=-nx;ny=-ny}
-      var lx=mx+nx*47,ly=my+ny*47;
-
-      var gridText='GRID  '+line.bearing+'   |   '+fmt(line.distance)+' m';
-      var groundText='GROUND  '+fmt(line.scaled)+' m';
-      var boxWidth=Math.max(300,Math.max(gridText.length*10.2,groundText.length*10.5)+42);
-      boxWidth=Math.min(boxWidth,480);
-      shapes+='<g transform="translate('+lx+' '+ly+') rotate('+readableAngle+')">';
-      shapes+='<rect x="'+(-boxWidth/2)+'" y="-36" width="'+boxWidth+'" height="72" rx="10" fill="#ffffff" fill-opacity=".98" stroke="#d3ddd7" stroke-width="1.5"/>';
-      shapes+='<text x="0" y="-7" text-anchor="middle" font-size="21" font-weight="800" letter-spacing=".2" fill="'+gridColour+'">'+escapeHTML(gridText)+'</text>';
-      shapes+='<text x="0" y="21" text-anchor="middle" font-size="20" font-weight="800" fill="'+groundColour+'">'+escapeHTML(groundText)+'</text>';
-      shapes+='</g>';
+      var side=points.reduce((sum,p)=>sum+((p.x-mx)*nx+(p.y-my)*ny),0)/points.length;
+      if(side>0){nx=-nx;ny=-ny}
+      var bx=mx+nx*25,by=my+ny*25;
+      shapes+='<circle cx="'+bx+'" cy="'+by+'" r="19" fill="#ffffff" stroke="'+ink+'" stroke-width="3"/>';
+      shapes+='<text x="'+bx+'" y="'+(by+7)+'" text-anchor="middle" font-size="19" font-weight="800" fill="'+ink+'">'+(index+1)+'</text>';
     });
 
-    // Mark symbols and names sit clear of the line annotations.
     points.forEach(function(p){
       var dx=p.x-cx,dy=p.y-cy,len=Math.hypot(dx,dy)||1;
-      var tx=p.x+(dx/len)*35,ty=p.y+(dy/len)*35;
-      var anchor=dx<-8?'end':dx>8?'start':'middle';
+      var tx=p.x+(dx/len)*34,ty=p.y+(dy/len)*34;
+      var anchor=dx<-12?'end':dx>12?'start':'middle';
       var label=p.key+(p.markName?' — '+p.markName:'');
-      shapes+='<circle cx="'+p.x+'" cy="'+p.y+'" r="8" fill="#263e35" stroke="#ffffff" stroke-width="3"/>';
-      shapes+='<text x="'+tx+'" y="'+(ty+6)+'" text-anchor="'+anchor+'" font-size="22" font-weight="800" fill="#172a23" stroke="#ffffff" stroke-width="7" paint-order="stroke">'+escapeHTML(label)+'</text>';
+      shapes+='<circle cx="'+p.x+'" cy="'+p.y+'" r="9" fill="'+ink+'" stroke="#ffffff" stroke-width="3"/>';
+      shapes+='<text x="'+tx+'" y="'+(ty+7)+'" text-anchor="'+anchor+'" font-size="23" font-weight="800" fill="#172a23" stroke="#ffffff" stroke-width="8" paint-order="stroke">'+escapeHTML(label)+'</text>';
     });
 
-    shapes+='<g transform="translate(1338 55)" stroke="#263e35" fill="#263e35" stroke-width="2.5"><path d="M0 34 V0 M-8 12 L0 0 L8 12" fill="none"/><text x="0" y="-10" text-anchor="middle" font-size="18" font-weight="700" stroke="none">N</text></g>';
-    return '<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Survey point line diagram with blue grid bearings and distances and orange scaled ground distances">'+shapes+'</svg>';
+    shapes+='<g transform="translate(930 92)" stroke="'+ink+'" fill="'+ink+'" stroke-width="3"><path d="M0 42 V0 M-9 14 L0 0 L9 14" fill="none"/><text x="0" y="-12" text-anchor="middle" font-size="21" font-weight="800" stroke="none">N</text></g>';
+
+    // Right-hand line schedule: horizontal labels never collide with linework.
+    shapes+='<rect x="1010" y="20" width="570" height="610" rx="16" fill="#ffffff" stroke="#dce4df" stroke-width="2"/>';
+    shapes+='<text x="1050" y="63" font-size="20" font-weight="800" letter-spacing=".7" fill="'+ink+'">LINE INFORMATION</text>';
+    shapes+='<text x="1050" y="90" font-size="14" fill="'+muted+'">Numbers correspond to the markers on the diagram</text>';
+    var rowH=160,gap=14,total=lines.length*rowH+(lines.length-1)*gap;
+    var top=105+(500-total)/2;
+    lines.forEach(function(line,index){
+      var y=top+index*(rowH+gap);
+      var from=points.find(p=>p.key===line.fromKey),to=points.find(p=>p.key===line.toKey);
+      var label=from.displayName+' → '+to.displayName;
+      shapes+='<rect x="1040" y="'+y+'" width="510" height="'+rowH+'" rx="12" fill="#f9fbfa" stroke="#dce4df" stroke-width="1.5"/>';
+      shapes+='<circle cx="1075" cy="'+(y+31)+'" r="18" fill="'+ink+'"/>';
+      shapes+='<text x="1075" y="'+(y+38)+'" text-anchor="middle" font-size="18" font-weight="800" fill="#ffffff">'+(index+1)+'</text>';
+      shapes+='<text x="1107" y="'+(y+38)+'" font-size="21" font-weight="800" fill="'+ink+'">'+escapeHTML(label)+'</text>';
+      shapes+='<text x="1070" y="'+(y+75)+'" font-size="16" font-weight="800" letter-spacing=".8" fill="'+blue+'">GRID BEARING</text>';
+      shapes+='<text x="1070" y="'+(y+103)+'" font-size="21" font-weight="800" fill="'+blue+'">'+escapeHTML(line.bearing)+'</text>';
+      shapes+='<text x="1335" y="'+(y+75)+'" font-size="16" font-weight="800" letter-spacing=".8" fill="'+blue+'">GRID DISTANCE</text>';
+      shapes+='<text x="1335" y="'+(y+103)+'" font-size="21" font-weight="800" fill="'+blue+'">'+fmt(line.distance)+' m</text>';
+      shapes+='<line x1="1070" y1="'+(y+116)+'" x2="1520" y2="'+(y+116)+'" stroke="#e3e9e5" stroke-width="1.5"/>';
+      shapes+='<text x="1070" y="'+(y+145)+'" font-size="16" font-weight="800" letter-spacing=".8" fill="'+orange+'">SCALED GROUND DISTANCE</text>';
+      shapes+='<text x="1515" y="'+(y+145)+'" text-anchor="end" font-size="23" font-weight="900" fill="'+orange+'">'+fmt(line.scaled)+' m</text>';
+    });
+    return '<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Survey geometry with numbered line information and separate blue grid and orange scaled ground values">'+shapes+'</svg>';
   }
 
   window.printCoordsCalculation=function(){
@@ -2337,9 +2355,8 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
         '<div class="print-section-title">Bearings and distances</div>'+
         '<table class="print-lines"><thead><tr><th>Line</th><th>Bearing</th><th>Grid distance (m)</th><th>Scaled distance (m)</th><th>Δ Easting (m)</th><th>Δ Northing (m)</th></tr></thead><tbody>'+lineRows+'</tbody></table>'+
         '<div class="print-section-title">Line diagram</div>'+
-        '<div class="print-diagram-legend"><span><i class="grid-key"></i>Grid bearing + grid distance</span><span><i class="ground-key"></i>Scaled ground distance</span></div>'+
         '<div class="print-diagram-wrap">'+makeDiagram(points,lines)+'</div>'+
-        '<div class="print-diagram-caption">Diagram is proportioned from the entered coordinates. Blue labels show grid bearing and grid distance; orange labels show scaled ground distance.</div>';
+        '<div class="print-diagram-caption">The diagram is automatically rotated to use the page space while preserving true coordinate proportions. Blue = grid bearing and grid distance; orange = scaled ground distance.</div>';
 
       if(typeof window.calcCoords==='function')window.calcCoords();
       document.body.classList.add('coords-printing');
