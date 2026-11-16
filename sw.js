@@ -1,5 +1,5 @@
 /* Surveyor's Toolbox — update-aware service worker */
-const CACHE_VERSION = 'surveyors-toolbox-iphone-v8-4';
+const CACHE_VERSION = 'surveyors-toolbox-iphone-v8-5';
 const CACHE_PREFIX = 'surveyors-toolbox-iphone-';
 const APP_SHELL = [
   './',
