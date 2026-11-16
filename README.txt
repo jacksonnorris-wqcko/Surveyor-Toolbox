@@ -1,5 +1,7 @@
-Surveyor’s Toolbox — iPhone PWA v8.9
+Surveyor’s Toolbox — iPhone PWA v8.10
 Built By Jackson 2026
+
+v8.10 improves the B&D calculation print diagram. The diagram is larger and more readable, with line-aligned annotation cards. Blue labels show each line's grid bearing and grid distance together; burnt-orange labels show the scale-factor-adjusted ground distance. Mark labels and point positions remain based on the entered coordinates.
 
 v8.9 adds editable mark names for Points A, B and C in B&D from Coords, and a dedicated Print Calculation report. The printout lists each point's mark name and Easting/Northing, then the line bearings, grid distances, scale-factor-adjusted distances and coordinate differences, plus a coordinate-proportioned line diagram. The report is generated from the current inputs. Swapping A and B also swaps their mark names.
 
