@@ -1,5 +1,7 @@
-Surveyor’s Toolbox — iPhone PWA v8.14
+Surveyor’s Toolbox — iPhone PWA v8.15
 Built By Jackson 2026
+
+v8.15 fixes the Saved Jobs Strata filter. Older Strata Area jobs were saved without an explicit type field, so the filter previously excluded them. The Strata filter now includes every saved job that is not a Quick Close job, and new or resaved Strata jobs are explicitly tagged as type=strata. Existing saved data is preserved.
 
 v8.14 redesigns the Quick Close page into a clearer workflow. Optional job details are tucked into a compact expandable panel; starting coordinates are grouped separately; line entry has dedicated Add Line and Calculate Close actions; save/export/print/new-job options are grouped into secondary tools; the plan preview and closing results are presented together; and full-precision calculation details are collapsed until requested. All original calculator element IDs, save/load, DXF, print and local storage workflows are retained.
 
