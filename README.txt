@@ -1,7 +1,9 @@
-Surveyor’s Toolbox — iPhone PWA v8.5
+Surveyor’s Toolbox — iPhone PWA v8.6
 Built By Jackson 2026
 
-v8.5 removes the standalone Traverse and Area calculators from the app interface, dashboard shortcuts, and iPhone navigation. Quick Close remains available for entering known boundary lines and calculating the closing bearing and distance. Strata Areas, B&D calculators, Point Manager, Saved Jobs, Scale, Conversions, and the existing local data are retained.
+v8.6 is a complete visual redesign of the Surveyor’s Toolbox interface. The new field-workstation design updates the desktop sidebar, top bar, dashboard, calculator panels, forms, result cards, tables, job lists, point manager, strata workspace, overlays, and iPhone navigation. Existing calculator behaviour, element IDs, localStorage keys, saved jobs, points, and backup/restore workflows are retained.
+
+v8.5 removed the standalone Traverse and Area calculators. Quick Close remains available for known-line entry and closing calculations.
 
 The automatic updater remains enabled. The app checks for a new service worker on open, when returning to the foreground, and when connectivity returns. Updated builds activate automatically and reload once. Network-first page loading keeps GitHub Pages releases fresh; the last cached app shell remains available offline. User jobs and points remain in localStorage and are not cleared by app updates.
 
