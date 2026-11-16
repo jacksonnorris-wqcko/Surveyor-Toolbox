@@ -851,13 +851,20 @@ canvas{background:#fbfcfa}
   <span class="logo-mark">⌖</span>
   <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.6</small></span>
 </div>
-<div class="nav"><div class="section">Survey</div>
-<button class="active" onclick="show('coords',this)">📍 B&D From Coords</button>
+<div class="nav">
+<div class="section">Workspace</div>
+<button class="active" onclick="show('dashboard',this)">⌂ Home</button>
+<button onclick="show('points',this)">📍 Point Manager</button>
+<div class="section">Survey Calculators</div>
+<button onclick="show('coords',this)">📐 B&D From Coords</button>
 <button onclick="show('bd',this)">🎯 Coords From B&D</button>
-<button onclick="show('misclose',this)">🔒 Quick Close</button>
-<button onclick="show('strata',this)">▦ Strata Areas</button><button onclick="show('jobs',this)">💾 Saved Jobs</button><div class="section">Geometry & Tools</div>
+<button onclick="show('misclose',this)">↗ Quick Close</button>
+<button onclick="show('strata',this)">▦ Strata Areas</button>
+<button onclick="show('jobs',this)">▤ Saved Jobs</button>
+<div class="section">Geometry & Tools</div>
 <button onclick="show('scale',this)">↔ Scale</button>
-<button onclick="show('convert',this)">🔄 Conversions</button></div>
+<button onclick="show('convert',this)">⇄ Conversions</button>
+</div>
 
       <div class="nav-spacer"></div>
       <button class="nav-item shortcuts-nav" data-page="shortcuts" type="button">⌨️ <span>Shortcuts</span></button>
@@ -921,7 +928,6 @@ canvas{background:#fbfcfa}
 <div class="card full"><button class="btn primary" onclick="calcBD()">CALCULATE</button><div id="bdStatus" class="status" hidden></div><div class="results"><div class="result"><small>End Easting</small><strong id="bE">—</strong></div><div class="result"><small>End Northing</small><strong id="bN">—</strong></div><div class="result"><small>Departure</small><strong id="bDep">—</strong></div><div class="result"><small>Latitude</small><strong id="bLat">—</strong></div></div></div></div>
 </section>
 
-</section>
 
 <section id="misclose" class="page">
 <h1>Quick Close</h1>
@@ -981,7 +987,6 @@ canvas{background:#fbfcfa}
 </div>
 </section>
 
-</section>
 
 
 <section id="jobs" class="page">
