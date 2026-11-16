@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="8.13">
+<meta name="app-version" content="8.14">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -923,6 +923,150 @@ canvas{background:#fbfcfa}
 }
 </style>
 
+
+<style id="v8-14-quick-close-redesign">
+/* Quick Close v8.14 — a calmer, task-first field workflow */
+#misclose.qc-redesigned{min-width:0}
+#misclose .qc-page-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:16px}
+#misclose .qc-page-heading h1{margin:0 0 5px;font-size:29px;letter-spacing:-.7px}
+#misclose .qc-page-heading .sub{margin:0;color:var(--muted);font-size:13px}
+#misclose .qc-heading-tag{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:#60736b;font-size:9px;font-weight:800;letter-spacing:.8px;white-space:nowrap}
+#misclose .qc-live-dot{width:7px;height:7px;border-radius:50%;background:#36a477;box-shadow:0 0 0 3px #e6f4ed}
+#misclose .qc-job-details{border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:var(--shadow);margin-bottom:14px;overflow:visible}
+#misclose .qc-job-details>summary{display:flex;align-items:center;gap:11px;padding:12px 15px;cursor:pointer;list-style:none}
+#misclose .qc-job-details>summary::-webkit-details-marker{display:none}
+#misclose .qc-summary-icon{width:34px;height:34px;border-radius:9px;background:#edf4f0;color:#315d4c;display:grid;place-items:center;font-size:17px}
+#misclose .qc-summary-copy{display:grid;gap:2px;flex:1}
+#misclose .qc-summary-copy strong{font-size:12px;color:var(--text)}
+#misclose .qc-summary-copy small{font-size:10px;color:var(--muted)}
+#misclose .qc-summary-action{font-size:10px;color:var(--accent);font-weight:750}
+#misclose .qc-summary-action b{font-size:14px;margin-left:5px}
+#misclose .qc-job-meta{display:grid;grid-template-columns:1fr 1.35fr 1.35fr 1fr;gap:12px;padding:0 15px 15px}
+#misclose .qc-job-meta label,#misclose .qc-start-fields label{margin-top:0}
+#misclose .qc-workspace{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(380px,.94fr);gap:14px;align-items:start}
+#misclose .qc-entry-card{display:flex;flex-direction:column;min-width:0;padding:18px}
+#misclose .qc-panel-heading,#misclose .qc-plan-heading,#misclose .qc-result-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+#misclose .qc-panel-heading h2,#misclose .qc-plan-heading h2,#misclose .qc-result-heading h2{font-size:17px;letter-spacing:-.25px;margin:0;color:var(--text)}
+#misclose .qc-panel-heading p{font-size:11px;color:var(--muted);margin:4px 0 0;line-height:1.45}
+#misclose .qc-kicker{font-size:9px;letter-spacing:1.1px;font-weight:850;color:#9a845d;margin-bottom:5px}
+#misclose .qc-count-pill{border-radius:999px;background:#f1f5f2;border:1px solid #dfe8e2;color:#567064;padding:6px 9px;font-size:9px;font-weight:800;white-space:nowrap}
+#misclose .qc-start-panel{margin-top:15px;padding:12px 13px 13px;border-radius:10px;background:#f5f8f6;border:1px solid #e1e9e3}
+#misclose .qc-start-title{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+#misclose .qc-start-icon{width:29px;height:29px;border-radius:8px;background:#e3eee7;color:#315c4b;display:grid;place-items:center;font-size:17px}
+#misclose .qc-start-title strong{display:block;font-size:11px}
+#misclose .qc-start-title small{display:block;font-size:9px;color:var(--muted);margin-top:2px}
+#misclose .qc-start-fields{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+#misclose .qc-start-fields input{font-variant-numeric:tabular-nums}
+#misclose .qc-main-actions{display:grid;grid-template-columns:minmax(130px,.8fr) minmax(180px,1.2fr);gap:9px;margin:13px 0 9px}
+#misclose .qc-main-actions .btn{min-height:43px;font-weight:800}
+#misclose .qc-add-line{background:#fff;border-color:#cbd9d1;color:#315b49}
+#misclose .qc-add-line:hover{background:#f4f8f5}
+#misclose .qc-calculate{background:#2f806b;color:#fff}
+#misclose .qc-calculate:hover{background:#286d5b}
+#misclose .qc-calculate span{margin-left:7px;font-size:16px}
+#misclose .qc-quick-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-bottom:13px;border-bottom:1px solid #e9eeeb}
+#misclose .qc-quick-actions>.btn{min-height:36px;padding:7px 11px;font-size:11px}
+#misclose .qc-more-tools{position:relative}
+#misclose .qc-more-tools>summary{list-style:none;cursor:pointer;padding:9px 11px;border:1px solid #d9e1dc;background:#fff;border-radius:6px;color:#586a61;font-size:11px;font-weight:750}
+#misclose .qc-more-tools>summary::-webkit-details-marker{display:none}
+#misclose .qc-more-tools>summary span{margin-left:10px;color:#839188}
+#misclose .qc-more-tools[open]>summary{border-color:#9fb8a9;background:#f6f9f7}
+#misclose .qc-more-tools-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:30;min-width:190px;padding:5px;background:#fff;border:1px solid var(--line);border-radius:9px;box-shadow:0 10px 28px #17212b20;display:grid;gap:2px}
+#misclose .qc-more-tools-menu button{border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:6px;color:#34483f;font-size:11px;cursor:pointer}
+#misclose .qc-more-tools-menu button:hover{background:#f1f5f2}
+#misclose .qc-more-tools-menu .qc-clear-action{color:#ad4b4b}
+#misclose .qc-line-heading{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:14px 0 8px}
+#misclose .qc-line-heading h3{font-size:12px;margin:0;color:var(--text)}
+#misclose .qc-line-heading p{font-size:10px;color:var(--muted);margin:3px 0 0}
+#misclose .qc-line-heading>span{font-size:9px;color:#839188;white-space:nowrap}
+#misclose .qc-table-scroll{max-height:395px;min-height:150px;overflow:auto;border:1px solid #e0e7e2;border-radius:9px}
+#misclose .qc-lines-table{border:0;border-radius:0;min-width:570px;font-size:11px}
+#misclose .qc-lines-table th{position:sticky;top:0;z-index:2;padding:10px 9px;background:#f2f6f3}
+#misclose .qc-lines-table td{padding:7px 8px;vertical-align:middle}
+#misclose .qc-lines-table td:first-child{width:42px;color:#6c7c73;font-weight:800}
+#misclose .qc-lines-table td input{min-width:100px;border-radius:7px;padding:9px;font-size:12px}
+#misclose .qc-lines-table .qcbearing{min-width:145px;font-variant-numeric:tabular-nums}
+#misclose .qc-lines-table .qcdistance{min-width:100px;font-variant-numeric:tabular-nums}
+#misclose .qc-lines-table .qcendE,#misclose .qc-lines-table .qcendN{font-size:10px;color:#57695f;font-variant-numeric:tabular-nums;white-space:nowrap}
+#misclose .qc-lines-table .btn{padding:5px 9px;min-width:30px}
+#misclose .qc-status{margin-top:9px;padding:9px 11px;font-size:10px;line-height:1.4}
+#misclose .qc-preview-column{display:grid;gap:12px;min-width:0}
+#misclose .qc-plan-card{padding:0;overflow:hidden}
+#misclose .qc-plan-heading{padding:16px 17px 12px;align-items:center}
+#misclose .qc-plan-heading>span{font-size:9px;color:var(--muted);white-space:nowrap}
+#misclose .qc-canvas-wrap{padding:0 10px;background:#fff}
+#misclose #qcPlot{width:100%;height:355px!important;min-height:0!important;aspect-ratio:auto;object-fit:contain;background:#fff;border-top:1px solid #edf1ee;border-bottom:1px solid #edf1ee}
+#misclose .qc-plan-foot{display:flex;align-items:center;gap:15px;padding:9px 15px;color:#6c7b72;font-size:9px}
+#misclose .qc-legend{display:inline-flex;align-items:center;gap:6px}
+#misclose .qc-legend i{display:inline-block;width:17px;height:3px;border-radius:3px}
+#misclose .qc-legend-known{background:#1677c8}
+#misclose .qc-legend-close{background:#18864b}
+#misclose .qc-north-note{margin-left:auto;font-weight:800}
+#misclose .qc-result-card{padding:16px}
+#misclose .qc-result-heading{align-items:center;margin-bottom:13px}
+#misclose .qc-result-state{font-size:9px;color:#2b765d;background:#eaf5ee;border:1px solid #d3e8da;padding:6px 8px;border-radius:999px;font-weight:750}
+#misclose .qc-main-results{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+#misclose .qc-main-result{padding:12px 13px;border-radius:9px;background:#eff6f1;border:1px solid #d9e8dc;min-width:0}
+#misclose .qc-main-result small{display:block;font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:#668073;font-weight:800}
+#misclose .qc-main-result strong{display:block;font-size:clamp(19px,2vw,25px);color:#286b53;margin-top:5px;font-weight:850;letter-spacing:-.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+#misclose .qc-delta-results{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}
+#misclose .qc-delta-results>div{padding:8px 11px;border:1px solid #e5ebe7;border-radius:8px;background:#fafcfb}
+#misclose .qc-delta-results small{display:block;color:#748279;font-size:9px;font-weight:750}
+#misclose .qc-delta-results strong{display:block;font-size:13px;margin-top:3px;color:#33483d;font-variant-numeric:tabular-nums}
+#misclose .qc-close-banner{display:none!important}
+#misclose .qc-calculation-details{margin-top:14px;border:1px solid var(--line);border-radius:11px;background:#fff;box-shadow:var(--shadow);overflow:hidden}
+#misclose .qc-calculation-details>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;cursor:pointer;list-style:none}
+#misclose .qc-calculation-details>summary::-webkit-details-marker{display:none}
+#misclose .qc-calculation-details>summary span{display:grid;gap:3px}
+#misclose .qc-calculation-details>summary strong{font-size:12px}
+#misclose .qc-calculation-details>summary small{font-size:10px;color:var(--muted)}
+#misclose .qc-calculation-details>summary>b{font-size:10px;color:var(--accent);white-space:nowrap}
+#misclose .qc-details-body{padding:0 15px 15px}
+#misclose .qc-details-body>.muted{margin-bottom:8px;font-size:10px}
+#misclose .qc-detail-table-wrap{overflow:auto;border:1px solid #e2e9e4;border-radius:8px}
+#misclose .qc-detail-table-wrap table{border:0;border-radius:0;min-width:740px}
+#misclose .qc-detail-table-wrap th{position:sticky;top:0}
+#misclose .qc-detail-table-wrap td{font-variant-numeric:tabular-nums}
+@media(max-width:1150px){
+ #misclose .qc-workspace{grid-template-columns:minmax(0,1fr) minmax(330px,.85fr)}
+ #misclose .qc-job-meta{grid-template-columns:1fr 1fr}
+ #misclose #qcPlot{height:315px!important}
+}
+@media(max-width:900px){
+ #misclose .qc-workspace{grid-template-columns:1fr}
+ #misclose .qc-preview-column{grid-template-columns:1fr 1fr;align-items:start}
+ #misclose #qcPlot{height:310px!important}
+}
+@media(max-width:650px){
+ #misclose .qc-page-heading{align-items:flex-start}
+ #misclose .qc-page-heading h1{font-size:24px}
+ #misclose .qc-heading-tag{font-size:8px;padding:7px 9px}
+ #misclose .qc-job-meta{grid-template-columns:1fr 1fr;gap:8px}
+ #misclose .qc-workspace{grid-template-columns:minmax(0,1fr);gap:11px}
+ #misclose .qc-entry-card{padding:13px}
+ #misclose .qc-panel-heading h2,#misclose .qc-plan-heading h2,#misclose .qc-result-heading h2{font-size:15px}
+ #misclose .qc-start-panel{padding:10px}
+ #misclose .qc-main-actions{grid-template-columns:1fr 1.2fr}
+ #misclose .qc-quick-actions{gap:6px}
+ #misclose .qc-quick-actions>.btn{flex:1;min-width:110px}
+ #misclose .qc-more-tools{flex:1}
+ #misclose .qc-more-tools>summary{text-align:center}
+ #misclose .qc-more-tools-menu{left:auto;right:0}
+ #misclose .qc-line-heading{align-items:flex-start;flex-direction:column;gap:3px}
+ #misclose .qc-table-scroll{max-height:340px}
+ #misclose #qcPlot{height:280px!important}
+ #misclose .qc-preview-column{grid-template-columns:1fr}
+ #misclose .qc-main-result strong{font-size:21px}
+}
+@media print{
+ #misclose .qc-job-details:not([open])> :not(summary){display:block!important}
+ #misclose .qc-more-tools,#misclose .qc-job-details>summary{display:none!important}
+ #misclose .qc-table-scroll{max-height:none;overflow:visible}
+ #misclose .qc-calculation-details:not([open])> :not(summary){display:block!important}
+ #misclose .qc-close-banner{display:none!important}
+}
+</style>
+
 </head>
 <body>
 <div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
@@ -930,7 +1074,7 @@ canvas{background:#fbfcfa}
 <aside class="side">
 <div class="logo">
   <span class="logo-mark">⌖</span>
-  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.13</small></span>
+  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.14</small></span>
 </div>
 <div class="nav">
 <div class="section">Workspace</div>
@@ -957,11 +1101,11 @@ canvas{background:#fbfcfa}
   <div class="desktop-context"><span class="desktop-context-mark">⌖</span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
     <div class="mobile-brand-mark">⌖</div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.13</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.14</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.13</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.14</small></span>
   </div>
 </div>
 
@@ -1037,62 +1181,114 @@ canvas{background:#fbfcfa}
 </section>
 
 
-<section id="misclose" class="page">
-<h1>Quick Close</h1>
-<div class="sub">Enter your traverse lines and calculate the missing closing bearing and distance back to the starting point.</div>
+<section id="misclose" class="page qc-redesigned">
+  <div class="qc-page-heading">
+    <div>
+      <div class="eyebrow">TRAVERSE CALCULATOR</div>
+      <h1>Quick Close</h1>
+      <div class="sub">Enter the known traverse lines to calculate the closing bearing and distance.</div>
+    </div>
+    <div class="qc-heading-tag"><span class="qc-live-dot"></span> FIELD CALCULATION</div>
+  </div>
 
-<div class="workspace">
-  <div class="workspace-left">
-    <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
-      <div class="eyebrow">Known Line Entry</div>
-      <div class="row qc-job-meta">
-        <div><label>Job Number</label><input id="qcJobNo" placeholder="e.g. 2385"></div>
-        <div><label>Project / Client</label><input id="qcProject" placeholder="Project name or client"></div>
-        <div><label>Site / Address</label><input id="qcAddress" placeholder="Site address"></div>
-        <div><label>Job Date</label><input id="qcDate" type="date"></div>
-        <div><label>Starting Easting</label><input id="qcE" value="500.000"></div>
-        <div><label>Starting Northing</label><input id="qcN" value="1000.000"></div>
+  <details class="qc-job-details">
+    <summary>
+      <span class="qc-summary-icon">▤</span>
+      <span class="qc-summary-copy"><strong>Job details</strong><small>Job number, project, site and date · Optional</small></span>
+      <span class="qc-summary-action">Edit details <b>⌄</b></span>
+    </summary>
+    <div class="qc-job-meta">
+      <div><label for="qcJobNo">Job number</label><input id="qcJobNo" placeholder="e.g. 2385"></div>
+      <div><label for="qcProject">Project / client</label><input id="qcProject" placeholder="Project name or client"></div>
+      <div><label for="qcAddress">Site / address</label><input id="qcAddress" placeholder="Site address"></div>
+      <div><label for="qcDate">Job date</label><input id="qcDate" type="date"></div>
+    </div>
+  </details>
+
+  <div class="qc-workspace">
+    <div class="qc-entry-card card">
+      <div class="qc-panel-heading">
+        <div><div class="qc-kicker">01 / INPUT</div><h2>Traverse lines</h2><p>Set the start coordinate, then enter each known bearing and distance.</p></div>
+        <span class="qc-count-pill" id="qcLineCount">0 LINES</span>
       </div>
-      <div class="toolbar sticky-actions">
-        <button class="btn primary" onclick="addQuickCloseLine()">＋ Add Line</button>
-        <button class="btn secondary" onclick="calcQuickClose()">Calculate Close</button>
-        <button class="btn primary" onclick="saveQuickCloseJob(false)">💾 Save Job</button>
-        <button class="btn secondary" onclick="saveQuickCloseJob(true)">Save As</button>
-        <button class="btn secondary" onclick="quickCloseNewJob()">New Job</button>
-        <button class="btn primary" onclick="exportQuickCloseDXF()">⇩ Export DXF</button>
-        <button class="btn secondary" onclick="printCurrentPage()">🖨 Print</button>
-        <button class="btn danger" onclick="clearQuickClose()">Clear</button>
+
+      <div class="qc-start-panel">
+        <div class="qc-start-title"><span class="qc-start-icon">⌖</span><div><strong>Starting coordinate</strong><small>Point of origin for the traverse</small></div></div>
+        <div class="qc-start-fields">
+          <div><label for="qcE">Starting Easting (m)</label><input id="qcE" value="500.000" inputmode="decimal"></div>
+          <div><label for="qcN">Starting Northing (m)</label><input id="qcN" value="1000.000" inputmode="decimal"></div>
+        </div>
       </div>
-      <div class="scroll-table">
-        <table>
-          <thead><tr><th>Line</th><th>Bearing</th><th>Distance</th><th>End E</th><th>End N</th><th></th></tr></thead>
+
+      <div class="qc-main-actions">
+        <button class="btn secondary qc-add-line" type="button" onclick="addQuickCloseLine()">＋ Add line</button>
+        <button class="btn primary qc-calculate" type="button" onclick="calcQuickClose()">Calculate close <span>→</span></button>
+      </div>
+
+      <div class="qc-quick-actions">
+        <button class="btn primary" type="button" onclick="saveQuickCloseJob(false)">▣ Save job</button>
+        <button class="btn secondary" type="button" onclick="exportQuickCloseDXF()">⇩ Export DXF</button>
+        <details class="qc-more-tools">
+          <summary>More tools <span>⌄</span></summary>
+          <div class="qc-more-tools-menu">
+            <button type="button" onclick="saveQuickCloseJob(true)">Save as new job</button>
+            <button type="button" onclick="quickCloseNewJob()">Start a new job</button>
+            <button type="button" onclick="printCurrentPage()">Print calculation</button>
+            <button type="button" class="qc-clear-action" onclick="clearQuickClose()">Clear line entries</button>
+          </div>
+        </details>
+      </div>
+
+      <div class="qc-line-heading">
+        <div><h3>Known lines</h3><p>Enter bearings in DMS and distances in metres.</p></div>
+        <span>Ctrl + Enter to add a line</span>
+      </div>
+      <div class="qc-table-scroll">
+        <table class="qc-lines-table">
+          <thead><tr><th>Line</th><th>Bearing</th><th>Distance (m)</th><th>End E</th><th>End N</th><th></th></tr></thead>
           <tbody id="qcBody"></tbody>
         </table>
       </div>
-      <div id="qcStatus" class="status">Enter your known traverse lines, then calculate the missing closing line.</div>
+      <div id="qcStatus" class="status qc-status">Add your known traverse lines, then calculate the closing line.</div>
+    </div>
+
+    <div class="qc-preview-column">
+      <div class="qc-plan-card card">
+        <div class="qc-plan-heading">
+          <div><div class="qc-kicker">02 / PREVIEW</div><h2>Traverse plan</h2></div>
+          <span>North up · Coordinate plan</span>
+        </div>
+        <div class="qc-canvas-wrap"><canvas id="qcPlot" width="1000" height="700"></canvas></div>
+        <div class="qc-plan-foot"><span class="qc-legend"><i class="qc-legend-known"></i>Known lines</span><span class="qc-legend"><i class="qc-legend-close"></i>Closing line</span><span class="qc-north-note">N ↑</span></div>
+      </div>
+
+      <div class="qc-result-card card">
+        <div class="qc-result-heading"><div><div class="qc-kicker">03 / RESULT</div><h2>Closing line</h2></div><span class="qc-result-state">Calculated close</span></div>
+        <div class="qc-main-results">
+          <div class="qc-main-result"><small>Closing bearing</small><strong id="qcBearing">—</strong></div>
+          <div class="qc-main-result"><small>Closing distance</small><strong id="qcDistance">—</strong></div>
+        </div>
+        <div class="qc-delta-results">
+          <div><small>Departure · ΔE</small><strong id="qcDeltaE">—</strong></div>
+          <div><small>Latitude · ΔN</small><strong id="qcDeltaN">—</strong></div>
+        </div>
+        <div id="qcCloseBanner" class="qc-close-banner">Calculate the close to see the closing line.</div>
+      </div>
     </div>
   </div>
 
-  <div class="workspace-right">
-    <div class="card live-card">
-      <div class="plot-head"><b>Quick Close Plan</b><span>Known traverse + calculated close</span></div>
-      <canvas id="qcPlot" width="1000" height="700"></canvas>
+  <details class="qc-calculation-details">
+    <summary><span><strong>Calculation details</strong><small>Full-precision line components and cumulative coordinates</small></span><b>View details ⌄</b></summary>
+    <div class="qc-details-body">
+      <div class="muted">Intermediate coordinates are not rounded before the final closing result.</div>
+      <div class="qc-detail-table-wrap">
+        <table>
+          <thead><tr><th>Line</th><th>Parsed bearing</th><th>Departure ΔE</th><th>Latitude ΔN</th><th>Cumulative E</th><th>Cumulative N</th></tr></thead>
+          <tbody id="qcDetailBody"></tbody>
+        </table>
+      </div>
     </div>
-  </div>
-</div>
-
-<div class="calc-summary qc-summary"><div class="results"><div class="result qc-primary"><small>CLOSING BEARING</small><strong id="qcBearing">—</strong></div><div class="result qc-primary"><small>CLOSING DISTANCE</small><strong id="qcDistance">—</strong></div><div class="result"><small>Δ EASTING</small><strong id="qcDeltaE">—</strong></div><div class="result"><small>Δ NORTHING</small><strong id="qcDeltaN">—</strong></div></div><div id="qcCloseBanner" class="close-banner">Calculate the close to see the closing line.</div></div>
-
-<div class="card" style="margin-top:12px">
-  <div class="eyebrow">Calculation Details</div>
-  <div class="muted" style="margin-bottom:8px">Full-precision components used for the closing calculation. Intermediate coordinates are not rounded before the final result.</div>
-  <div style="overflow:auto">
-    <table>
-      <thead><tr><th>Line</th><th>Parsed Bearing</th><th>Departure ΔE</th><th>Latitude ΔN</th><th>Cumulative E</th><th>Cumulative N</th></tr></thead>
-      <tbody id="qcDetailBody"></tbody>
-    </table>
-  </div>
-</div>
+  </details>
 </section>
 
 
