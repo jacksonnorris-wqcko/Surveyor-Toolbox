@@ -1,5 +1,7 @@
-Surveyor’s Toolbox — iPhone PWA v8.7
+Surveyor’s Toolbox — iPhone PWA v8.8
 Built By Jackson 2026
+
+v8.8 adds an optional Point C to B&D from Coords. With Point C enabled, the calculator reports all three survey-mark lines: A→B, B→C and C→A. The scale-factor control multiplies each calculated grid distance and displays both the original grid distance and adjusted distance. The existing two-point A→B calculation remains the default.
 
 v8.7 fixes Quick Close line entry by restoring its line counter, which was accidentally removed during the v8.5 calculator cleanup. The permanent desktop Point Manager sidebar shortcut introduced in v8.6 has been removed; Point Manager remains available from the existing dashboard tool and iPhone More menu.
 
