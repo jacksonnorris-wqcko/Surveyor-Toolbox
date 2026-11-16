@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="8.11">
+<meta name="app-version" content="8.12">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -928,7 +928,7 @@ canvas{background:#fbfcfa}
 <aside class="side">
 <div class="logo">
   <span class="logo-mark">⌖</span>
-  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.11</small></span>
+  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.12</small></span>
 </div>
 <div class="nav">
 <div class="section">Workspace</div>
@@ -955,11 +955,11 @@ canvas{background:#fbfcfa}
   <div class="desktop-context"><span class="desktop-context-mark">⌖</span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
     <div class="mobile-brand-mark">⌖</div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.11</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.12</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.11</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.12</small></span>
   </div>
 </div>
 
@@ -1006,7 +1006,7 @@ canvas{background:#fbfcfa}
     <div><label for="cn3">Northing</label><input id="cn3" inputmode="decimal" placeholder="Point C Northing"></div>
   </div>
 </div>
-<div class="card full"><div class="toolbar calc-toolbar"><button class="btn primary" onclick="calcCoords()">CALCULATE</button><button class="btn secondary" onclick="swapCoords()">⇄ Swap A / B</button><button class="btn secondary" type="button" onclick="printCoordsCalculation()">▤ PRINT CALCULATION</button></div><div id="coordsStatus" class="status" hidden></div>
+<div class="card full"><div class="toolbar calc-toolbar"><button class="btn primary" onclick="calcCoords()">CALCULATE</button><button class="btn secondary" onclick="swapCoords()">⇄ Swap A / B</button><button class="btn secondary" type="button" onclick="printCoordsCalculation()">▤ PRINT CALCULATION</button><button class="btn secondary" type="button" onclick="exportCoordsDXF()">⇩ EXPORT DXF</button></div><div id="coordsStatus" class="status" hidden></div>
 <div class="results"><div class="result"><small>A→B Distance</small><strong id="crDist">278.002 m</strong></div><div class="result"><small>A→B Bearing</small><strong id="crBear">323d20'10"</strong></div><div class="result"><small>Δ Easting</small><strong id="crE">166.000 m</strong></div><div class="result"><small>Δ Northing</small><strong id="crN">-223.000 m</strong></div></div>
 <div class="coords-scale-panel">
   <div class="coords-scale-heading"><h3>Scale factor</h3><span>Apply after calculating</span></div>
@@ -2373,6 +2373,133 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     var a=byId('coordsName1'),b=byId('coordsName2');
     if(a&&b){var value=a.value;a.value=b.value;b.value=value}
     oldSwap();
+  };
+})();
+</script>
+
+
+<script id="v8-12-coords-dxf-js">
+(function(){
+  function setExportStatus(message,type){
+    var el=document.getElementById('coordsStatus');
+    if(!el)return;
+    el.hidden=!message;
+    el.textContent=message||'';
+    el.className='status'+(type?' '+type:'');
+  }
+  function readExportPoint(key,index){
+    var eText=document.getElementById('ce'+index).value.trim();
+    var nText=document.getElementById('cn'+index).value.trim();
+    var e=Number(eText),n=Number(nText);
+    if(!eText||!nText||!Number.isFinite(e)||!Number.isFinite(n)){
+      throw new Error('Enter valid Easting and Northing coordinates for Point '+key+'.');
+    }
+    var nameEl=document.getElementById('coordsName'+index);
+    var name=nameEl?nameEl.value.trim():'';
+    return {key:key,e:e,n:n,name:name||('Point '+key)};
+  }
+  function cleanDxfText(value){
+    return String(value??'')
+      .replace(/[\r\n\t]/g,' ')
+      .replace(/[^\x20-\x7E]/g,'')
+      .replace(/\s+/g,' ')
+      .trim();
+  }
+  function coord(value){return Number(value).toFixed(6)}
+
+  function buildCoordsDXF(points){
+    var pairs=points.length===3?[[0,1],[1,2],[2,0]]:[[0,1]];
+    var rows=[];
+    var add=function(code,value){rows.push(String(code),String(value))};
+    var addLine=function(layer,x1,y1,x2,y2){
+      add(0,'LINE');add(8,layer);
+      add(10,coord(x1));add(20,coord(y1));add(30,'0.000000');
+      add(11,coord(x2));add(21,coord(y2));add(31,'0.000000');
+    };
+
+    // AutoCAD R12 / AC1009 header, consistent with Quick Close DXF.
+    add(0,'SECTION');add(2,'HEADER');
+    add(9,'$ACADVER');add(1,'AC1009');
+    add(0,'ENDSEC');
+
+    // Separate layers for the inserted survey crosses, connecting lines and labels.
+    add(0,'SECTION');add(2,'TABLES');
+    add(0,'TABLE');add(2,'LAYER');add(70,'3');
+    [['QC_POINT',7],['QC_LINE',3],['QC_LABEL',7]].forEach(function(layer){
+      add(0,'LAYER');add(2,layer[0]);add(70,'0');add(62,String(layer[1]));add(6,'CONTINUOUS');
+    });
+    add(0,'ENDTAB');add(0,'ENDSEC');
+
+    // Same centred 0,0 cross block used by Quick Close.
+    var arm=0.5;
+    add(0,'SECTION');add(2,'BLOCKS');
+    add(0,'BLOCK');add(8,'0');add(2,'QC_SURVEY_POINT');add(70,'0');
+    add(10,'0.000000');add(20,'0.000000');add(30,'0.000000');
+    addLine('QC_POINT',-arm,0,arm,0);
+    addLine('QC_POINT',0,-arm,0,arm);
+    add(0,'ENDBLK');add(8,'0');add(0,'ENDSEC');
+
+    add(0,'SECTION');add(2,'ENTITIES');
+
+    // Connected grid geometry is written using the original coordinate values.
+    pairs.forEach(function(pair){
+      var from=points[pair[0]],to=points[pair[1]];
+      addLine('QC_LINE',from.e,from.n,to.e,to.n);
+    });
+
+    // Insert the reusable cross block at each exact survey coordinate.
+    points.forEach(function(point){
+      add(0,'INSERT');add(8,'QC_POINT');add(2,'QC_SURVEY_POINT');
+      add(10,coord(point.e));add(20,coord(point.n));add(30,'0.000000');
+      add(41,'1.000000');add(42,'1.000000');add(43,'1.000000');add(50,'0.000000');
+    });
+
+    // Text is a separate annotation; the survey point INSERT itself remains exact.
+    points.forEach(function(point){
+      var label=cleanDxfText(point.key+' - '+point.name);
+      add(0,'TEXT');add(8,'QC_LABEL');
+      add(10,coord(point.e+0.8));add(20,coord(point.n+0.8));add(30,'0.000000');
+      add(40,'1.000000');add(1,label);add(50,'0.000000');
+    });
+
+    add(0,'ENDSEC');add(0,'EOF');
+    return rows.join('\r\n')+'\r\n';
+  }
+
+  window.exportCoordsDXF=function(){
+    try{
+      var points=[readExportPoint('A',1),readExportPoint('B',2)];
+      if(document.getElementById('coordsUseC').checked)points.push(readExportPoint('C',3));
+      if(points.length===3){
+        var keys=['A','B','C'];
+        for(var i=0;i<points.length;i++){
+          for(var j=i+1;j<points.length;j++){
+            if(points[i].e===points[j].e&&points[i].n===points[j].n){
+              throw new Error('Points '+keys[i]+' and '+keys[j]+' have identical coordinates.');
+            }
+          }
+        }
+      }else if(points[0].e===points[1].e&&points[0].n===points[1].n){
+        throw new Error('Points A and B have identical coordinates.');
+      }
+
+      var dxf=buildCoordsDXF(points);
+      var blob=new Blob([dxf],{type:'application/dxf'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');
+      a.href=url;
+      var nameBits=points.map(function(p){return cleanDxfText(p.name).replace(/[^a-zA-Z0-9_-]+/g,'_')}).filter(Boolean);
+      var safeName=nameBits.join('_').slice(0,60)||'Survey_Points';
+      a.download=safeName+' - points.dxf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function(){URL.revokeObjectURL(url)},1000);
+
+      setExportStatus('DXF exported: '+points.length+' coordinate-true survey point(s), '+(points.length===3?3:1)+' connecting line(s). Original grid coordinates retained; scale factor not applied.','ok');
+    }catch(error){
+      setExportStatus(error.message||'Unable to export the DXF file.','warn');
+    }
   };
 })();
 </script>
