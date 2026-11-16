@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="8.6">
+<meta name="app-version" content="8.7">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -849,12 +849,11 @@ canvas{background:#fbfcfa}
 <aside class="side">
 <div class="logo">
   <span class="logo-mark">⌖</span>
-  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.6</small></span>
+  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.7</small></span>
 </div>
 <div class="nav">
 <div class="section">Workspace</div>
 <button class="active" onclick="show('dashboard',this)">⌂ Home</button>
-<button onclick="show('points',this)">📍 Point Manager</button>
 <div class="section">Survey Calculators</div>
 <button onclick="show('coords',this)">📐 B&D From Coords</button>
 <button onclick="show('bd',this)">🎯 Coords From B&D</button>
@@ -877,11 +876,11 @@ canvas{background:#fbfcfa}
   <div class="desktop-context"><span class="desktop-context-mark">⌖</span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
     <div class="mobile-brand-mark">⌖</div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.6</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.7</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.6</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.7</small></span>
   </div>
 </div>
 
@@ -1157,6 +1156,7 @@ function parseDMS(value){
 function calcCoords(){let e1=num('ce1'),n1=num('cn1'),e2=num('ce2'),n2=num('cn2'),de=e2-e1,dn=n2-n1;let dist=Math.hypot(de,dn),b=Math.atan2(de,dn)*180/Math.PI;if(b<0)b+=360;crDist.textContent=dist.toFixed(3)+' m';crBear.textContent=dms(b);crE.textContent=de.toFixed(3)+' m';crN.textContent=dn.toFixed(3)+' m'}
 
 function calcBD(){let e=num('be'),n=num('bn'),b=parseDMS(document.getElementById('bb').value),d=num('bdist'),r=b*Math.PI/180,de=d*Math.sin(r),dn=d*Math.cos(r);bE.textContent=(e+de).toFixed(3)+' m';bN.textContent=(n+dn).toFixed(3)+' m';bDep.textContent=de.toFixed(3)+' m';bLat.textContent=dn.toFixed(3)+' m'}
+let qcLineNo=0;
 function addQuickCloseLine(bearing="90d00'00\"",distance="50"){
   qcLineNo++;
   const tr=document.createElement('tr');
