@@ -1,5 +1,7 @@
-Surveyor’s Toolbox — iPhone PWA v8.13
+Surveyor’s Toolbox — iPhone PWA v8.14
 Built By Jackson 2026
+
+v8.14 redesigns the Quick Close page into a clearer workflow. Optional job details are tucked into a compact expandable panel; starting coordinates are grouped separately; line entry has dedicated Add Line and Calculate Close actions; save/export/print/new-job options are grouped into secondary tools; the plan preview and closing results are presented together; and full-precision calculation details are collapsed until requested. All original calculator element IDs, save/load, DXF, print and local storage workflows are retained.
 
 v8.13 adds a visible note beside the B&D DXF export button clarifying that DXF files use the original grid coordinates and do not apply the scale factor.
 
