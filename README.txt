@@ -1,5 +1,7 @@
-Surveyor’s Toolbox — iPhone PWA v8.12
+Surveyor’s Toolbox — iPhone PWA v8.13
 Built By Jackson 2026
+
+v8.13 adds a visible note beside the B&D DXF export button clarifying that DXF files use the original grid coordinates and do not apply the scale factor.
 
 v8.12 adds DXF export to B&D from Coords. It follows the Quick Close R12/AC1009 DXF conventions: a reusable centred survey cross block is inserted at each exact Easting/Northing coordinate with six-decimal precision. It exports mark-name text labels and connecting LINE entities on separate QC_LABEL and QC_LINE layers. Two-point mode exports A–B; three-point mode exports A–B, B–C and C–A. DXF uses original grid coordinates and deliberately does not apply the on-screen scale factor.
 
