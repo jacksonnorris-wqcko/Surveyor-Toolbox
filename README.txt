@@ -1,5 +1,7 @@
-Surveyor’s Toolbox — iPhone PWA v9.0
+Surveyor’s Toolbox — iPhone PWA v9.1
 Built By Jackson 2026
+
+v9.1 redesigns B&D From Coordinates. Points A and B now sit in a compact side-by-side input card; Point C uses an optional toggle and appears only when enabled. A new live coordinate-proportioned point sketch updates as coordinates or mark names are edited. Calculate is the primary action, grid bearing and distance are prominent results, departure/latitude are secondary, scale factor and line breakdown have their own ground-adjustment panel, and print/DXF actions are grouped in a report and CAD section. Existing input/result IDs, calculations, scale-factor logic, named points, three-line calculations, print and DXF generation are preserved.
 
 v9.0 is a complete visual reskin of the Surveyor’s Toolbox. It introduces a custom inline SVG icon library, a refreshed forest-green and brass visual identity, redesigned desktop sidebar and mobile navigation, updated typography and spacing, consistent cards, forms, result panels, tables and buttons, and page-specific styling for Home, Point Manager, B&D calculators, Quick Close, Saved Jobs, Scale, Conversions, Shortcuts and Strata Areas. Saved-job and point-list actions use matching custom icons. This release is presentation-focused: calculator logic, saved job/point storage formats, existing IDs, print and DXF exporters, and workflows are retained.
 
