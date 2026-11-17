@@ -1,3 +1,5 @@
+v9.3 — B&D print report: Removed the rotated view so the diagram is north-up (Easting right, Northing up) and the grid-north arrow is correct. Redesigned point-name callouts to stay within the geometry panel, improved line-information spacing, and enlarged the landscape diagram area. Applies to both triangle and four-point boundary reports.
+
 v9.2 — B&D From Coordinates: Added optional Point D after Point C. Four-point calculations now close A→B→C→D→A, including the live diagram, scale-factor line schedule, print report and DXF export. Existing two- and three-point workflows remain supported.
 
 Surveyor’s Toolbox — iPhone PWA v9.1
