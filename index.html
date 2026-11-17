@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="9.2" data-release="major">
+<meta name="app-version" content="9.3" data-release="major">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -912,7 +912,7 @@ canvas{background:#fbfcfa}
  #coordsPrintSheet td{border:1px solid #dce3de;padding:7px 8px;background:#fff!important}
  #coordsPrintSheet .print-point-name{font-weight:700}
  #coordsPrintSheet .print-lines td:nth-child(4){font-weight:700;color:#245d45}
- #coordsPrintSheet .print-diagram-wrap{margin-top:8px;border:1px solid #dce3de;padding:4px 8px;height:465px;break-inside:avoid;display:flex;align-items:center;justify-content:center;overflow:hidden}
+ #coordsPrintSheet .print-diagram-wrap{margin-top:7px;border:1px solid #dce3de;padding:5px 8px;height:535px;break-inside:avoid;display:flex;align-items:center;justify-content:center;overflow:hidden}
  #coordsPrintSheet .print-diagram-wrap svg{display:block;width:100%;height:100%;max-width:100%;max-height:100%}
  #coordsPrintSheet .print-diagram-caption{font-size:8pt;color:#718078;margin-top:4px}
  #coordsPrintSheet .print-diagram-legend{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin:0 0 5px;font-size:8.5pt;font-weight:700}
@@ -1339,7 +1339,7 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 <div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
 <div class="app">
 <aside class="side">
-<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v9.2</small></span></div>
+<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v9.3</small></span></div>
 <div class="nav">
 <div class="section">Workspace</div>
 <button class="active" onclick="show('dashboard',this)"><svg class="ui-icon nav-icon"><use href="#st-home"></use></svg><span>Home</span></button>
@@ -1361,11 +1361,11 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
   <div class="desktop-context"><span class="desktop-context-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
     <div class="mobile-brand-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v9.2</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v9.3</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v9.2</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v9.3</small></span>
   </div>
 </div>
 
@@ -2805,92 +2805,140 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     return {key:key,markName:markName,displayName:markName||'Point '+key,e:e,n:n};
   }
   function makeDiagram(points,lines){
-    // Rotate the coordinate geometry so its longest line is horizontal,
-    // while preserving the true equal scale of Easting and Northing.
-    var w=1600,h=points.length>3?850:650,plot={x:55,y:55,w:900,h:points.length>3?735:535};
-    var longest=lines.reduce(function(best,line){
-      var from=points.find(p=>p.key===line.fromKey),to=points.find(p=>p.key===line.toKey);
-      var len=Math.hypot(to.e-from.e,to.n-from.n);
-      return !best||len>best.len?{from:from,to:to,len:len}:best;
-    },null);
-    var theta=Math.atan2(longest.to.n-longest.from.n,longest.to.e-longest.from.e);
-    var cos=Math.cos(theta),sin=Math.sin(theta);
-    points.forEach(function(p){
-      p.rx=p.e*cos+p.n*sin;
-      p.ry=-p.e*sin+p.n*cos;
-    });
-    var minX=Math.min.apply(null,points.map(p=>p.rx));
-    var maxX=Math.max.apply(null,points.map(p=>p.rx));
-    var minY=Math.min.apply(null,points.map(p=>p.ry));
-    var maxY=Math.max.apply(null,points.map(p=>p.ry));
-    var spanX=Math.max(maxX-minX,0.001),spanY=Math.max(maxY-minY,0.001);
-    var scale=Math.min((plot.w-170)/spanX,(plot.h-130)/spanY);
-    var usedW=spanX*scale,usedH=spanY*scale;
-    var offX=plot.x+(plot.w-usedW)/2,offY=plot.y+(plot.h-usedH)/2;
-    points.forEach(function(p){
-      p.x=offX+(p.rx-minX)*scale;
-      p.y=h-offY-(p.ry-minY)*scale;
-    });
-    var cx=points.reduce((sum,p)=>sum+p.x,0)/points.length;
-    var cy=points.reduce((sum,p)=>sum+p.y,0)/points.length;
-    var blue='#1769aa',orange='#bf5726',ink='#344b43',muted='#65756d';
-    var shapes='';
-    shapes+='<rect x="20" y="20" width="970" height="'+(h-40)+'" rx="16" fill="#fbfcfb" stroke="#dce4df" stroke-width="2"/>';
-    shapes+='<text x="55" y="48" font-size="15" font-weight="800" letter-spacing="1.3" fill="'+muted+'">SURVEY GEOMETRY · TRUE PROPORTION</text>';
+    // The diagram is deliberately north-up. Easting is plotted to the right
+    // and Northing upward; the north arrow therefore always reflects grid north.
+    var w=1600,h=850;
+    var plot={x:85,y:112,w:790,h:660};
+    var minE=Math.min.apply(null,points.map(function(p){return p.e}));
+    var maxE=Math.max.apply(null,points.map(function(p){return p.e}));
+    var minN=Math.min.apply(null,points.map(function(p){return p.n}));
+    var maxN=Math.max.apply(null,points.map(function(p){return p.n}));
+    var spanE=Math.max(maxE-minE,0.001),spanN=Math.max(maxN-minN,0.001);
 
+    // Equal scale in both coordinate axes keeps the surveyed geometry true.
+    // The unused space is centred, with generous margins for full point labels.
+    var scale=Math.min((plot.w-190)/spanE,(plot.h-190)/spanN);
+    var usedW=spanE*scale,usedH=spanN*scale;
+    var offX=plot.x+(plot.w-usedW)/2;
+    var offY=plot.y+(plot.h-usedH)/2;
+    points.forEach(function(p){
+      p.x=offX+(p.e-minE)*scale;
+      p.y=offY+(maxN-p.n)*scale;
+    });
+
+    var cx=points.reduce(function(sum,p){return sum+p.x},0)/points.length;
+    var cy=points.reduce(function(sum,p){return sum+p.y},0)/points.length;
+    var blue='#1769aa',orange='#bf5726',ink='#344b43',muted='#65756d';
+    var pointColors=['#397c63','#5d8297','#b08a4b','#8b7398'];
+    var shapes='';
+    shapes+='<rect x="20" y="20" width="970" height="810" rx="18" fill="#fbfcfb" stroke="#dce4df" stroke-width="2"/>';
+    shapes+='<text x="55" y="58" font-size="17" font-weight="800" letter-spacing="1.2" fill="'+muted+'">NORTH-UP SURVEY GEOMETRY</text>';
+    shapes+='<text x="55" y="82" font-size="12" fill="'+muted+'">Easting increases right · Northing increases up · Equal coordinate scale</text>';
+
+    // Draw all surveyed boundary legs before labels and line-number markers.
     lines.forEach(function(line){
-      var from=points.find(p=>p.key===line.fromKey),to=points.find(p=>p.key===line.toKey);
+      var from=points.find(function(p){return p.key===line.fromKey});
+      var to=points.find(function(p){return p.key===line.toKey});
       shapes+='<line x1="'+from.x+'" y1="'+from.y+'" x2="'+to.x+'" y2="'+to.y+'" stroke="'+ink+'" stroke-width="5" stroke-linecap="round"/>';
     });
 
-    // Numbered markers avoid putting long rotated text on top of narrow lines.
+    // Numbered line markers correspond exactly with the schedule at right.
     lines.forEach(function(line,index){
-      var from=points.find(p=>p.key===line.fromKey),to=points.find(p=>p.key===line.toKey);
+      var from=points.find(function(p){return p.key===line.fromKey});
+      var to=points.find(function(p){return p.key===line.toKey});
       var mx=(from.x+to.x)/2,my=(from.y+to.y)/2;
       var dx=to.x-from.x,dy=to.y-from.y,len=Math.hypot(dx,dy)||1;
       var nx=-dy/len,ny=dx/len;
-      var side=points.reduce((sum,p)=>sum+((p.x-mx)*nx+(p.y-my)*ny),0)/points.length;
+      var side=points.reduce(function(sum,p){return sum+((p.x-mx)*nx+(p.y-my)*ny)},0)/points.length;
       if(side>0){nx=-nx;ny=-ny}
-      var bx=mx+nx*25,by=my+ny*25;
+      var bx=mx+nx*24,by=my+ny*24;
       shapes+='<circle cx="'+bx+'" cy="'+by+'" r="19" fill="#ffffff" stroke="'+ink+'" stroke-width="3"/>';
       shapes+='<text x="'+bx+'" y="'+(by+7)+'" text-anchor="middle" font-size="19" font-weight="800" fill="'+ink+'">'+(index+1)+'</text>';
     });
 
-    points.forEach(function(p){
-      var dx=p.x-cx,dy=p.y-cy,len=Math.hypot(dx,dy)||1;
-      var tx=p.x+(dx/len)*34,ty=p.y+(dy/len)*34;
-      var anchor=dx<-12?'end':dx>12?'start':'middle';
-      var label=p.key+(p.markName?' — '+p.markName:'');
-      shapes+='<circle cx="'+p.x+'" cy="'+p.y+'" r="9" fill="'+ink+'" stroke="#ffffff" stroke-width="3"/>';
-      shapes+='<text x="'+tx+'" y="'+(ty+7)+'" text-anchor="'+anchor+'" font-size="23" font-weight="800" fill="#172a23" stroke="#ffffff" stroke-width="8" paint-order="stroke">'+escapeHTML(label)+'</text>';
+    // Place full point-name callouts inside the geometry panel. Candidate
+    // positions are scored to avoid clipping and overlapping other labels.
+    var labelBoxes=[];
+    points.forEach(function(p,index){
+      var display=p.markName||('Point '+p.key);
+      var labelW=Math.min(360,Math.max(126,display.length*7.5+58));
+      var labelH=34;
+      var pad=30,topPad=96,bottomPad=h-34;
+      var candidates=[
+        {x:p.x-labelW/2,y:p.y-labelH-18},
+        {x:p.x+17,y:p.y-labelH/2},
+        {x:p.x-labelW/2,y:p.y+18},
+        {x:p.x-labelW-17,y:p.y-labelH/2},
+        {x:p.x+17,y:p.y-labelH-18},
+        {x:p.x-labelW-17,y:p.y-labelH-18},
+        {x:p.x+17,y:p.y+18},
+        {x:p.x-labelW-17,y:p.y+18}
+      ];
+      var best=null,bestScore=Infinity;
+      candidates.forEach(function(candidate){
+        var x=candidate.x,y=candidate.y;
+        var overflow=Math.max(0,pad-x)+Math.max(0,x+labelW-(980-pad))+
+          Math.max(0,topPad-y)+Math.max(0,y+labelH-bottomPad);
+        var overlap=0;
+        labelBoxes.forEach(function(box){
+          var iw=Math.max(0,Math.min(x+labelW,box.x+box.w)-Math.max(x,box.x));
+          var ih=Math.max(0,Math.min(y+labelH,box.y+box.h)-Math.max(y,box.y));
+          overlap+=iw*ih;
+        });
+        var pointHit=0;
+        points.forEach(function(other){
+          if(other===p)return;
+          if(other.x>=x-7&&other.x<=x+labelW+7&&other.y>=y-7&&other.y<=y+labelH+7)pointHit+=1;
+        });
+        var vx=x+labelW/2-p.x,vy=y+labelH/2-p.y;
+        var outward=((p.x-cx)*vx+(p.y-cy)*vy)/(Math.hypot(p.x-cx,p.y-cy)*Math.hypot(vx,vy)||1);
+        var score=overflow*120+overlap*3+pointHit*1800-outward*18;
+        if(score<bestScore){bestScore=score;best=candidate}
+      });
+      var box={x:best.x,y:best.y,w:labelW,h:labelH};
+      labelBoxes.push(box);
+      var edgeX=Math.max(box.x,Math.min(p.x,box.x+box.w));
+      var edgeY=Math.max(box.y,Math.min(p.y,box.y+box.h));
+      shapes+='<line x1="'+p.x+'" y1="'+p.y+'" x2="'+edgeX+'" y2="'+edgeY+'" stroke="'+pointColors[index%pointColors.length]+'" stroke-width="2" opacity=".8"/>';
+      shapes+='<rect x="'+box.x+'" y="'+box.y+'" width="'+box.w+'" height="'+box.h+'" rx="9" fill="#ffffff" stroke="#cbd8d0" stroke-width="1.6"/>';
+      shapes+='<circle cx="'+(box.x+17)+'" cy="'+(box.y+17)+'" r="11" fill="'+pointColors[index%pointColors.length]+'"/>';
+      shapes+='<text x="'+(box.x+17)+'" y="'+(box.y+21)+'" text-anchor="middle" font-size="12" font-weight="900" fill="#ffffff">'+p.key+'</text>';
+      shapes+='<text x="'+(box.x+36)+'" y="'+(box.y+22)+'" font-size="14" font-weight="800" fill="#172a23">'+escapeHTML(display)+'</text>';
+      shapes+='<circle cx="'+p.x+'" cy="'+p.y+'" r="8" fill="'+pointColors[index%pointColors.length]+'" stroke="#ffffff" stroke-width="3"/>';
     });
 
-    shapes+='<g transform="translate(930 92)" stroke="'+ink+'" fill="'+ink+'" stroke-width="3"><path d="M0 42 V0 M-9 14 L0 0 L9 14" fill="none"/><text x="0" y="-12" text-anchor="middle" font-size="21" font-weight="800" stroke="none">N</text></g>';
+    // Fixed vertical arrow means grid north, not the direction of a rotated view.
+    shapes+='<g transform="translate(925 142)" stroke="'+ink+'" fill="'+ink+'" stroke-width="3">';
+    shapes+='<path d="M0 48 V0 M-10 15 L0 0 L10 15" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+    shapes+='<text x="0" y="-13" text-anchor="middle" font-size="22" font-weight="900" stroke="none">N</text>';
+    shapes+='<text x="0" y="68" text-anchor="middle" font-size="10" font-weight="800" stroke="none">GRID</text></g>';
 
-    // Right-hand line schedule: horizontal labels never collide with linework.
-    shapes+='<rect x="1010" y="20" width="570" height="'+(h-40)+'" rx="16" fill="#ffffff" stroke="#dce4df" stroke-width="2"/>';
-    shapes+='<text x="1050" y="63" font-size="20" font-weight="800" letter-spacing=".7" fill="'+ink+'">LINE INFORMATION</text>';
-    shapes+='<text x="1050" y="90" font-size="14" fill="'+muted+'">Numbers correspond to the markers on the diagram</text>';
-    var rowH=160,gap=14,total=lines.length*rowH+(lines.length-1)*gap;
-    var scheduleInnerHeight=h-150;
-    var top=105+(scheduleInnerHeight-total)/2;
+    // The schedule is given enough vertical room for every side, including
+    // the fourth leg on a four-point boundary.
+    shapes+='<rect x="1010" y="20" width="570" height="810" rx="18" fill="#ffffff" stroke="#dce4df" stroke-width="2"/>';
+    shapes+='<text x="1050" y="62" font-size="20" font-weight="800" letter-spacing=".7" fill="'+ink+'">LINE INFORMATION</text>';
+    shapes+='<text x="1050" y="88" font-size="14" fill="'+muted+'">Numbers match the markers on the north-up diagram</text>';
+    var rowH=lines.length===4?145:(lines.length===3?175:205);
+    var gap=12,total=lines.length*rowH+(lines.length-1)*gap;
+    var scheduleInnerHeight=h-180;
+    var top=110+(scheduleInnerHeight-total)/2;
     lines.forEach(function(line,index){
       var y=top+index*(rowH+gap);
-      var from=points.find(p=>p.key===line.fromKey),to=points.find(p=>p.key===line.toKey);
-      var label=from.displayName+' → '+to.displayName;
+      var label=line.from.displayName+' → '+line.to.displayName;
+      var safeLabel=label.length>52?label.slice(0,49)+'…':label;
       shapes+='<rect x="1040" y="'+y+'" width="510" height="'+rowH+'" rx="12" fill="#f9fbfa" stroke="#dce4df" stroke-width="1.5"/>';
-      shapes+='<circle cx="1075" cy="'+(y+31)+'" r="18" fill="'+ink+'"/>';
-      shapes+='<text x="1075" y="'+(y+38)+'" text-anchor="middle" font-size="18" font-weight="800" fill="#ffffff">'+(index+1)+'</text>';
-      shapes+='<text x="1107" y="'+(y+38)+'" font-size="21" font-weight="800" fill="'+ink+'">'+escapeHTML(label)+'</text>';
-      shapes+='<text x="1070" y="'+(y+75)+'" font-size="16" font-weight="800" letter-spacing=".8" fill="'+blue+'">GRID BEARING</text>';
-      shapes+='<text x="1070" y="'+(y+103)+'" font-size="21" font-weight="800" fill="'+blue+'">'+escapeHTML(line.bearing)+'</text>';
-      shapes+='<text x="1335" y="'+(y+75)+'" font-size="16" font-weight="800" letter-spacing=".8" fill="'+blue+'">GRID DISTANCE</text>';
-      shapes+='<text x="1335" y="'+(y+103)+'" font-size="21" font-weight="800" fill="'+blue+'">'+fmt(line.distance)+' m</text>';
-      shapes+='<line x1="1070" y1="'+(y+116)+'" x2="1520" y2="'+(y+116)+'" stroke="#e3e9e5" stroke-width="1.5"/>';
-      shapes+='<text x="1070" y="'+(y+145)+'" font-size="16" font-weight="800" letter-spacing=".8" fill="'+orange+'">SCALED GROUND DISTANCE</text>';
-      shapes+='<text x="1515" y="'+(y+145)+'" text-anchor="end" font-size="23" font-weight="900" fill="'+orange+'">'+fmt(line.scaled)+' m</text>';
+      shapes+='<circle cx="1075" cy="'+(y+27)+'" r="16" fill="'+ink+'"/>';
+      shapes+='<text x="1075" y="'+(y+33)+'" text-anchor="middle" font-size="16" font-weight="800" fill="#ffffff">'+(index+1)+'</text>';
+      shapes+='<text x="1104" y="'+(y+33)+'" font-size="16" font-weight="800" fill="'+ink+'">'+escapeHTML(safeLabel)+'</text>';
+      shapes+='<text x="1070" y="'+(y+68)+'" font-size="11" font-weight="800" letter-spacing=".7" fill="'+blue+'">GRID BEARING</text>';
+      shapes+='<text x="1070" y="'+(y+91)+'" font-size="18" font-weight="800" fill="'+blue+'">'+escapeHTML(line.bearing)+'</text>';
+      shapes+='<text x="1325" y="'+(y+68)+'" font-size="11" font-weight="800" letter-spacing=".7" fill="'+blue+'">GRID DISTANCE</text>';
+      shapes+='<text x="1325" y="'+(y+91)+'" font-size="18" font-weight="800" fill="'+blue+'">'+fmt(line.distance)+' m</text>';
+      shapes+='<line x1="1070" y1="'+(y+105)+'" x2="1520" y2="'+(y+105)+'" stroke="#e3e9e5" stroke-width="1.5"/>';
+      shapes+='<text x="1070" y="'+(y+131)+'" font-size="11" font-weight="800" letter-spacing=".7" fill="'+orange+'">SCALED GROUND DISTANCE</text>';
+      shapes+='<text x="1515" y="'+(y+131)+'" text-anchor="end" font-size="19" font-weight="900" fill="'+orange+'">'+fmt(line.scaled)+' m</text>';
     });
-    return '<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Survey geometry with numbered line information and separate blue grid and orange scaled ground values">'+shapes+'</svg>';
+    return '<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="North-up surveying geometry and numbered bearing and distance schedule">'+shapes+'</svg>';
   }
 
   window.printCoordsCalculation=function(){
@@ -2927,7 +2975,7 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
         '<table class="print-lines"><thead><tr><th>Line</th><th>Bearing</th><th>Grid distance (m)</th><th>Scaled distance (m)</th><th>Δ Easting (m)</th><th>Δ Northing (m)</th></tr></thead><tbody>'+lineRows+'</tbody></table>'+
         '<div class="print-section-title">Line diagram</div>'+
         '<div class="print-diagram-wrap">'+makeDiagram(points,lines)+'</div>'+
-        '<div class="print-diagram-caption">The diagram is automatically rotated to use the page space while preserving true coordinate proportions. Blue = grid bearing and grid distance; orange = scaled ground distance.</div>';
+        '<div class="print-diagram-caption">Diagram is north-up: Easting increases to the right and Northing increases upward. The grid-north arrow is true to the plotted coordinate axes. Geometry is shown at equal coordinate scale. Blue = grid bearing and grid distance; orange = scaled ground distance.</div>';
 
       if(typeof window.calcCoords==='function')window.calcCoords();
       document.body.classList.add('coords-printing');
