@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="9.1" data-release="major">
+<meta name="app-version" content="9.2" data-release="major">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -1209,6 +1209,8 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 #coords .coords-legend-a{background:#397c63}
 #coords .coords-legend-b{background:#5d8297}
 #coords .coords-legend-c{background:#b08a4b}
+#coords .coords-legend-d{background:#8b7398}
+#coords .coords-point-d .coords-point-badge{background:#f0eaf3;color:#755b82;border-color:#e3d7e9}
 #coords .coords-calculate-row{display:flex;align-items:center;gap:9px;margin:13px 0}
 #coords .coords-calculate-btn{min-height:46px;padding:12px 19px;font-size:12px}
 #coords .coords-swap-btn{min-height:42px}
@@ -1428,7 +1430,7 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
       </div>
 
       <div class="coords-pointc-toggle-row">
-        <label class="coords-pointc-toggle" for="coordsUseC"><input id="coordsUseC" type="checkbox" onchange="toggleCoordsPointC()"><span class="coords-toggle-track"></span><span class="coords-toggle-copy"><strong>Add Point C</strong><small>Calculate all three sides of a survey triangle</small></span></label>
+        <label class="coords-pointc-toggle" for="coordsUseC"><input id="coordsUseC" type="checkbox" onchange="toggleCoordsPointC()"><span class="coords-toggle-track"></span><span class="coords-toggle-copy"><strong>Add Point C</strong><small>Optional third point; required before adding Point D</small></span></label>
         <span class="coords-optional-tag">OPTIONAL</span>
       </div>
 
@@ -1439,6 +1441,22 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
             <div class="coords-field"><label for="coordsName3">MARK NAME <span>OPTIONAL</span></label><input id="coordsName3" maxlength="40" placeholder="e.g. PM 106" autocomplete="off"></div>
             <div class="coords-field"><label for="ce3">EASTING <span>m</span></label><input id="ce3" inputmode="decimal" placeholder="Point C Easting" autocomplete="off"></div>
             <div class="coords-field"><label for="cn3">NORTHING <span>m</span></label><input id="cn3" inputmode="decimal" placeholder="Point C Northing" autocomplete="off"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="coords-pointc-toggle-row coords-pointd-toggle-row">
+        <label class="coords-pointc-toggle" for="coordsUseD"><input id="coordsUseD" type="checkbox" onchange="toggleCoordsPointD()" disabled><span class="coords-toggle-track"></span><span class="coords-toggle-copy"><strong>Add Point D</strong><small>Fourth mark — closes the A → B → C → D boundary</small></span></label>
+        <span class="coords-optional-tag" id="coordsPointDRequirement">ADD C FIRST</span>
+      </div>
+
+      <div id="coordsPointDFields" class="coords-pointc-fields" hidden>
+        <div class="coords-point-card coords-point-d">
+          <div class="coords-point-title"><span class="coords-point-badge">D</span><div><strong>Point D</strong><small>Fourth survey mark</small></div></div>
+          <div class="coords-pointc-input-grid">
+            <div class="coords-field"><label for="coordsName4">MARK NAME <span>OPTIONAL</span></label><input id="coordsName4" maxlength="40" placeholder="e.g. PM 107" autocomplete="off"></div>
+            <div class="coords-field"><label for="ce4">EASTING <span>m</span></label><input id="ce4" inputmode="decimal" placeholder="Point D Easting" autocomplete="off"></div>
+            <div class="coords-field"><label for="cn4">NORTHING <span>m</span></label><input id="cn4" inputmode="decimal" placeholder="Point D Northing" autocomplete="off"></div>
           </div>
         </div>
       </div>
@@ -1455,7 +1473,7 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
           <text x="260" y="155" text-anchor="middle" fill="#7f8f85" font-size="13">Enter coordinates to preview the survey points</text>
         </svg>
       </div>
-      <div class="coords-preview-legend"><span><i class="coords-legend-a"></i>Point A</span><span><i class="coords-legend-b"></i>Point B</span><span><i class="coords-legend-c"></i>Point C</span></div>
+      <div class="coords-preview-legend"><span><i class="coords-legend-a"></i>Point A</span><span><i class="coords-legend-b"></i>Point B</span><span><i class="coords-legend-c"></i>Point C</span><span><i class="coords-legend-d"></i>Point D</span></div>
     </div>
   </div>
 
@@ -2681,10 +2699,31 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
 
   window.toggleCoordsPointC=function(){
     var enabled=!!document.getElementById('coordsUseC').checked;
+    var dToggle=document.getElementById('coordsUseD');
+    var dRequirement=document.getElementById('coordsPointDRequirement');
     document.getElementById('coordsPointCFields').hidden=!enabled;
+    if(dToggle){
+      dToggle.disabled=!enabled;
+      if(!enabled)dToggle.checked=false;
+    }
+    if(dRequirement)dRequirement.textContent=enabled?'OPTIONAL':'ADD C FIRST';
+    if(!enabled)document.getElementById('coordsPointDFields').hidden=true;
     lastLines=[];
     document.getElementById('coordsLineTableWrap').hidden=true;
-    setCoordsStatus(enabled?'Point C enabled. Enter its coordinates, then calculate again.':'Point C disabled. Calculate again for the A→B line only.','');
+    setCoordsStatus(enabled?'Point C enabled. Add Point D if required, then calculate again.':'Point C disabled. Point D has also been disabled. Calculate again for the A→B line only.','');
+  };
+
+  window.toggleCoordsPointD=function(){
+    var enabled=!!document.getElementById('coordsUseD').checked;
+    if(!document.getElementById('coordsUseC').checked){
+      document.getElementById('coordsUseD').checked=false;
+      setCoordsStatus('Enable Point C before adding Point D.','warn');
+      return;
+    }
+    document.getElementById('coordsPointDFields').hidden=!enabled;
+    lastLines=[];
+    document.getElementById('coordsLineTableWrap').hidden=true;
+    setCoordsStatus(enabled?'Point D enabled. Enter its coordinates to complete the four-point boundary.':'Point D disabled. Calculate again for the A→B→C boundary.','');
   };
 
   window.calcCoords=function(){
@@ -2697,13 +2736,18 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
       if(c.error){setCoordsStatus(c.error,'warn');return}
       points.push(c);
     }
+    if(document.getElementById('coordsUseD').checked){
+      var d=pointFrom('4','D');
+      if(d.error){setCoordsStatus(d.error,'warn');return}
+      points.push(d);
+    }
     var factor=getScaleFactor();
     if(!Number.isFinite(factor)){
       setCoordsStatus('Enter a scale factor greater than zero.','warn');
       return;
     }
 
-    var pairs=points.length===3?[[points[0],points[1]],[points[1],points[2]],[points[2],points[0]]]:[[points[0],points[1]]];
+    var pairs=points.length>=3?points.map(function(point,index){return [point,points[(index+1)%points.length]];}):[[points[0],points[1]]];
     var lines=[];
     for(var i=0;i<pairs.length;i++){
       var from=pairs[i][0],to=pairs[i][1];
@@ -2763,7 +2807,7 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
   function makeDiagram(points,lines){
     // Rotate the coordinate geometry so its longest line is horizontal,
     // while preserving the true equal scale of Easting and Northing.
-    var w=1600,h=650,plot={x:55,y:55,w:900,h:535};
+    var w=1600,h=points.length>3?850:650,plot={x:55,y:55,w:900,h:points.length>3?735:535};
     var longest=lines.reduce(function(best,line){
       var from=points.find(p=>p.key===line.fromKey),to=points.find(p=>p.key===line.toKey);
       var len=Math.hypot(to.e-from.e,to.n-from.n);
@@ -2791,7 +2835,7 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     var cy=points.reduce((sum,p)=>sum+p.y,0)/points.length;
     var blue='#1769aa',orange='#bf5726',ink='#344b43',muted='#65756d';
     var shapes='';
-    shapes+='<rect x="20" y="20" width="970" height="610" rx="16" fill="#fbfcfb" stroke="#dce4df" stroke-width="2"/>';
+    shapes+='<rect x="20" y="20" width="970" height="'+(h-40)+'" rx="16" fill="#fbfcfb" stroke="#dce4df" stroke-width="2"/>';
     shapes+='<text x="55" y="48" font-size="15" font-weight="800" letter-spacing="1.3" fill="'+muted+'">SURVEY GEOMETRY · TRUE PROPORTION</text>';
 
     lines.forEach(function(line){
@@ -2824,11 +2868,12 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     shapes+='<g transform="translate(930 92)" stroke="'+ink+'" fill="'+ink+'" stroke-width="3"><path d="M0 42 V0 M-9 14 L0 0 L9 14" fill="none"/><text x="0" y="-12" text-anchor="middle" font-size="21" font-weight="800" stroke="none">N</text></g>';
 
     // Right-hand line schedule: horizontal labels never collide with linework.
-    shapes+='<rect x="1010" y="20" width="570" height="610" rx="16" fill="#ffffff" stroke="#dce4df" stroke-width="2"/>';
+    shapes+='<rect x="1010" y="20" width="570" height="'+(h-40)+'" rx="16" fill="#ffffff" stroke="#dce4df" stroke-width="2"/>';
     shapes+='<text x="1050" y="63" font-size="20" font-weight="800" letter-spacing=".7" fill="'+ink+'">LINE INFORMATION</text>';
     shapes+='<text x="1050" y="90" font-size="14" fill="'+muted+'">Numbers correspond to the markers on the diagram</text>';
     var rowH=160,gap=14,total=lines.length*rowH+(lines.length-1)*gap;
-    var top=105+(500-total)/2;
+    var scheduleInnerHeight=h-150;
+    var top=105+(scheduleInnerHeight-total)/2;
     lines.forEach(function(line,index){
       var y=top+index*(rowH+gap);
       var from=points.find(p=>p.key===line.fromKey),to=points.find(p=>p.key===line.toKey);
@@ -2852,10 +2897,11 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     try{
       var points=[readPoint('A',1),readPoint('B',2)];
       if(byId('coordsUseC').checked)points.push(readPoint('C',3));
+      if(byId('coordsUseD').checked)points.push(readPoint('D',4));
       var factorText=byId('coordsScaleFactor').value.trim();
       var factor=Number(factorText);
       if(!factorText||!Number.isFinite(factor)||factor<=0)throw new Error('Enter a scale factor greater than zero.');
-      var keys=points.length===3?[['A','B'],['B','C'],['C','A']]:[['A','B']];
+      var keys=points.length>=3?points.map(function(point,index){return [point.key,points[(index+1)%points.length].key];}):[['A','B']];
       var lines=keys.map(function(pair){
         var from=points.find(p=>p.key===pair[0]),to=points.find(p=>p.key===pair[1]);
         var de=to.e-from.e,dn=to.n-from.n,distance=Math.hypot(de,dn);
@@ -2933,7 +2979,7 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
   function coord(value){return Number(value).toFixed(6)}
 
   function buildCoordsDXF(points){
-    var pairs=points.length===3?[[0,1],[1,2],[2,0]]:[[0,1]];
+    var pairs=points.length>=3?points.map(function(point,index){return [index,(index+1)%points.length];}):[[0,1]];
     var rows=[];
     var add=function(code,value){rows.push(String(code),String(value))};
     var addLine=function(layer,x1,y1,x2,y2){
@@ -2995,17 +3041,14 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     try{
       var points=[readExportPoint('A',1),readExportPoint('B',2)];
       if(document.getElementById('coordsUseC').checked)points.push(readExportPoint('C',3));
-      if(points.length===3){
-        var keys=['A','B','C'];
-        for(var i=0;i<points.length;i++){
-          for(var j=i+1;j<points.length;j++){
-            if(points[i].e===points[j].e&&points[i].n===points[j].n){
-              throw new Error('Points '+keys[i]+' and '+keys[j]+' have identical coordinates.');
-            }
+      if(document.getElementById('coordsUseD').checked)points.push(readExportPoint('D',4));
+      var keys=points.map(function(point){return point.key});
+      for(var i=0;i<points.length;i++){
+        for(var j=i+1;j<points.length;j++){
+          if(points[i].e===points[j].e&&points[i].n===points[j].n){
+            throw new Error('Points '+keys[i]+' and '+keys[j]+' have identical coordinates.');
           }
         }
-      }else if(points[0].e===points[1].e&&points[0].n===points[1].n){
-        throw new Error('Points A and B have identical coordinates.');
       }
 
       var dxf=buildCoordsDXF(points);
@@ -3021,7 +3064,7 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
       a.remove();
       setTimeout(function(){URL.revokeObjectURL(url)},1000);
 
-      setExportStatus('DXF exported: '+points.length+' coordinate-true survey point(s), '+(points.length===3?3:1)+' connecting line(s). Original grid coordinates retained; scale factor not applied.','ok');
+      setExportStatus('DXF exported: '+points.length+' coordinate-true survey point(s), '+(points.length>=3?points.length:1)+' connecting line(s). Original grid coordinates retained; scale factor not applied.','ok');
     }catch(error){
       setExportStatus(error.message||'Unable to export the DXF file.','warn');
     }
@@ -3081,6 +3124,7 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     var svg=byId('coordsLiveDiagram');if(!svg)return;
     var defs=[['A',1,'#397c63'],['B',2,'#5d8297']];
     if(byId('coordsUseC')&&byId('coordsUseC').checked)defs.push(['C',3,'#b08a4b']);
+    if(byId('coordsUseD')&&byId('coordsUseD').checked)defs.push(['D',4,'#8b7398']);
     var points=[];
     for(var i=0;i<defs.length;i++){
       var key=defs[i][0],ix=defs[i][1];
@@ -3102,7 +3146,7 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     var offsetX=(width-usedW)/2,offsetY=(height-usedH)/2;
     points.forEach(function(p){p.x=offsetX+(p.e-minE)*scale;p.y=height-offsetY-(p.n-minN)*scale});
     var cx=points.reduce((sum,p)=>sum+p.x,0)/points.length,cy=points.reduce((sum,p)=>sum+p.y,0)/points.length;
-    var pairs=points.length===3?[[0,1],[1,2],[2,0]]:[[0,1]];
+    var pairs=points.length>=3?points.map(function(point,index){return [index,(index+1)%points.length];}):[[0,1]];
     var markup='<rect x="1" y="1" width="518" height="308" rx="12" fill="#f8faf8" stroke="#e1e9e3"/>';
     for(var j=0;j<pairs.length;j++){
       var from=points[pairs[j][0]],to=points[pairs[j][1]];
@@ -3120,11 +3164,13 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     markup+='<g transform="translate(478 45)" stroke="#71877a" fill="none" stroke-width="2"><path d="M0 25V0m-5 7 5-7 5 7"/><text x="0" y="-7" text-anchor="middle" fill="#71877a" stroke="none" font-size="10" font-weight="800">N</text></g>';
     svg.innerHTML=markup;
   }
-  ['ce1','cn1','ce2','cn2','ce3','cn3','coordsName1','coordsName2','coordsName3'].forEach(function(id){
+  ['ce1','cn1','ce2','cn2','ce3','cn3','ce4','cn4','coordsName1','coordsName2','coordsName3','coordsName4'].forEach(function(id){
     var el=byId(id);if(el){el.addEventListener('input',render);el.addEventListener('change',render)}
   });
   var oldToggle=window.toggleCoordsPointC;
   window.toggleCoordsPointC=function(){if(typeof oldToggle==='function')oldToggle();render()};
+  var oldToggleD=window.toggleCoordsPointD;
+  window.toggleCoordsPointD=function(){if(typeof oldToggleD==='function')oldToggleD();render()};
   var oldCalc=window.calcCoords;
   window.calcCoords=function(){if(typeof oldCalc==='function')oldCalc();render()};
   var oldSwap=window.swapCoords;
