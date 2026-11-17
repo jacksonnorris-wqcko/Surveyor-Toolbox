@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="8.15">
+<meta name="app-version" content="9.0" data-release="major">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -925,7 +925,7 @@ canvas{background:#fbfcfa}
 
 
 <style id="v8-14-quick-close-redesign">
-/* Quick Close v8.15 — a calmer, task-first field workflow */
+/* Quick Close v9.0 — a calmer, task-first field workflow */
 #misclose.qc-redesigned{min-width:0}
 #misclose .qc-page-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:16px}
 #misclose .qc-page-heading h1{margin:0 0 5px;font-size:29px;letter-spacing:-.7px}
@@ -1068,62 +1068,170 @@ canvas{background:#fbfcfa}
 }
 </style>
 
+<style id="v9-complete-reskin">
+:root{--bg:#f3f5f1;--panel:#fff;--panel2:#f7f9f6;--line:#dfe7e1;--text:#1c302a;--muted:#77857e;--nav:#102f28;--nav2:#1b4438;--accent:#347c67;--accent2:#286653;--accent-soft:#e7f1eb;--accent-line:#cbded2;--amber:#dfad5d;--good:#287956;--goodbg:#eaf5ee;--warn:#94671f;--warnbg:#fff5e5;--bad:#b94f4c;--shadow:0 7px 24px rgba(26,54,42,.055);--shadow-hover:0 14px 35px rgba(26,54,42,.11);--radius:18px;--ui-radius:12px}
+*{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{background:radial-gradient(ellipse at 74% 0%,rgba(220,230,219,.44),transparent 35%),var(--bg);color:var(--text);font-family:Inter,"SF Pro Display",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit}button{touch-action:manipulation}.icon-library{position:absolute;width:0;height:0;overflow:hidden}
+.ui-icon{display:inline-block;width:18px;height:18px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}.brand-icon{width:27px;height:27px;stroke-width:1.65}
+.app{background:transparent;min-height:100vh}
+.side{width:270px;flex:0 0 270px;position:fixed;inset:0 auto 0 0;z-index:50;display:flex;flex-direction:column;padding:23px 15px 16px;background:linear-gradient(160deg,#153a30 0%,#102f28 54%,#0c2822 100%);color:#eaf1ec;border-right:1px solid rgba(255,255,255,.06);box-shadow:9px 0 32px rgba(16,47,40,.09)}
+.logo{display:flex;align-items:center;gap:12px;padding:5px 8px 22px;margin-bottom:8px;border-bottom:1px solid rgba(224,242,230,.12);font-size:17px}.logo-mark{width:43px;height:43px;flex:0 0 43px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.16);border-radius:14px;background:linear-gradient(145deg,#f0c879,#dca34f);color:#19382e;box-shadow:0 8px 19px rgba(210,157,72,.18)}.logo-copy{display:block;min-width:0}.logo-copy strong{display:block;color:#fff;font-size:15px;font-weight:850;letter-spacing:-.35px;white-space:nowrap}.logo-copy small{display:block;margin-top:5px;color:#a9c0b3;font-size:9px;font-weight:850;letter-spacing:1.35px}
+.nav{display:flex;flex-direction:column;gap:4px}.section{padding:17px 11px 7px;color:#8aa99a;font-size:9px;font-weight:850;letter-spacing:1.4px;text-transform:uppercase}
+.nav button,.side button.nav-item{width:100%;min-height:45px;display:flex;align-items:center;gap:11px;padding:0 12px;margin:0;border:1px solid transparent;border-radius:11px;background:transparent;color:#c0d1c7;text-align:left;font-size:12px;font-weight:700;letter-spacing:.01em;cursor:pointer;transition:background .16s ease,color .16s ease,border-color .16s ease,transform .16s ease}
+.nav button .nav-icon{width:18px;height:18px;color:#9ab8a8;transition:color .16s ease}.nav button span{min-width:0}.nav button:hover,.side button.nav-item:hover{background:rgba(255,255,255,.075);color:#fff}.nav button:hover .nav-icon{color:#f0c879}
+.nav button.active{position:relative;background:#f5f7f2;color:#17372d;border-color:rgba(255,255,255,.9);font-weight:850;box-shadow:0 6px 18px rgba(0,0,0,.13)}.nav button.active .nav-icon{color:#347c67}.nav button.active:before{content:"";position:absolute;left:-16px;top:9px;bottom:9px;width:3px;border-radius:0 4px 4px 0;background:var(--amber)}
+.nav-spacer{flex:1}.shortcuts-nav{margin-top:10px!important;background:rgba(255,255,255,.045)!important;border:1px solid rgba(255,255,255,.09)!important;color:#d0ded4!important}.shortcuts-nav .nav-icon{color:#adc2b4}.shortcuts-nav.active{background:#f5f7f2!important;color:#17372d!important}
+.side-footer{display:flex;align-items:center;gap:10px;padding:14px 10px 3px;margin-top:15px;border-top:1px solid rgba(223,239,230,.12)}.side-footer-mark{width:29px;height:29px;display:grid;place-items:center;border-radius:9px;background:rgba(135,190,156,.15);color:#a6d6b7}.side-footer strong,.side-footer small{display:block}.side-footer strong{font-size:10px;color:#e7f0e9;font-weight:800}.side-footer small{font-size:9px;color:#98b0a3;margin-top:3px}
+.main{margin-left:270px;width:calc(100% - 270px);max-width:none;min-width:0;padding:0 clamp(24px,3vw,48px) 58px}
+.topbar{position:sticky;top:0;z-index:30;height:78px;margin:0 0 30px;padding:0;display:flex;align-items:center;justify-content:space-between;gap:20px;background:rgba(243,245,241,.91);border-bottom:1px solid rgba(207,220,210,.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.desktop-context{display:flex;align-items:center;gap:12px}.desktop-context-mark{width:40px;height:40px;display:grid;place-items:center;border:1px solid #d3e2d8;border-radius:13px;background:#e8f1eb;color:#347c67}.desktop-context small,.desktop-context strong{display:block}.desktop-context small{color:#87978e;font-size:9px;font-weight:900;letter-spacing:1.5px}.desktop-context strong{margin-top:3px;color:#223b30;font-size:14px;font-weight:850}.mobile-brand{display:none}.topbar-right{display:flex;align-items:center;gap:9px}
+.workspace-indicator,.brandtag{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #dce6df;border-radius:999px;background:rgba(255,255,255,.78);color:#718177;font-size:9px;font-weight:850;letter-spacing:.7px;white-space:nowrap}.workspace-indicator i{width:7px;height:7px;border-radius:50%;background:#57a77d;box-shadow:0 0 0 3px #e3f1e7}.brandtag b{color:#233b30}.brandtag small{margin-left:3px;padding-left:8px;border-left:1px solid #e0e8e1;color:#347c67;font-size:9px}
+.page{width:100%;max-width:1600px;margin:0 auto;padding:0;min-width:0;animation:stPageIn .22s ease both}@keyframes stPageIn{from{opacity:.35;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.page h1{margin:0 0 7px;color:#1b342a;font-size:31px;font-weight:900;line-height:1.12;letter-spacing:-1.1px}.page .sub,.page .subtitle{margin:0 0 23px;color:#78877f;font-size:13px;line-height:1.6;font-weight:450}.page-head-row{align-items:center;margin-bottom:20px}.page-head-row .sub{margin-bottom:0}.page h2,.card h2{color:#1e382d;font-size:16px;font-weight:850;letter-spacing:-.3px}
+.card{min-width:0;padding:22px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow);transition:border-color .18s ease,box-shadow .18s ease}.card:hover{border-color:#d4e1d8}.card h2{margin:0 0 15px}.card h3{color:#294338;font-size:13px;font-weight:850}.grid{gap:16px;align-items:stretch}.grid>.card{min-width:0}
+label{margin:14px 0 7px;color:#66796e;font-size:9px;font-weight:900;letter-spacing:1.05px}
+input,select,textarea{width:100%;max-width:100%;min-width:0;min-height:45px;padding:11px 13px;border:1px solid #d8e3db;border-radius:10px;background:#fbfcfa;color:#20392f;font-size:13px;outline:none;box-shadow:inset 0 1px 1px rgba(20,43,31,.02);transition:border-color .15s ease,box-shadow .15s ease,background .15s ease}
+input::placeholder,textarea::placeholder{color:#a6b2aa}input:focus,select:focus,textarea:focus{border-color:#82b29a;background:#fff;box-shadow:0 0 0 3px rgba(52,124,103,.13)}input[type=checkbox]{accent-color:var(--accent)}
+.row{gap:14px}.toolbar{gap:8px;align-items:center}.btn,button.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:41px;padding:10px 14px;border-radius:10px;border:1px solid transparent;font-size:11px;font-weight:850;letter-spacing:.1px;cursor:pointer;transition:transform .14s ease,box-shadow .14s ease,background .14s ease,border-color .14s ease}
+.btn:active{transform:translateY(1px) scale(.985)}.btn.primary,.primary{background:#347c67;border-color:#347c67;color:#fff;box-shadow:0 4px 11px rgba(52,124,103,.16)}.btn.primary:hover,.primary:hover{background:#286653;border-color:#286653;box-shadow:0 7px 16px rgba(52,124,103,.2)}.btn.secondary,.secondary{background:#fff;border-color:#dce6df;color:#3d5649}.btn.secondary:hover,.secondary:hover{background:#f3f8f4;border-color:#bad3c3}.btn.danger,.danger{background:#fff8f7;border-color:#efd8d4;color:var(--bad)}.btn.danger:hover,.danger:hover{background:#fff0ed}
+button:focus-visible{outline:3px solid rgba(223,173,93,.45);outline-offset:2px}.btn .ui-icon,.toolbar .ui-icon{width:16px;height:16px}
+.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:17px}.result{min-width:0;min-height:82px;padding:14px;border:1px solid #e4ece5;border-radius:13px;background:linear-gradient(180deg,#fbfcfa,#f5f8f4)}.result small{display:block;color:#87968d;font-size:9px;font-weight:900;letter-spacing:1px}.result strong{display:block;margin-top:9px;color:#1b382c;font-size:19px;font-weight:900;line-height:1.15;letter-spacing:-.55px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.status{padding:12px 14px;border:1px solid #e1e9e2;border-radius:11px;background:#f6f9f6;color:#6f8076;font-size:12px;line-height:1.5}.status.ok{border-color:#cde3d4;background:var(--goodbg);color:var(--good)}.status.warn{border-color:#eedbb5;background:var(--warnbg);color:var(--warn)}.eyebrow{margin-bottom:9px;color:#b08a4c;font-size:9px;text-transform:uppercase;font-weight:900;letter-spacing:1.25px}.muted{color:var(--muted);font-size:12px;line-height:1.55}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border:1px solid #dfe8e1;border-radius:11px;overflow:hidden}th{background:#f0f5f1;color:#687b70;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.7px;font-weight:900;padding:11px 10px;border-bottom:1px solid #dfe8e1}td{padding:9px 10px;border-bottom:1px solid #e9efea;background:#fff;color:#30473b}tr:last-child td{border-bottom:0}tbody tr:hover td{background:#fafcf9}td input{padding:8px 9px;min-height:38px;font-size:12px}
+.page-head-row{display:flex;justify-content:space-between;gap:16px}.page-head-row>.btn{flex:0 0 auto}
+
+/* Home dashboard */
+.dash-hero{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;gap:18px;padding:27px 28px;border:1px solid rgba(255,255,255,.12);border-radius:22px;background:linear-gradient(118deg,#163d31 0%,#1d5544 58%,#245f4c 100%);color:#fff;box-shadow:0 12px 32px rgba(19,59,45,.16)}
+.dash-hero:after{content:"";position:absolute;z-index:-1;right:-55px;top:-95px;width:380px;height:380px;border:1px solid rgba(232,198,132,.14);border-radius:50%;box-shadow:0 0 0 35px rgba(232,198,132,.035),0 0 0 75px rgba(232,198,132,.025)}
+.dash-mark{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;border:1px solid rgba(239,206,146,.4);border-radius:19px;background:linear-gradient(145deg,#f0c879,#dba14d);color:#183c30;box-shadow:0 7px 19px rgba(7,29,21,.18)}.dash-mark .ui-icon{width:42px;height:42px;stroke-width:1.4}.dash-kicker{font-size:9px;font-weight:900;letter-spacing:1.65px;color:#d2c39f}.dash-copy h1{margin:6px 0 7px;color:#fff;font-size:30px;font-weight:900;letter-spacing:-1px}.dash-copy p{margin:0;color:#c0d5c9;font-size:12px}
+.dash-job-btn{margin-left:auto;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:10px 14px;border:1px solid rgba(255,255,255,.24);border-radius:11px;background:rgba(255,255,255,.11);color:#fff;font-size:11px;font-weight:850;cursor:pointer}.dash-job-btn .ui-icon{width:17px;height:17px}.dash-job-btn:hover{background:rgba(255,255,255,.19)}
+.current-job-card{margin-top:13px;padding:15px 17px;border:1px solid #d6e5db;border-radius:15px;background:linear-gradient(120deg,#f1f7f2,#fff);box-shadow:var(--shadow)}.current-job-card.empty{background:#fff;border-color:var(--line)}.current-job-label{font-size:9px;font-weight:900;letter-spacing:1.15px;color:#8c9b91}.current-job-name{margin-top:4px;font-size:15px;font-weight:900;color:#254638}.current-job-meta{margin-top:4px;font-size:11px;color:#75867b;line-height:1.45}.current-job-top{display:flex;align-items:center;justify-content:space-between}.current-job-top>span{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:#e9f2eb;color:#347c67}.current-job-top .ui-icon{width:23px;height:23px}.current-job-actions{display:flex;gap:7px;margin-top:10px}
+.dash-section-title{display:flex;align-items:center;justify-content:space-between;margin:23px 2px 10px;font-size:13px;font-weight:900;color:#294236}.dash-section-title small{font-size:10px;color:#829087;font-weight:650}.dash-section-title button{display:inline-flex;align-items:center;gap:5px;border:0;background:none;color:#347c67;font-size:11px;font-weight:850;cursor:pointer}
+.quick-tools-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.quick-tools-grid button{display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:150px;padding:15px;border:1px solid #dfe8e1;border-radius:16px;background:#fff;text-align:left;box-shadow:var(--shadow);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.quick-tools-grid button:hover{transform:translateY(-2px);border-color:#bdd6c6;box-shadow:var(--shadow-hover)}
+.quick-tools-grid .quick-tool-icon{width:43px;height:43px;display:grid;place-items:center;margin-bottom:15px;border-radius:13px;background:#eaf2ec;color:#347c67}.quick-tools-grid .quick-tool-icon .ui-icon{width:23px;height:23px}.quick-tools-grid button:nth-child(2) .quick-tool-icon{background:#eef2f5;color:#507c8b}.quick-tools-grid button:nth-child(3) .quick-tool-icon{background:#f8f0e3;color:#ad7c39}.quick-tools-grid button:nth-child(4) .quick-tool-icon{background:#eef1e9;color:#6b855e}.quick-tools-grid button b{display:block;color:#223d31;font-size:12px;font-weight:900}.quick-tools-grid button small{display:block;color:#849188;font-size:10px;margin-top:5px;line-height:1.4}
+.recent-jobs{display:grid;gap:8px}.recent-job{display:flex;align-items:center;gap:12px;padding:12px 13px;border:1px solid #e2eae4;background:#fff;border-radius:13px}.recent-job-icon{width:37px;height:37px;display:grid;place-items:center;border-radius:11px;background:#edf3ee;color:#477a63}.recent-job-icon .ui-icon{width:20px;height:20px}.recent-job-info{min-width:0;flex:1}.recent-job-name{font-weight:850;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#263e32}.recent-job-meta{font-size:10px;color:#87948c;margin-top:3px}.recent-job button{min-height:35px!important;padding:6px 10px!important}
+.field-tip{display:flex;gap:10px;align-items:flex-start;padding:13px 15px;border-radius:13px;background:#eef4ef;border:1px solid #dce8df;color:#63786c;font-size:11px;line-height:1.5}.field-tip b{color:#347c67}
+
+/* Point Manager and data library */
+.point-summary{display:grid;grid-template-columns:1fr 1fr auto auto;gap:9px;margin-bottom:13px}.point-summary>div{background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px 14px}.point-summary small{display:block;color:#809087;font-size:9px;font-weight:900;letter-spacing:.8px}.point-summary strong{display:block;color:#234536;font-size:18px;margin-top:4px;font-variant-numeric:tabular-nums}.point-list-card{padding:15px!important}.point-search-row{display:flex;gap:8px;margin-bottom:6px}.point-search-row input{flex:1}.point-row{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:12px;align-items:center;padding:13px 5px;border-bottom:1px solid #edf1ed}.point-row:last-child{border-bottom:0}.point-no{width:43px;height:38px;display:grid;place-items:center;border-radius:10px;background:#edf3ee;color:#33755e;font-size:12px;font-weight:900}.point-main b{display:block;font-size:12px;color:#263e33;font-weight:850}.point-main small{display:block;color:#829087;font-size:10px;margin-top:4px;font-variant-numeric:tabular-nums}.point-actions{display:flex;gap:5px;flex-wrap:wrap}.point-actions .btn{min-height:34px;padding:6px 9px}.point-empty{padding:28px 12px;text-align:center;color:#86948c;font-size:12px}
+.modal-close{width:35px;height:35px;display:grid;place-items:center;border:1px solid var(--line);border-radius:10px;background:#fff;color:#596b60;cursor:pointer}.modal-close .ui-icon{width:17px;height:17px}
+
+/* Calculators */
+#coords .grid>.card,#bd .grid>.card{border-radius:17px}#coords .coords-scale-panel{border-color:#dfe8e1;border-radius:14px;background:#f7faf7}#coords .coords-pointc-card{background:#fcfdfb}#coords .coords-line-table-wrap{border:1px solid #e2eae4}#coords .coords-dxf-note{border-radius:10px;background:#f4f7f3;border-color:#dce7dd;color:#607368}#bd .results .result{background:#f5f8f5}
+#misclose .qc-entry-card,#misclose .qc-plan-card,#misclose .qc-result-card{border-color:#dfe8e1;box-shadow:var(--shadow)}#misclose .qc-kicker{color:#a27c42}#misclose .qc-add-line{border-color:#cbded2;color:#2f6b56}#misclose .qc-calculate{background:#347c67}#misclose .qc-calculate:hover{background:#286653}#misclose .qc-main-result{background:#eff6f1;border-color:#d6e7dc}#misclose .qc-main-result strong{color:#2f7457}#misclose .qc-lines-table th{background:#f0f5f1}#misclose .qc-calculation-details{border-color:#dfe8e1}
+
+/* Jobs, Strata, shortcuts */
+#jobs .card{padding:19px}.jobs-toolbar-v7{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:13px}.jobs-toolbar-v7 input{flex:1;min-width:220px}.jobs-filter{display:flex;gap:6px;padding:5px;background:#f1f5f1;border:1px solid #e2eae3;border-radius:11px;width:max-content;margin-bottom:11px}.jobs-filter button{border:0;border-radius:8px;background:transparent;padding:8px 13px;color:#708077;font-size:10px;font-weight:850;cursor:pointer}.jobs-filter button.active{background:#fff;color:#2b5f4a;box-shadow:0 2px 8px rgba(28,60,43,.08)}
+.saved-job{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 2px;border-bottom:1px solid #ebf0eb}.saved-job:last-child{border-bottom:0}.saved-job-title{display:flex;align-items:center;gap:9px;font-weight:850;font-size:13px;color:#263e32}.saved-job-type-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#edf3ee;color:#39765e;flex:0 0 auto}.saved-job-type-icon .ui-icon{width:19px;height:19px}.saved-job-meta{font-size:10px;color:#829087;margin-top:5px;line-height:1.4}.saved-job-actions{display:flex;gap:6px;flex-wrap:wrap}.saved-job-actions .btn{min-height:34px;padding:6px 10px}.jobs-empty{padding:35px 10px;text-align:center;color:#819087;font-size:12px}.jobs-count{font-size:10px;color:#839188;margin-bottom:8px}
+.strata-header{gap:12px;margin-bottom:14px}.strata-header .card{padding:15px 17px;border-radius:14px}.strata-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.strata-actions .btn{min-width:116px}.strata-layout{gap:14px}.strata-table-wrap{border-radius:14px;border-color:#dfe8e1;box-shadow:var(--shadow)}.strata-table{min-width:900px}.strata-table th{background:#eff4f0}.strata-table th,.strata-table td{padding:9px 8px}.strata-table td input{border-radius:8px;min-height:36px;background:#fbfcfa;text-align:right}.strata-table .unit-no{background:#f1f5f1;color:#3d6851;font-weight:900}.strata-table .row-total{background:#f8f0e3;color:#89632e;font-weight:900}.strata-table tfoot td{background:#edf4ee;border-top:2px solid #d8e4da;color:#294a39}.strata-key{border-color:#dfe8e1;border-radius:14px;box-shadow:var(--shadow)}.strata-key h2{color:#284336}.strata-key strong{color:#347c67}.strata-summary{border-radius:14px}
+.shortcut-card{border-color:#dfe8e1;border-radius:15px;box-shadow:var(--shadow)}.shortcut-key{border:1px solid #d3ded5;border-bottom-width:2px;border-radius:8px;background:#f4f7f4;color:#456253}.shortcut-note{border-radius:12px;background:#eff5f0;color:#5d7366}
+.app-modal-card{border:1px solid #dfe8e1;border-radius:18px;box-shadow:0 25px 80px rgba(16,47,40,.25)}.app-modal-head{border-bottom-color:#e9efea}.app-modal-actions{border-top-color:#e9efea}.tool-choice{border:1px solid #dfe8e1;border-radius:13px;background:#fff}.app-action-icon{width:15px;height:15px;margin-right:7px;vertical-align:-3px;flex:0 0 auto}.saved-job-actions .app-action-icon,.point-actions .app-action-icon{width:13px;height:13px;margin-right:4px}.has-app-icon{gap:7px}
+
+/* Mobile field workspace */
+@media(max-width:700px){
+ .side{display:none!important}.main{margin:0!important;width:100%!important;max-width:none!important;padding:0 15px calc(92px + var(--ios-safe-bottom))!important}
+ .topbar{display:flex!important;position:sticky!important;top:0!important;height:72px!important;margin:0 -15px 18px!important;padding:0 15px!important;border-bottom:1px solid #dce6df!important;background:rgba(243,245,241,.95)!important;box-shadow:0 5px 18px rgba(25,55,39,.045)!important}
+ .desktop-context{display:none!important}.mobile-brand{display:flex!important;align-items:center;gap:10px}.mobile-brand-mark{width:39px!important;height:39px!important;display:grid!important;place-items:center!important;border-radius:12px!important;background:linear-gradient(145deg,#f0c879,#dca34f)!important;color:#17382d!important}.mobile-brand-mark .ui-icon{width:26px;height:26px}
+ .mobile-brand-title{font-size:15px!important;font-weight:900!important;color:#20392e!important}.mobile-brand-sub{font-size:9px!important;color:#7d8a81!important;margin-top:2px}.topbar-right{gap:0}.topbar .workspace-indicator{display:none!important}.topbar .brandtag{font-size:8px!important;padding:6px 8px!important}
+ .page h1{font-size:25px!important}.page .sub{margin-bottom:15px}.grid,.workspace{grid-template-columns:minmax(0,1fr)!important;gap:12px!important;width:100%!important;min-width:0!important}.card{padding:16px!important;border-radius:15px!important}.results{grid-template-columns:1fr 1fr!important;gap:8px!important}.result{padding:11px!important;min-height:74px}.result strong{font-size:17px}
+ .toolbar{gap:7px}.toolbar .btn{flex:1 1 auto}.quick-tools-grid{grid-template-columns:1fr 1fr;gap:9px}.quick-tools-grid button{min-height:135px;padding:12px}.quick-tools-grid .quick-tool-icon{width:38px;height:38px;margin-bottom:11px}
+ .dash-hero{padding:18px!important;gap:12px!important;border-radius:17px!important;flex-wrap:wrap}.dash-mark{width:48px;height:48px;flex-basis:48px;border-radius:14px}.dash-mark .ui-icon{width:32px;height:32px}.dash-copy h1{font-size:22px!important}.dash-copy p{font-size:10px}.dash-job-btn{margin-left:auto;padding:8px 10px;font-size:10px}
+ .point-summary{grid-template-columns:1fr 1fr!important}.point-row{grid-template-columns:48px minmax(0,1fr)!important}.point-actions{grid-column:2}.point-actions .btn{flex:1}
+ .strata-header{grid-template-columns:1fr!important}.strata-layout{grid-template-columns:1fr!important}.strata-key{display:grid;grid-template-columns:1fr 1fr}.strata-key h2{grid-column:1/-1}
+ .saved-job{align-items:flex-start;flex-direction:column}.saved-job-actions{width:100%}.saved-job-actions .btn{flex:1}
+ #misclose .qc-workspace{grid-template-columns:1fr!important}#misclose .qc-preview-column{grid-template-columns:1fr!important}#misclose #qcPlot{height:270px!important}#misclose .qc-main-results{grid-template-columns:1fr 1fr}#misclose .qc-job-meta{grid-template-columns:1fr 1fr}
+ #iphoneNav{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:5px!important;position:fixed!important;left:10px!important;right:10px!important;bottom:calc(9px + var(--ios-safe-bottom))!important;z-index:9998!important;padding:7px!important;border:1px solid rgba(218,230,220,.95)!important;border-radius:18px!important;background:rgba(17,47,39,.96)!important;box-shadow:0 10px 35px rgba(16,47,40,.25)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important}
+ #iphoneNav button{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:4px!important;min-height:49px!important;border:0!important;border-radius:12px!important;background:transparent!important;color:#b9cec1!important;font-size:9px!important;font-weight:850!important;letter-spacing:.2px}#iphoneNav button .ui-icon{width:20px;height:20px}#iphoneNav button.active{background:#f4f7f1!important;color:#204c3c!important}
+ #iphoneMore{background:rgba(10,28,23,.52)!important;backdrop-filter:blur(5px)!important}#iphoneMore .sheet{padding:17px 15px calc(18px + var(--ios-safe-bottom))!important;border:1px solid #e0e8e1!important;border-radius:20px 20px 0 0!important;background:#f7f9f5!important;box-shadow:0 -16px 42px rgba(12,38,28,.2)!important}
+ #iphoneMore .sheet h3{margin:4px 4px 14px!important;color:#1e3c2e!important;font-size:16px!important}#iphoneMore .tools{grid-template-columns:1fr 1fr!important;gap:8px!important}
+ #iphoneMore .tools button{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;min-height:53px!important;padding:10px!important;border:1px solid #dfe8e1!important;border-radius:12px!important;background:#fff!important;color:#345443!important;font-size:11px!important;font-weight:800!important;text-align:left!important}#iphoneMore .tools button .ui-icon{width:18px;height:18px;color:#347c67}
+ #iphoneMore .iphone-more-close{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-height:42px!important;border:1px solid #dfe8e1!important;border-radius:11px!important;background:#edf3ee!important;color:#3d5948!important;font-size:11px!important;font-weight:800!important}
+}
+@media(min-width:701px){#iphoneNav,#iphoneMore{display:none!important}.quick-tools-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:1050px) and (min-width:701px){.side{width:235px;flex-basis:235px}.main{margin-left:235px;width:calc(100% - 235px)}.quick-tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#misclose .qc-workspace{grid-template-columns:1fr}#misclose .qc-preview-column{grid-template-columns:1.1fr .9fr}}
+@media(max-width:520px){.topbar .brandtag{display:none!important}.qc-main-results{grid-template-columns:1fr 1fr}#misclose .qc-job-meta{grid-template-columns:1fr!important}#misclose .qc-main-actions{grid-template-columns:1fr 1fr}#misclose .qc-quick-actions>.btn{min-width:100px}.point-summary{grid-template-columns:1fr 1fr!important}.point-search-row{flex-wrap:wrap}.point-search-row input{flex-basis:100%}.strata-key{grid-template-columns:1fr}.strata-key h2{grid-column:auto}}
+@media print{.icon-library{display:none!important}.side,.topbar,#iphoneNav,#iphoneMore{display:none!important}.main{margin:0!important;width:100%!important;max-width:none!important;padding:0!important}body{background:#fff!important}}
+</style>
 </head>
 <body>
+<svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+<symbol id="st-brand" viewBox="0 0 32 32"><circle cx="16" cy="16" r="10.5"/><path d="M16 1.8v6M16 24.2v6M1.8 16h6M24.2 16h6"/><path d="m16 9 3.1 7-3.1 7-3.1-7z"/><circle cx="16" cy="16" r="1.3" fill="currentColor" stroke="none"/></symbol>
+<symbol id="st-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7"/><path d="M5.5 9v11h13V9M9.5 20v-6h5v6"/></symbol>
+<symbol id="st-coords" viewBox="0 0 24 24"><path d="M4 19 12 4l8 15z"/><circle cx="4" cy="19" r="1.6"/><circle cx="12" cy="4" r="1.6"/><circle cx="20" cy="19" r="1.6"/><path d="M8 16h8"/></symbol>
+<symbol id="st-bd" viewBox="0 0 24 24"><path d="M5 19V5h14"/><path d="m15 3 4 2-4 2"/><path d="M5 19h14"/><path d="m16 16 3 3-3 3"/><circle cx="5" cy="19" r="2"/></symbol>
+<symbol id="st-traverse" viewBox="0 0 24 24"><path d="m4 18 5-12 11 13z"/><circle cx="4" cy="18" r="2"/><circle cx="9" cy="6" r="2"/><circle cx="20" cy="19" r="2"/></symbol>
+<symbol id="st-points" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.2"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></symbol>
+<symbol id="st-strata" viewBox="0 0 24 24"><path d="M3 4.5 12 2l9 2.5v15L12 22l-9-2.5z"/><path d="M12 2v20M3 4.5l9 2.7 9-2.7M7.5 8v7M16.5 8v7M7.5 15h9"/></symbol>
+<symbol id="st-jobs" viewBox="0 0 24 24"><path d="M3 7.5h7l2 2H21v10H3z"/><path d="M3 7.5V5h7l2 2.5"/></symbol>
+<symbol id="st-scale" viewBox="0 0 24 24"><path d="M4 6v12M8 6v5M12 6v3M16 6v5M20 6v12M4 18h16M4 6h16"/></symbol>
+<symbol id="st-convert" viewBox="0 0 24 24"><path d="M4 8h15m-4-4 4 4-4 4M20 16H5m4-4-4 4 4 4"/></symbol>
+<symbol id="st-keyboard" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M6 9h.01M9 9h.01M12 9h.01M15 9h.01M18 9h.01M6 12h.01M9 12h.01M12 12h.01M15 12h.01M18 12h.01M8 15.5h8"/></symbol>
+<symbol id="st-save" viewBox="0 0 24 24"><path d="M4 3h13l3 3v15H4z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></symbol>
+<symbol id="st-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 20h16"/></symbol>
+<symbol id="st-upload" viewBox="0 0 24 24"><path d="M12 16V4m-5 5 5-5 5 5M4 20h16"/></symbol>
+<symbol id="st-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
+<symbol id="st-calculator" viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="19" rx="2.5"/><path d="M8 6h8v3H8zM8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01M16 17h.01"/></symbol>
+<symbol id="st-printer" viewBox="0 0 24 24"><path d="M7 8V3h10v5M6 17H4V9h16v8h-2"/><path d="M7 14h10v7H7zM17 11h.01"/></symbol>
+<symbol id="st-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"/></symbol>
+<symbol id="st-edit" viewBox="0 0 24 24"><path d="m4 16.5-.8 4.3 4.3-.8L19 8.5 15.5 5z"/><path d="m13.8 6.7 3.5 3.5M4 21h16"/></symbol>
+<symbol id="st-open" viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3z"/><path d="M12 13h6m-3-3 3 3-3 3"/></symbol>
+<symbol id="st-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
+<symbol id="st-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.2 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 11.8-3"/></symbol>
+<symbol id="st-archive" viewBox="0 0 24 24"><path d="M3 4h18v4H3zM5 8v12h14V8M9 12h6"/></symbol>
+<symbol id="st-close" viewBox="0 0 24 24"><path d="m5 5 14 14M19 5 5 19"/></symbol>
+<symbol id="st-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none"/></symbol>
+<symbol id="st-check" viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></symbol>
+<symbol id="st-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+<symbol id="st-swap" viewBox="0 0 24 24"><path d="M4 8h15m-4-4 4 4-4 4M20 16H5m4-4-4 4 4 4"/></symbol>
+</svg>
 <div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
 <div class="app">
 <aside class="side">
-<div class="logo">
-  <span class="logo-mark">⌖</span>
-  <span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v8.15</small></span>
-</div>
+<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v9.0</small></span></div>
 <div class="nav">
 <div class="section">Workspace</div>
-<button class="active" onclick="show('dashboard',this)">⌂ Home</button>
+<button class="active" onclick="show('dashboard',this)"><svg class="ui-icon nav-icon"><use href="#st-home"></use></svg><span>Home</span></button>
 <div class="section">Survey Calculators</div>
-<button onclick="show('coords',this)">📐 B&D From Coords</button>
-<button onclick="show('bd',this)">🎯 Coords From B&D</button>
-<button onclick="show('misclose',this)">↗ Quick Close</button>
-<button onclick="show('strata',this)">▦ Strata Areas</button>
-<button onclick="show('jobs',this)">▤ Saved Jobs</button>
+<button onclick="show('coords',this)"><svg class="ui-icon nav-icon"><use href="#st-coords"></use></svg><span>B&amp;D From Coords</span></button>
+<button onclick="show('bd',this)"><svg class="ui-icon nav-icon"><use href="#st-bd"></use></svg><span>Coords From B&amp;D</span></button>
+<button onclick="show('misclose',this)"><svg class="ui-icon nav-icon"><use href="#st-traverse"></use></svg><span>Quick Close</span></button>
+<button onclick="show('strata',this)"><svg class="ui-icon nav-icon"><use href="#st-strata"></use></svg><span>Strata Areas</span></button>
+<button onclick="show('jobs',this)"><svg class="ui-icon nav-icon"><use href="#st-jobs"></use></svg><span>Saved Jobs</span></button>
 <div class="section">Geometry & Tools</div>
-<button onclick="show('scale',this)">↔ Scale</button>
-<button onclick="show('convert',this)">⇄ Conversions</button>
+<button onclick="show('scale',this)"><svg class="ui-icon nav-icon"><use href="#st-scale"></use></svg><span>Scale</span></button>
+<button onclick="show('convert',this)"><svg class="ui-icon nav-icon"><use href="#st-convert"></use></svg><span>Conversions</span></button>
 </div>
-
-      <div class="nav-spacer"></div>
-      <button class="nav-item shortcuts-nav" data-page="shortcuts" type="button">⌨️ <span>Shortcuts</span></button>
-      <div class="side-footer">
-        <span class="side-footer-mark">✓</span>
-        <span><strong>Local workspace</strong><small>Ready for field use</small></span>
-      </div>
+<div class="nav-spacer"></div>
+<button class="nav-item shortcuts-nav" data-page="shortcuts" type="button"><svg class="ui-icon nav-icon"><use href="#st-keyboard"></use></svg><span>Shortcuts</span></button>
+<div class="side-footer"><span class="side-footer-mark"><svg class="ui-icon"><use href="#st-check"></use></svg></span><span><strong>Local workspace</strong><small>Ready for field use</small></span></div>
 </aside>
 <main class="main"><div class="topbar">
-  <div class="desktop-context"><span class="desktop-context-mark">⌖</span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
+  <div class="desktop-context"><span class="desktop-context-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
-    <div class="mobile-brand-mark">⌖</div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v8.15</div></div>
+    <div class="mobile-brand-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v9.0</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v8.15</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v9.0</small></span>
   </div>
 </div>
 
 
 <section id="dashboard" class="page">
   <div class="dash-hero">
-    <div class="dash-mark">⌖</div>
+    <div class="dash-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></div>
     <div class="dash-copy"><div class="dash-kicker">SURVEY OPERATIONS / HOME</div><h1>Your field workspace</h1><p>Calculations, coordinates and job records in one place.</p></div>
-    <button class="dash-job-btn" type="button" onclick="openJobManager()">💾 Jobs</button>
+    <button class="dash-job-btn" type="button" onclick="openJobManager()"><svg class="ui-icon"><use href="#st-jobs"></use></svg>Jobs</button>
   </div>
   <div id="currentJobCard" class="current-job-card"></div>
   <div class="dash-section-title"><span>Quick Tools</span><small>Tap to open</small></div>
   <div class="quick-tools-grid">
-    <button onclick="iphoneShow('coords')"><span>📐</span><b>B&D From Coords</b><small>Calculate bearing & distance</small></button>
-    <button onclick="iphoneShow('bd')"><span>🎯</span><b>Coords From B&D</b><small>Calculate destination point</small></button>
-    <button onclick="iphoneShow('quick')"><span>✓</span><b>Quick Close</b><small>Calculate closing line</small></button>
-    <button onclick="iphoneShow('points')"><span>📍</span><b>Points</b><small>Manage survey coordinates</small></button>
+    <button onclick="iphoneShow('coords')"><span class="quick-tool-icon"><svg class="ui-icon"><use href="#st-coords"></use></svg></span><b>B&D From Coords</b><small>Calculate bearing & distance</small></button>
+    <button onclick="iphoneShow('bd')"><span class="quick-tool-icon"><svg class="ui-icon"><use href="#st-bd"></use></svg></span><b>Coords From B&D</b><small>Calculate destination point</small></button>
+    <button onclick="iphoneShow('quick')"><span class="quick-tool-icon"><svg class="ui-icon"><use href="#st-traverse"></use></svg></span><b>Quick Close</b><small>Calculate closing line</small></button>
+    <button onclick="iphoneShow('points')"><span class="quick-tool-icon"><svg class="ui-icon"><use href="#st-points"></use></svg></span><b>Points</b><small>Manage survey coordinates</small></button>
   </div>
   <div class="dash-section-title"><span>Recent Jobs</span><button onclick="openJobManager()">View all</button></div>
   <div id="dashboardRecentJobs" class="recent-jobs"></div>
@@ -1132,8 +1240,8 @@ canvas{background:#fbfcfa}
 </section>
 
 <section id="points" class="page">
-  <div class="page-head-row"><div><h1>Point Manager</h1><div class="sub">Keep your survey coordinates in one place and reuse them across calculations.</div></div><button class="btn primary" onclick="addSurveyPoint()">＋ Add Point</button></div>
-  <div class="point-summary"><div><small>POINTS</small><strong id="pointCount">0</strong></div><div><small>LAST ADDED</small><strong id="pointLast">—</strong></div><button class="btn secondary" onclick="exportPoints()">⇩ Export</button><button class="btn secondary" onclick="document.getElementById('pointImportFile').click()">⇧ Import</button><input id="pointImportFile" type="file" accept="application/json,.json" hidden onchange="importPoints(event)"></div>
+  <div class="page-head-row"><div><div class="eyebrow">SURVEY DATA / LIBRARY</div><h1>Point Manager</h1><div class="sub">Keep your survey coordinates in one place and reuse them across calculations.</div></div><button class="btn primary" onclick="addSurveyPoint()"><svg class="ui-icon"><use href="#st-plus"></use></svg>Add Point</button></div>
+  <div class="point-summary"><div><small>POINTS</small><strong id="pointCount">0</strong></div><div><small>LAST ADDED</small><strong id="pointLast">—</strong></div><button class="btn secondary" onclick="exportPoints()"><svg class="ui-icon"><use href="#st-download"></use></svg>Export</button><button class="btn secondary" onclick="document.getElementById('pointImportFile').click()"><svg class="ui-icon"><use href="#st-upload"></use></svg>Import</button><input id="pointImportFile" type="file" accept="application/json,.json" hidden onchange="importPoints(event)"></div>
   <div class="card point-list-card"><div class="point-search-row"><input id="pointSearch" placeholder="Search points..." oninput="renderPoints()"><button class="btn secondary" onclick="clearPointSearch()">Clear</button></div><div id="pointList"></div></div>
 </section>
 
@@ -1153,7 +1261,7 @@ canvas{background:#fbfcfa}
     <div><label for="cn3">Northing</label><input id="cn3" inputmode="decimal" placeholder="Point C Northing"></div>
   </div>
 </div>
-<div class="card full"><div class="toolbar calc-toolbar"><button class="btn primary" onclick="calcCoords()">CALCULATE</button><button class="btn secondary" onclick="swapCoords()">⇄ Swap A / B</button><button class="btn secondary" type="button" onclick="printCoordsCalculation()">▤ PRINT CALCULATION</button><button class="btn secondary" type="button" onclick="exportCoordsDXF()">⇩ EXPORT DXF</button></div><div class="coords-dxf-note"><strong>DXF export:</strong> Uses the original grid coordinates. The scale factor is not applied.</div><div id="coordsStatus" class="status" hidden></div>
+<div class="card full"><div class="toolbar calc-toolbar"><button class="btn primary" onclick="calcCoords()"><svg class="ui-icon"><use href="#st-calculator"></use></svg>Calculate</button><button class="btn secondary" onclick="swapCoords()"><svg class="ui-icon"><use href="#st-swap"></use></svg>Swap A / B</button><button class="btn secondary" type="button" onclick="printCoordsCalculation()"><svg class="ui-icon"><use href="#st-printer"></use></svg>Print calculation</button><button class="btn secondary" type="button" onclick="exportCoordsDXF()"><svg class="ui-icon"><use href="#st-download"></use></svg>Export DXF</button></div><div class="coords-dxf-note"><strong>DXF export:</strong> Uses the original grid coordinates. The scale factor is not applied.</div><div id="coordsStatus" class="status" hidden></div>
 <div class="results"><div class="result"><small>A→B Distance</small><strong id="crDist">278.002 m</strong></div><div class="result"><small>A→B Bearing</small><strong id="crBear">323d20'10"</strong></div><div class="result"><small>Δ Easting</small><strong id="crE">166.000 m</strong></div><div class="result"><small>Δ Northing</small><strong id="crN">-223.000 m</strong></div></div>
 <div class="coords-scale-panel">
   <div class="coords-scale-heading"><h3>Scale factor</h3><span>Apply after calculating</span></div>
@@ -1178,7 +1286,7 @@ canvas{background:#fbfcfa}
 <h1>Bearing & Distance</h1><div class="sub">Enter a bearing and distance to calculate the destination coordinate.</div>
 <div class="grid"><div class="card"><h2>Start Point</h2><label>Easting</label><input id="be" value="500"><label>Northing</label><input id="bn" value="1000"></div>
 <div class="card"><h2>Line</h2><label>Bearing (e.g. 137d13'15")</label><input id="bb" value="137d13'15&quot;"><label>Distance (m)</label><input id="bdist" value="52.438"></div>
-<div class="card full"><button class="btn primary" onclick="calcBD()">CALCULATE</button><div id="bdStatus" class="status" hidden></div><div class="results"><div class="result"><small>End Easting</small><strong id="bE">—</strong></div><div class="result"><small>End Northing</small><strong id="bN">—</strong></div><div class="result"><small>Departure</small><strong id="bDep">—</strong></div><div class="result"><small>Latitude</small><strong id="bLat">—</strong></div></div></div></div>
+<div class="card full"><button class="btn primary" onclick="calcBD()"><svg class="ui-icon"><use href="#st-calculator"></use></svg>Calculate</button><div id="bdStatus" class="status" hidden></div><div class="results"><div class="result"><small>End Easting</small><strong id="bE">—</strong></div><div class="result"><small>End Northing</small><strong id="bN">—</strong></div><div class="result"><small>Departure</small><strong id="bDep">—</strong></div><div class="result"><small>Latitude</small><strong id="bLat">—</strong></div></div></div></div>
 </section>
 
 
@@ -1222,15 +1330,15 @@ canvas{background:#fbfcfa}
       </div>
 
       <div class="qc-main-actions">
-        <button class="btn secondary qc-add-line" type="button" onclick="addQuickCloseLine()">＋ Add line</button>
-        <button class="btn primary qc-calculate" type="button" onclick="calcQuickClose()">Calculate close <span>→</span></button>
+        <button class="btn secondary qc-add-line" type="button" onclick="addQuickCloseLine()"><svg class="ui-icon"><use href="#st-plus"></use></svg>Add line</button>
+        <button class="btn primary qc-calculate" type="button" onclick="calcQuickClose()"><svg class="ui-icon"><use href="#st-calculator"></use></svg>Calculate close</button>
       </div>
 
       <div class="qc-quick-actions">
-        <button class="btn primary" type="button" onclick="saveQuickCloseJob(false)">▣ Save job</button>
-        <button class="btn secondary" type="button" onclick="exportQuickCloseDXF()">⇩ Export DXF</button>
+        <button class="btn primary" type="button" onclick="saveQuickCloseJob(false)"><svg class="ui-icon"><use href="#st-save"></use></svg>Save job</button>
+        <button class="btn secondary" type="button" onclick="exportQuickCloseDXF()"><svg class="ui-icon"><use href="#st-download"></use></svg>Export DXF</button>
         <details class="qc-more-tools">
-          <summary>More tools <span>⌄</span></summary>
+          <summary><svg class="ui-icon"><use href="#st-more"></use></svg>More tools <span>⌄</span></summary>
           <div class="qc-more-tools-menu">
             <button type="button" onclick="saveQuickCloseJob(true)">Save as new job</button>
             <button type="button" onclick="quickCloseNewJob()">Start a new job</button>
@@ -1297,7 +1405,7 @@ canvas{background:#fbfcfa}
 <section id="jobs" class="page">
  <h1>Saved Jobs</h1><div class="sub">Strata and Quick Close jobs are stored locally in this browser on this computer.</div>
  <div class="card">
-  <div class="jobs-toolbar-v7"><input id="jobSearch" placeholder="Search jobs, project, address..." oninput="renderSavedJobs()"><button class="btn secondary" type="button" onclick="exportStrataJobs()">⇩ Export</button><button class="btn secondary" type="button" onclick="document.getElementById('jobImportFile').click()">⇧ Import</button><button class="btn primary" type="button" onclick="backupAllData()">⬇ Backup All</button><input id="jobImportFile" type="file" accept="application/json,.json" style="display:none" onchange="importStrataJobs(event)"></div><div class="jobs-filter"><button class="active" data-jobfilter="all" onclick="setJobFilter('all',this)">All</button><button data-jobfilter="quickclose" onclick="setJobFilter('quickclose',this)">Quick Close</button><button data-jobfilter="strata" onclick="setJobFilter('strata',this)">Strata</button></div><div id="jobsCount" class="jobs-count"></div><div id="savedJobsList"></div>
+  <div class="jobs-toolbar-v7"><input id="jobSearch" placeholder="Search jobs, project, address..." oninput="renderSavedJobs()"><button class="btn secondary" type="button" onclick="exportStrataJobs()"><svg class="ui-icon"><use href="#st-download"></use></svg>Export</button><button class="btn secondary" type="button" onclick="document.getElementById('jobImportFile').click()"><svg class="ui-icon"><use href="#st-upload"></use></svg>Import</button><button class="btn primary" type="button" onclick="backupAllData()"><svg class="ui-icon"><use href="#st-archive"></use></svg>Backup all</button><input id="jobImportFile" type="file" accept="application/json,.json" style="display:none" onchange="importStrataJobs(event)"></div><div class="jobs-filter"><button class="active" data-jobfilter="all" onclick="setJobFilter('all',this)">All</button><button data-jobfilter="quickclose" onclick="setJobFilter('quickclose',this)">Quick Close</button><button data-jobfilter="strata" onclick="setJobFilter('strata',this)">Strata</button></div><div id="jobsCount" class="jobs-count"></div><div id="savedJobsList"></div>
  </div>
 </section>
 
@@ -1375,14 +1483,7 @@ canvas{background:#fbfcfa}
     </div>
   </div>
 
-  <div class="strata-actions">
-    <button class="btn primary" type="button" onclick="strataAddRow()">＋ Add Unit</button>
-    <button class="btn primary" type="button" onclick="saveStrataJob(false)">💾 Save Job</button>
-    <button class="btn secondary" type="button" onclick="saveStrataJob(true)">Save As</button>
-    <button class="btn secondary" type="button" onclick="strataNewJob()">New Job</button>
-    <button class="btn secondary" type="button" onclick="strataReset()">Reset Table</button>
-    <button class="btn secondary" type="button" onclick="strataPrint()">Print</button>
-  </div>
+  <div class="strata-actions"><button class="btn primary" type="button" onclick="strataAddRow()"><svg class="ui-icon"><use href="#st-plus"></use></svg>Add unit</button><button class="btn primary" type="button" onclick="saveStrataJob(false)"><svg class="ui-icon"><use href="#st-save"></use></svg>Save job</button><button class="btn secondary" type="button" onclick="saveStrataJob(true)">Save as</button><button class="btn secondary" type="button" onclick="strataNewJob()">New job</button><button class="btn secondary" type="button" onclick="strataReset()">Reset table</button><button class="btn secondary" type="button" onclick="strataPrint()"><svg class="ui-icon"><use href="#st-printer"></use></svg>Print</button></div>
 
   <div class="strata-layout">
     <div>
@@ -2120,32 +2221,25 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
 
 <!-- iPhone PWA navigation -->
 <nav id="iphoneNav" aria-label="Surveyor Toolbox">
-  <button data-target="coords" onclick="iphoneShow('coords',this)"><span class="ico">📐</span>B&D</button>
-  <button data-target="quick" onclick="iphoneShow('quick',this)"><span class="ico">✓</span>Close</button>
-  <button data-target="more" onclick="iphoneMoreOpen()"><span class="ico">•••</span>More</button>
+<button data-target="coords" onclick="iphoneShow('coords',this)"><svg class="ui-icon"><use href="#st-coords"></use></svg><span>B&amp;D</span></button>
+<button data-target="quick" onclick="iphoneShow('quick',this)"><svg class="ui-icon"><use href="#st-traverse"></use></svg><span>Close</span></button>
+<button data-target="more" onclick="iphoneMoreOpen()"><svg class="ui-icon"><use href="#st-more"></use></svg><span>More</span></button>
 </nav>
-
-<div id="iphoneMore" onclick="if(event.target===this) iphoneMoreClose()">
-  <div class="sheet">
-    <h3>Surveyor's Toolbox</h3>
-    <div class="tools">
-      <button onclick="iphoneShow('dashboard');iphoneMoreClose()">🏠 Home</button>
-      <button onclick="iphoneShow('bd');iphoneMoreClose()">Coords from B&D</button>
-      <button onclick="iphoneShow('points');iphoneMoreClose()">📍 Point Manager</button>
-      <button onclick="iphoneShow('strata');iphoneMoreClose()">Strata Areas</button>
-      <button onclick="iphoneShow('jobs');iphoneMoreClose()">Saved Jobs</button>
-      <button onclick="iphoneShow('scale');iphoneMoreClose()">Scale</button>
-      <button onclick="iphoneShow('convert');iphoneMoreClose()">Conversions</button>
-      <button onclick="backupAllData();iphoneMoreClose()">⬇ Backup All</button>
-      <button onclick="document.getElementById('restoreAllFile').click();iphoneMoreClose()">⬆ Restore Backup</button>
-    </div>
-    <button style="width:100%;margin-top:10px" onclick="iphoneMoreClose()">Close</button>
-  </div>
-</div>
+<div id="iphoneMore" onclick="if(event.target===this) iphoneMoreClose()"><div class="sheet"><h3>Surveyor’s Toolbox</h3><div class="tools">
+<button onclick="iphoneShow('dashboard');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-home"></use></svg>Home</button>
+<button onclick="iphoneShow('bd');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-bd"></use></svg>Coords from B&amp;D</button>
+<button onclick="iphoneShow('points');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-points"></use></svg>Point Manager</button>
+<button onclick="iphoneShow('strata');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-strata"></use></svg>Strata Areas</button>
+<button onclick="iphoneShow('jobs');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-jobs"></use></svg>Saved Jobs</button>
+<button onclick="iphoneShow('scale');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-scale"></use></svg>Scale</button>
+<button onclick="iphoneShow('convert');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-convert"></use></svg>Conversions</button>
+<button onclick="backupAllData();iphoneMoreClose()"><svg class="ui-icon"><use href="#st-archive"></use></svg>Backup all</button>
+<button onclick="document.getElementById('restoreAllFile').click();iphoneMoreClose()"><svg class="ui-icon"><use href="#st-upload"></use></svg>Restore backup</button>
+</div><button class="iphone-more-close" style="width:100%;margin-top:10px" onclick="iphoneMoreClose()"><svg class="ui-icon"><use href="#st-close"></use></svg>Close</button></div></div>
 <div id="pointModal" class="app-modal" aria-hidden="true">
   <div class="app-modal-backdrop" onclick="closePointModal()"></div>
   <div class="app-modal-card" role="dialog" aria-modal="true" aria-labelledby="pointModalTitle">
-    <div class="app-modal-head"><div><div class="eyebrow">Point Manager</div><h2 id="pointModalTitle">Add Survey Point</h2></div><button class="modal-close" type="button" onclick="closePointModal()">×</button></div>
+    <div class="app-modal-head"><div><div class="eyebrow">Point Manager</div><h2 id="pointModalTitle">Add Survey Point</h2></div><button class="modal-close" type="button" onclick="closePointModal()"><svg class="ui-icon"><use href="#st-close"></use></svg></button></div>
     <div class="app-modal-body">
       <div class="modal-grid"><div><label>Point Number</label><input id="pointFormNo" inputmode="text"></div><div><label>Description</label><input id="pointFormDesc" placeholder="Optional"></div></div>
       <div class="modal-grid"><div><label>Easting</label><input id="pointFormE" inputmode="decimal"></div><div><label>Northing</label><input id="pointFormN" inputmode="decimal"></div></div>
@@ -2157,8 +2251,8 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
 <div id="pointUseModal" class="app-modal" aria-hidden="true">
   <div class="app-modal-backdrop" onclick="closePointUseModal()"></div>
   <div class="app-modal-card compact" role="dialog" aria-modal="true" aria-labelledby="pointUseTitle">
-    <div class="app-modal-head"><div><div class="eyebrow">Use Survey Point</div><h2 id="pointUseTitle">Choose a calculation</h2></div><button class="modal-close" type="button" onclick="closePointUseModal()">×</button></div>
-    <div class="use-point-actions"><button class="tool-choice" type="button" onclick="usePointAsCoords()"><span>📐</span><b>B&D From Coords</b><small>Use this point as Point A</small></button><button class="tool-choice" type="button" onclick="usePointAsBD()"><span>🎯</span><b>Coords From B&D</b><small>Use this point as the start point</small></button></div>
+    <div class="app-modal-head"><div><div class="eyebrow">Use Survey Point</div><h2 id="pointUseTitle">Choose a calculation</h2></div><button class="modal-close" type="button" onclick="closePointUseModal()"><svg class="ui-icon"><use href="#st-close"></use></svg></button></div>
+    <div class="use-point-actions"><button class="tool-choice" type="button" onclick="usePointAsCoords()"><span class="quick-tool-icon"><svg class="ui-icon"><use href="#st-coords"></use></svg></span><b>B&D From Coords</b><small>Use this point as Point A</small></button><button class="tool-choice" type="button" onclick="usePointAsBD()"><span class="quick-tool-icon"><svg class="ui-icon"><use href="#st-bd"></use></svg></span><b>Coords From B&D</b><small>Use this point as the start point</small></button></div>
   </div>
 </div>
 <input id="restoreAllFile" type="file" accept="application/json,.json" hidden onchange="restoreAllData(event)">
@@ -2703,4 +2797,48 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
 })();
 </script>
 
+<script id="v9-custom-icons">
+(function(){
+ function svg(name){return '<svg class="ui-icon app-action-icon" aria-hidden="true"><use href="#st-'+name+'"></use></svg>'}
+ function iconFor(btn){
+  var t=(btn.textContent||'').replace(/\s+/g,' ').trim().toLowerCase(),a=(btn.getAttribute('onclick')||'').toLowerCase();
+  if(/add|new unit|new line/.test(t)||/add.*(point|line|row|unit)/.test(a))return 'plus';
+  if(/calculate|convert/.test(t)||/calc(coords|bd|quickclose)|convert\(/.test(a))return 'calculator';
+  if(/save/.test(t)||/save.*job|savepoint/.test(a))return 'save';
+  if(/export|download/.test(t)||/export/.test(a))return 'download';
+  if(/import|restore/.test(t)||/import|restore/.test(a))return 'upload';
+  if(/print/.test(t)||/print/.test(a))return 'printer';
+  if(/delete|clear|remove/.test(t)||/delete|clear/.test(a))return 'trash';
+  if(/rename|edit/.test(t)||/rename|edit/.test(a))return 'edit';
+  if(/^open|^use\b/.test(t)||/load.*job|usesurveypoint/.test(a))return 'open';
+  if(/backup/.test(t)||/backup/.test(a))return 'archive';
+  if(/reset/.test(t)||/reset/.test(a))return 'refresh';
+  if(/swap/.test(t)||/swap/.test(a))return 'swap';
+  if(/^close|^cancel|^×/.test(t))return 'close';
+  if(/more tools/.test(t))return 'more';
+  if(/view all/.test(t))return 'arrow';
+  if(/^jobs$/.test(t)||/openjobmanager/.test(a))return 'jobs';
+  return '';
+ }
+ function decorate(root){
+  var buttons=[];
+  if(root&&root.matches&&root.matches('button'))buttons.push(root);
+  if(root&&root.querySelectorAll)buttons=buttons.concat(Array.from(root.querySelectorAll('button')));
+  buttons.forEach(function(btn){
+   if(btn.querySelector('.ui-icon'))return;
+   var name=iconFor(btn);if(!name)return;
+   btn.insertAdjacentHTML('afterbegin',svg(name));btn.classList.add('has-app-icon');
+  });
+ }
+ window.applySurveyIcons=decorate;decorate(document);
+ ['renderSavedJobs','renderPoints','renderDashboard'].forEach(function(name){
+  var original=window[name];if(typeof original!=='function')return;
+  window[name]=function(){var result=original.apply(this,arguments);decorate(document);return result};
+ });
+ if(window.MutationObserver){
+  var observer=new MutationObserver(function(records){records.forEach(function(record){record.addedNodes.forEach(function(node){if(node.nodeType===1)decorate(node)})})});
+  observer.observe(document.body,{childList:true,subtree:true});
+ }
+})();
+</script>
 </body></html>
