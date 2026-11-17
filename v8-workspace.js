@@ -6,7 +6,7 @@ function setPoints(v){localStorage.setItem(POINTS_KEY,JSON.stringify(v))}
 function currentJob(){try{return JSON.parse(localStorage.getItem(CURRENT_JOB_KEY)||'null')}catch(e){return null}}
 function setCurrentJob(j){if(j)localStorage.setItem(CURRENT_JOB_KEY,JSON.stringify(j));else localStorage.removeItem(CURRENT_JOB_KEY);renderDashboard()}
 function openJobManager(){iphoneShow('jobs')}
-function jobIcon(j){const icon=j?.type==='quickclose'?'traverse':j?.type==='strata'?'strata':'jobs';return '<svg class="ui-icon job-type-icon" aria-hidden="true"><use href="#st-'+icon+'"></use></svg>'}
+function jobIcon(j){const icon=j?.type==='quickclose'?'traverse':(j?.type==='strata'||Array.isArray(j?.units))?'strata':'jobs';return '<svg class="ui-icon job-type-icon" aria-hidden="true"><use href="#st-'+icon+'"></use></svg>'}
 function jobTitle(j){return j?.name||j?.project||j?.jobNumber||'Untitled Job'}
 function openSavedJobFromDashboard(id){const j=getStrataJobs().find(x=>x.id===id);if(!j)return;if(j.type==='quickclose')loadQuickCloseJob(id);else loadStrataJob(id);setCurrentJob({id,type:j.type,name:jobTitle(j)});}
 function renderDashboard(){
