@@ -1,5 +1,7 @@
-Surveyor’s Toolbox — iPhone PWA v8.15
+Surveyor’s Toolbox — iPhone PWA v9.0
 Built By Jackson 2026
+
+v9.0 is a complete visual reskin of the Surveyor’s Toolbox. It introduces a custom inline SVG icon library, a refreshed forest-green and brass visual identity, redesigned desktop sidebar and mobile navigation, updated typography and spacing, consistent cards, forms, result panels, tables and buttons, and page-specific styling for Home, Point Manager, B&D calculators, Quick Close, Saved Jobs, Scale, Conversions, Shortcuts and Strata Areas. Saved-job and point-list actions use matching custom icons. This release is presentation-focused: calculator logic, saved job/point storage formats, existing IDs, print and DXF exporters, and workflows are retained.
 
 v8.15 fixes the Saved Jobs Strata filter. Older Strata Area jobs were saved without an explicit type field, so the filter previously excluded them. The Strata filter now includes every saved job that is not a Quick Close job, and new or resaved Strata jobs are explicitly tagged as type=strata. Existing saved data is preserved.
 
