@@ -3107,7 +3107,7 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     for(var j=0;j<pairs.length;j++){
       var from=points[pairs[j][0]],to=points[pairs[j][1]];
       markup+='<line x1="'+from.x+'" y1="'+from.y+'" x2="'+to.x+'" y2="'+to.y+'" stroke="#436d55" stroke-width="3" stroke-linecap="round"/>';
-      if(points.length===3&&j===2)markup+='<line x1="'+from.x+'" y1="'+from.y+'" x2="'+to.x+'" y2="'+to.y+'" stroke="#436d55" stroke-width="3" stroke-linecap="round"/>';
+
     }
     points.forEach(function(p){
       var dx=p.x-cx,dy=p.y-cy,len=Math.hypot(dx,dy)||1;
