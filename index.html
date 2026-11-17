@@ -2551,7 +2551,7 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
       <button class="modal-close" type="button" onclick="closeScimsImportModal()"><svg class="ui-icon"><use href="#st-close"></use></svg></button>
     </div>
     <div class="app-modal-body scims-modal-body">
-      <div class="scims-import-notice"><strong>Coordinate source:</strong> MGA2020 Easting / Northing only. Latitude/longitude, heights and page 2 are ignored. The PDF is processed locally in this app.</div>
+      <div class="scims-import-notice"><strong>Coordinate source:</strong> MGA2020 Easting / Northing only. Latitude/longitude, heights and page 2 are ignored. The PDF is processed locally in this app. Applying the selection replaces the current A–D entries.</div>
       <div id="scimsImportList" class="scims-import-list"></div>
       <div id="scimsImportStatus" class="status" hidden></div>
     </div>
@@ -3326,7 +3326,7 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
   }
   function parseScimsLines(lines){
     var marks=[],current=null;
-    var markPattern=new RegExp('^\\s*('+typeCodes.join('|')+')\\s+([0-9]{1,10}[A-Z]?)\\s*$','i');
+    var markPattern=new RegExp('^\\s*('+typeCodes.join('|')+')\\s+([0-9]{1,10}[A-Z]?)\\b','i');
     var coordPattern=/\bMGA2020\b\s+(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\s+(\d{1,2})(?=\s|$)/i;
     lines.forEach(function(line){
       var m=line.match(markPattern);
