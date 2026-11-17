@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="9.3" data-release="major">
+<meta name="app-version" content="9.4" data-release="major">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -876,6 +876,40 @@ canvas{background:#fbfcfa}
 }
 </style>
 
+<style id="v9-4-scims-import-css">
+#coords .coords-head-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+#coords .coords-scims-import-btn{min-height:38px;padding:9px 13px;border-color:#cbdcd0;background:#f7faf7;color:#315b49;font-size:10px;font-weight:850;white-space:nowrap}
+#coords .coords-scims-import-btn:hover{background:#edf5ef;border-color:#a9c4b1}
+#coords .coords-scims-import-btn .ui-icon{width:15px;height:15px;margin-right:5px;vertical-align:-3px}
+.scims-import-modal.open{align-items:center}
+.scims-modal-card{width:min(760px,calc(100% - 28px));max-width:760px;max-height:min(86vh,820px);display:flex;flex-direction:column}
+.scims-modal-card .app-modal-head{flex:none}
+.scims-import-meta{margin:5px 0 0;color:#77867d;font-size:11px;line-height:1.4}
+.scims-modal-body{min-height:0;overflow:auto;padding:14px 16px 16px}
+.scims-import-notice{padding:10px 12px;border:1px solid #d9e5dc;border-radius:10px;background:#f4f8f5;color:#627369;font-size:11px;line-height:1.5;margin-bottom:12px}
+.scims-import-notice strong{color:#345748}
+.scims-import-list{display:grid;gap:8px}
+.scims-mark-choice{display:grid;grid-template-columns:24px minmax(110px,.7fr) minmax(0,1.3fr);gap:11px;align-items:center;padding:11px 12px;border:1px solid #dfe8e1;border-radius:11px;background:#fff;cursor:pointer;min-width:0}
+.scims-mark-choice:has(input:checked){border-color:#8db59b;background:#f6faf7;box-shadow:0 0 0 2px #e5f0e8}
+.scims-mark-choice input{width:17px;height:17px;margin:0;accent-color:#347c67}
+.scims-mark-ident{display:grid;gap:3px;min-width:0}
+.scims-mark-ident strong{font-size:12px;color:#294538}
+.scims-mark-ident small{font-size:9px;color:#819087}
+.scims-mark-coords{display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;min-width:0;font-size:10px;color:#4e6257;font-variant-numeric:tabular-nums}
+.scims-mark-coords span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scims-mark-coords small{grid-column:1/-1;color:#8b9990;font-size:9px}
+.scims-modal-card .app-modal-actions{flex:none}
+.scims-modal-card .app-modal-actions .btn:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:700px){
+ .scims-import-modal.open{align-items:flex-end}
+ .scims-modal-card{width:100%;max-width:none;max-height:88vh;margin:0;border-radius:20px 20px 0 0}
+ .scims-mark-choice{grid-template-columns:22px minmax(80px,.55fr) minmax(0,1fr);gap:8px;padding:10px}
+ .scims-mark-coords{grid-template-columns:1fr;gap:3px}
+ .scims-mark-coords small{grid-column:auto}
+ #coords .coords-head-actions{align-items:stretch;flex-direction:column}
+ #coords .coords-head-actions>*{justify-content:center}
+}
+</style>
 
 <style id="v8-9-coords-print-css">
 #coords .coords-pointc-fields{grid-template-columns:1fr 1fr 1fr}
@@ -1339,7 +1373,7 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 <div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
 <div class="app">
 <aside class="side">
-<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v9.3</small></span></div>
+<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v9.4</small></span></div>
 <div class="nav">
 <div class="section">Workspace</div>
 <button class="active" onclick="show('dashboard',this)"><svg class="ui-icon nav-icon"><use href="#st-home"></use></svg><span>Home</span></button>
@@ -1361,11 +1395,11 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
   <div class="desktop-context"><span class="desktop-context-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
     <div class="mobile-brand-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v9.3</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v9.4</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v9.3</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v9.4</small></span>
   </div>
 </div>
 
@@ -1403,8 +1437,12 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
       <h1>B&amp;D From Coordinates</h1>
       <div class="sub">Calculate grid bearings and distances between survey marks.</div>
     </div>
-    <div class="coords-mode-pill"><span></span> GRID COORDINATES</div>
+    <div class="coords-head-actions">
+      <button class="btn secondary coords-scims-import-btn" type="button" onclick="chooseScimsPdf()"><svg class="ui-icon"><use href="#st-upload"></use></svg> Import SCIMS PDF</button>
+      <div class="coords-mode-pill"><span></span> GRID COORDINATES</div>
+    </div>
   </div>
+  <input id="scimsPdfFile" type="file" accept="application/pdf,.pdf" hidden onchange="handleScimsPdfFile(event)">
 
   <div class="coords-top-grid">
     <div class="coords-points-card card">
@@ -2505,6 +2543,21 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
     <div class="use-point-actions"><button class="tool-choice" type="button" onclick="usePointAsCoords()"><span class="quick-tool-icon"><svg class="ui-icon"><use href="#st-coords"></use></svg></span><b>B&D From Coords</b><small>Use this point as Point A</small></button><button class="tool-choice" type="button" onclick="usePointAsBD()"><span class="quick-tool-icon"><svg class="ui-icon"><use href="#st-bd"></use></svg></span><b>Coords From B&D</b><small>Use this point as the start point</small></button></div>
   </div>
 </div>
+<div id="scimsImportModal" class="app-modal scims-import-modal" aria-hidden="true">
+  <div class="app-modal-backdrop" onclick="closeScimsImportModal()"></div>
+  <div class="app-modal-card scims-modal-card" role="dialog" aria-modal="true" aria-labelledby="scimsImportTitle">
+    <div class="app-modal-head">
+      <div><div class="eyebrow">SCIMS / PAGE 1 IMPORT</div><h2 id="scimsImportTitle">Select survey marks</h2><p id="scimsImportMeta" class="scims-import-meta">Choose two to four MGA2020 marks to populate Points A–D.</p></div>
+      <button class="modal-close" type="button" onclick="closeScimsImportModal()"><svg class="ui-icon"><use href="#st-close"></use></svg></button>
+    </div>
+    <div class="app-modal-body scims-modal-body">
+      <div class="scims-import-notice"><strong>Coordinate source:</strong> MGA2020 Easting / Northing only. Latitude/longitude, heights and page 2 are ignored. The PDF is processed locally in this app.</div>
+      <div id="scimsImportList" class="scims-import-list"></div>
+      <div id="scimsImportStatus" class="status" hidden></div>
+    </div>
+    <div class="app-modal-actions"><button class="btn secondary" type="button" onclick="closeScimsImportModal()">Cancel</button><button id="scimsImportApply" class="btn primary" type="button" onclick="importSelectedScimsMarks()" disabled>Fill points &amp; calculate</button></div>
+  </div>
+</div>
 <input id="restoreAllFile" type="file" accept="application/json,.json" hidden onchange="restoreAllData(event)">
 
 <script>
@@ -3226,4 +3279,131 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
   render();
 })();
 </script>
-</body></html>
+<script id="v9-4-scims-import-js">
+(function(){
+  'use strict';
+  var PDFJS_VERSION='6.5.438';
+  var pdfJsPromise=null,parsedMarks=[],selectedIndexes=new Set();
+  var typeCodes=['PM','SS','TS','CR','MM','CP','GB'];
+  var slots=[
+    {name:'coordsName1',e:'ce1',n:'cn1',key:'A'},
+    {name:'coordsName2',e:'ce2',n:'cn2',key:'B'},
+    {name:'coordsName3',e:'ce3',n:'cn3',key:'C'},
+    {name:'coordsName4',e:'ce4',n:'cn4',key:'D'}
+  ];
+  function byId(id){return document.getElementById(id)}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
+  function setStatus(message,type){
+    var el=byId('scimsImportStatus');if(!el)return;
+    el.hidden=!message;el.className='status'+(type?' '+type:'');el.textContent=message||'';
+  }
+  function loadPdfJs(){
+    if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);
+    if(!pdfJsPromise){
+      pdfJsPromise=import('https://cdn.jsdelivr.net/npm/pdfjs-dist@'+PDFJS_VERSION+'/build/pdf.mjs').then(function(lib){
+        lib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@'+PDFJS_VERSION+'/build/pdf.worker.mjs';
+        window.pdfjsLib=lib;return lib;
+      }).catch(function(error){
+        pdfJsPromise=null;throw new Error('The PDF reader could not be loaded. Connect to the internet and try again.');
+      });
+    }
+    return pdfJsPromise;
+  }
+  function groupTextItems(items){
+    var lines=[];
+    items.forEach(function(item){
+      if(!item||typeof item.str!=='string'||!item.str.trim())return;
+      var t=item.transform||[],x=Number(t[4]||0),y=Number(t[5]||0),line=null;
+      for(var i=0;i<lines.length;i++){if(Math.abs(lines[i].y-y)<=2.2){line=lines[i];break}}
+      if(!line){line={y:y,items:[]};lines.push(line)}
+      line.items.push({x:x,str:item.str});
+    });
+    lines.sort(function(a,b){return b.y-a.y});
+    return lines.map(function(line){
+      line.items.sort(function(a,b){return a.x-b.x});
+      return line.items.map(function(item){return item.str.trim()}).filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+    }).filter(Boolean);
+  }
+  function parseScimsLines(lines){
+    var marks=[],current=null;
+    var markPattern=new RegExp('^\\s*('+typeCodes.join('|')+')\\s+([0-9]{1,10}[A-Z]?)\\s*$','i');
+    var coordPattern=/\bMGA2020\b\s+(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\s+(\d{1,2})(?=\s|$)/i;
+    lines.forEach(function(line){
+      var m=line.match(markPattern);
+      if(m){current={type:m[1].toUpperCase(),number:m[2],name:m[1].toUpperCase()+' '+m[2]};return}
+      if(!current)return;
+      var cm=line.match(coordPattern);if(!cm)return;
+      var e=Number(cm[1]),n=Number(cm[2]),zone=Number(cm[3]);
+      if(Number.isFinite(e)&&Number.isFinite(n)&&zone>=1&&zone<=60){
+        marks.push({type:current.type,number:current.number,markName:current.name,easting:e,northing:n,datum:'MGA2020',zone:zone});
+      }
+      current=null;
+    });
+    return marks;
+  }
+  async function readPdf(file){
+    if(!file||file.type&&file.type!=='application/pdf'&&!/\.pdf$/i.test(file.name||''))throw new Error('Choose a SCIMS PDF file.');
+    if(file.size>30*1024*1024)throw new Error('The PDF is larger than 30 MB.');
+    var lib=await loadPdfJs(),data=new Uint8Array(await file.arrayBuffer());
+    var pdf=await lib.getDocument({data:data,isEvalSupported:false}).promise;
+    var page=await pdf.getPage(1),content=await page.getTextContent({includeMarkedContent:false});
+    var marks=parseScimsLines(groupTextItems(content.items||[]));
+    if(!marks.length)throw new Error('No readable MGA2020 mark rows were found on page 1. This may be a scanned report or a different SCIMS layout.');
+    var unique=[],seen=new Set();
+    marks.forEach(function(m){var key=m.markName+'|'+m.easting+'|'+m.northing+'|'+m.zone;if(!seen.has(key)){seen.add(key);unique.push(m)}});
+    return {marks:unique,pageCount:pdf.numPages};
+  }
+  function updateSelection(){
+    var count=selectedIndexes.size,button=byId('scimsImportApply');
+    if(button)button.disabled=count<2||count>4;
+    var meta=byId('scimsImportMeta');
+    if(meta)meta.textContent=parsedMarks.length+' MGA2020 marks found on page 1 · '+count+' selected · choose 2 to 4';
+  }
+  function renderChoices(){
+    var list=byId('scimsImportList');if(!list)return;
+    list.innerHTML=parsedMarks.map(function(m,i){
+      return '<label class="scims-mark-choice"><input type="checkbox" data-scims-index="'+i+'"'+(selectedIndexes.has(i)?' checked':'')+' onchange="toggleScimsMarkSelection('+i+',this.checked)"><span class="scims-mark-ident"><strong>'+esc(m.markName)+'</strong><small>Mark type: '+esc(m.type)+'</small></span><span class="scims-mark-coords"><span>E '+m.easting.toFixed(3)+'</span><span>N '+m.northing.toFixed(3)+'</span><small>'+m.datum+' · Zone '+m.zone+'</small></span></label>';
+    }).join('');
+    updateSelection();
+  }
+  function openModal(){var m=byId('scimsImportModal');if(m){m.classList.add('open');m.setAttribute('aria-hidden','false')}}
+  window.closeScimsImportModal=function(){var m=byId('scimsImportModal');if(m){m.classList.remove('open');m.setAttribute('aria-hidden','true')}};
+  window.chooseScimsPdf=function(){var f=byId('scimsPdfFile');if(f){f.value='';f.click()}};
+  window.toggleScimsMarkSelection=function(i,checked){
+    if(checked&&selectedIndexes.size>=4){setStatus('Select no more than four marks.','warn');var box=document.querySelector('[data-scims-index="'+i+'"]');if(box)box.checked=false;return}
+    if(checked)selectedIndexes.add(i);else selectedIndexes.delete(i);
+    setStatus('','');updateSelection();
+  };
+  window.handleScimsPdfFile=async function(event){
+    var input=event&&event.target,file=input&&input.files&&input.files[0];if(!file)return;
+    var btn=document.querySelector('#coords .coords-scims-import-btn');
+    if(btn){btn.disabled=true;btn.textContent='Reading SCIMS…'}
+    try{
+      var result=await readPdf(file);parsedMarks=result.marks;
+      selectedIndexes=new Set(parsedMarks.map(function(_,i){return i}).slice(0,4));
+      renderChoices();
+      var zones=Array.from(new Set(parsedMarks.map(function(m){return m.zone})));
+      setStatus('Read page 1 of '+result.pageCount+'. '+parsedMarks.length+' marks recognised. '+(zones.length===1?'MGA2020 · Zone '+zones[0]:'Multiple MGA zones detected')+'. Page 2 and non-MGA2020 rows were ignored.','ok');
+      openModal();
+    }catch(error){alert(error&&error.message?error.message:'Unable to read this SCIMS PDF.')}
+    finally{if(btn){btn.disabled=false;btn.innerHTML='<svg class="ui-icon"><use href="#st-upload"></use></svg> Import SCIMS PDF'}if(input)input.value=''}
+  };
+  window.importSelectedScimsMarks=function(){
+    var chosen=Array.from(selectedIndexes).sort(function(a,b){return a-b}).map(function(i){return parsedMarks[i]}).filter(Boolean);
+    if(chosen.length<2||chosen.length>4){setStatus('Select between two and four marks.','warn');return}
+    var zones=new Set(chosen.map(function(m){return m.zone})),datums=new Set(chosen.map(function(m){return m.datum}));
+    if(zones.size!==1||datums.size!==1){setStatus('Selected marks use different datums or MGA zones. Select marks from one zone and datum only.','warn');return}
+    slots.forEach(function(slot,i){
+      var m=chosen[i]||null;byId(slot.name).value=m?m.markName:'';byId(slot.e).value=m?m.easting.toFixed(3):'';byId(slot.n).value=m?m.northing.toFixed(3):'';
+    });
+    byId('coordsUseC').checked=chosen.length>=3;
+    if(typeof window.toggleCoordsPointC==='function')window.toggleCoordsPointC();
+    byId('coordsUseD').checked=chosen.length>=4;
+    if(typeof window.toggleCoordsPointD==='function')window.toggleCoordsPointD();
+    window.closeScimsImportModal();
+    if(typeof window.calcCoords==='function')window.calcCoords();
+    var status=byId('coordsStatus');
+    if(status){status.hidden=false;status.className='status ok coords-status';status.textContent='Imported '+chosen.length+' SCIMS marks ('+chosen[0].datum+', Zone '+chosen[0].zone+') into Points A–'+slots[chosen.length-1].key+'. Review the entries before use.'}
+  };
+})();
+</script>
