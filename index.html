@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="9.0" data-release="major">
+<meta name="app-version" content="9.1" data-release="major">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -925,7 +925,7 @@ canvas{background:#fbfcfa}
 
 
 <style id="v8-14-quick-close-redesign">
-/* Quick Close v9.0 — a calmer, task-first field workflow */
+/* Quick Close v9.1 — a calmer, task-first field workflow */
 #misclose.qc-redesigned{min-width:0}
 #misclose .qc-page-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:16px}
 #misclose .qc-page-heading h1{margin:0 0 5px;font-size:29px;letter-spacing:-.7px}
@@ -1153,6 +1153,155 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 @media(max-width:520px){.topbar .brandtag{display:none!important}.qc-main-results{grid-template-columns:1fr 1fr}#misclose .qc-job-meta{grid-template-columns:1fr!important}#misclose .qc-main-actions{grid-template-columns:1fr 1fr}#misclose .qc-quick-actions>.btn{min-width:100px}.point-summary{grid-template-columns:1fr 1fr!important}.point-search-row{flex-wrap:wrap}.point-search-row input{flex-basis:100%}.strata-key{grid-template-columns:1fr}.strata-key h2{grid-column:auto}}
 @media print{.icon-library{display:none!important}.side,.topbar,#iphoneNav,#iphoneMore{display:none!important}.main{margin:0!important;width:100%!important;max-width:none!important;padding:0!important}body{background:#fff!important}}
 </style>
+<style id="v9-1-coords-layout">
+#coords.coords-redesigned{max-width:1480px}
+#coords .coords-page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
+#coords .coords-page-head h1{font-size:30px;margin:0 0 6px}
+#coords .coords-page-head .sub{margin:0}
+#coords .coords-mode-pill{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid #dce7df;border-radius:999px;background:#fff;color:#60756a;font-size:9px;font-weight:850;letter-spacing:.8px;white-space:nowrap}
+#coords .coords-mode-pill>span{width:7px;height:7px;border-radius:50%;background:#347c67;box-shadow:0 0 0 3px #e9f2ec}
+#coords .coords-top-grid{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(320px,.78fr);gap:14px;align-items:stretch}
+#coords .coords-points-card,#coords .coords-preview-card,#coords .coords-results-card,#coords .coords-scale-panel,#coords .coords-export-card{padding:19px;border-radius:17px}
+#coords .coords-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+#coords .coords-section-kicker{margin-bottom:5px;color:#a27d47;font-size:9px;letter-spacing:1.2px;font-weight:900}
+#coords .coords-section-head h2,#coords .coords-export-copy h2{margin:0;color:#213b30;font-size:16px;font-weight:900;letter-spacing:-.3px}
+#coords .coords-section-head p,#coords .coords-export-copy p{margin:4px 0 0;color:#7e8c83;font-size:10.5px;line-height:1.45}
+#coords .coords-required-pill,#coords .coords-optional-tag,#coords .coords-result-tag{display:inline-flex;align-items:center;padding:6px 8px;border:1px solid #e0e9e2;border-radius:999px;background:#f5f8f5;color:#718178;font-size:8px;font-weight:900;letter-spacing:.6px;white-space:nowrap}
+#coords .coords-point-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#coords .coords-point-card{min-width:0;padding:13px;border:1px solid #dfe8e1;border-radius:13px;background:#fbfcfb}
+#coords .coords-point-a{border-top:3px solid #397c63}
+#coords .coords-point-b{border-top:3px solid #5d8297}
+#coords .coords-point-c{border-top:3px solid #b08a4b;background:#fffdf8}
+#coords .coords-point-title{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+#coords .coords-point-title>div{display:grid;gap:2px}
+#coords .coords-point-title strong{color:#243d32;font-size:12px;font-weight:900}
+#coords .coords-point-title small{color:#87948b;font-size:9px}
+#coords .coords-point-badge{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#e7f1eb;color:#2f7559;font-size:12px;font-weight:950}
+#coords .coords-point-b .coords-point-badge{background:#eaf0f4;color:#547d91}
+#coords .coords-point-c .coords-point-badge{background:#f6efdf;color:#9a743b}
+#coords .coords-field{min-width:0;margin-top:7px}
+#coords .coords-field label,#coords .coords-scale-input-wrap label{display:flex;justify-content:space-between;align-items:center;margin:0 0 5px;color:#738379;font-size:8px;font-weight:900;letter-spacing:.8px}
+#coords .coords-field label span,#coords .coords-scale-input-wrap label span{color:#9aa59e;font-size:8px;font-weight:700;letter-spacing:.35px}
+#coords .coords-field input{min-height:38px;padding:8px 10px;border-radius:8px;background:#fff;font-size:12px;font-variant-numeric:tabular-nums}
+#coords .coords-field input:focus{border-color:#86b59b;box-shadow:0 0 0 3px rgba(52,124,103,.1)}
+#coords .coords-pointc-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:10px 11px;border:1px dashed #d7e2d9;border-radius:11px;background:#f8faf8}
+#coords .coords-pointc-toggle{display:flex;align-items:center;gap:10px;margin:0;cursor:pointer}
+#coords .coords-pointc-toggle>input{position:absolute;opacity:0;width:1px;height:1px}
+#coords .coords-toggle-track{position:relative;width:34px;height:19px;flex:0 0 34px;border-radius:999px;background:#ccd6ce;transition:background .18s ease}
+#coords .coords-toggle-track:after{content:"";position:absolute;top:3px;left:3px;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0002;transition:transform .18s ease}
+#coords .coords-pointc-toggle input:checked+.coords-toggle-track{background:#347c67}
+#coords .coords-pointc-toggle input:checked+.coords-toggle-track:after{transform:translateX(15px)}
+#coords .coords-pointc-toggle input:focus-visible+.coords-toggle-track{outline:3px solid rgba(223,173,93,.5);outline-offset:2px}
+#coords .coords-toggle-copy{display:grid;gap:2px}
+#coords .coords-toggle-copy strong{font-size:10px;color:#30483b;font-weight:900}
+#coords .coords-toggle-copy small{font-size:9px;color:#87948b}
+#coords .coords-pointc-fields[hidden]{display:none!important}
+#coords .coords-pointc-fields:not([hidden]){display:block;margin-top:9px}
+#coords .coords-pointc-input-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+#coords .coords-preview-card{display:flex;flex-direction:column;min-width:0}
+#coords .coords-preview-card .coords-section-head{margin-bottom:10px}
+#coords .coords-north-badge{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:10px;background:#eff4f0;color:#3e6f58;font-size:12px;font-weight:950}
+#coords .coords-live-plan-wrap{flex:1;min-height:210px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #e4ebe5;border-radius:12px;background-color:#fafcf9;background-image:linear-gradient(rgba(44,89,63,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(44,89,63,.045) 1px,transparent 1px);background-size:22px 22px}
+#coords #coordsLiveDiagram{display:block;width:100%;height:100%;min-height:210px;max-height:290px}
+#coords .coords-preview-legend{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-top:10px;color:#78877e;font-size:9px}
+#coords .coords-preview-legend span{display:inline-flex;align-items:center;gap:5px}
+#coords .coords-preview-legend i{width:7px;height:7px;border-radius:50%;display:inline-block}
+#coords .coords-legend-a{background:#397c63}
+#coords .coords-legend-b{background:#5d8297}
+#coords .coords-legend-c{background:#b08a4b}
+#coords .coords-calculate-row{display:flex;align-items:center;gap:9px;margin:13px 0}
+#coords .coords-calculate-btn{min-height:46px;padding:12px 19px;font-size:12px}
+#coords .coords-swap-btn{min-height:42px}
+#coords .coords-status{flex:1;margin:0;padding:10px 12px;font-size:10px}
+#coords .coords-results-card{margin-bottom:13px;background:linear-gradient(135deg,#fff 0%,#fbfdfb 100%)}
+#coords .coords-results-card .coords-section-head{align-items:center}
+#coords .coords-primary-results{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#coords .coords-primary-result{min-width:0;padding:15px 16px;border:1px solid #dbe8df;border-radius:13px;background:#eff6f1}
+#coords .coords-bearing-result{background:#eff5f1;border-color:#d9e7dd}
+#coords .coords-distance-result{background:#f1f5f6;border-color:#dce7e8}
+#coords .coords-result-label{display:flex;align-items:center;gap:7px;color:#71857a;font-size:8px;font-weight:900;letter-spacing:.9px}
+#coords .coords-result-glyph{display:grid;place-items:center;width:21px;height:21px;border-radius:7px;background:#deebe1;color:#347c67;font-size:14px}
+#coords .coords-distance-result .coords-result-glyph{background:#dfeaed;color:#527b8d}
+#coords .coords-primary-result>strong{display:block;margin-top:8px;color:#286a51;font-size:clamp(22px,2.3vw,30px);line-height:1.1;letter-spacing:-.8px;font-weight:950;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#coords .coords-distance-result>strong{color:#315d71}
+#coords .coords-primary-result>small{display:block;margin-top:5px;color:#89978e;font-size:9px}
+#coords .coords-delta-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}
+#coords .coords-delta-row>div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid #e6ece7;border-radius:10px;background:#fbfcfb}
+#coords .coords-delta-row small{color:#87948c;font-size:8px;font-weight:900;letter-spacing:.6px}
+#coords .coords-delta-row strong{color:#30483b;font-size:12px;font-weight:900;font-variant-numeric:tabular-nums}
+#coords .coords-scale-panel{margin-bottom:13px}
+#coords .coords-scale-controls{display:grid;grid-template-columns:minmax(220px,.8fr) auto minmax(180px,1fr);align-items:end;gap:10px;margin-top:4px}
+#coords .coords-scale-input-wrap{min-width:0}
+#coords .coords-scale-input-wrap input{min-height:42px;font-variant-numeric:tabular-nums}
+#coords .coords-apply-btn{min-height:42px;white-space:nowrap}
+#coords .coords-scale-formula{display:flex;flex-direction:column;justify-content:center;min-height:42px;padding:7px 11px;border-left:2px solid #dce7df}
+#coords .coords-scale-formula strong{font-size:10px;color:#385545}
+#coords .coords-scale-formula span{margin-top:2px;color:#849188;font-size:9px}
+#coords .coords-line-table-wrap{margin-top:15px;border:1px solid #e1e9e2;border-radius:11px;overflow:hidden}
+#coords .coords-lines-table-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:#f7faf7;border-bottom:1px solid #e4ebe5}
+#coords .coords-lines-table-heading strong{font-size:10px;color:#344d3e}
+#coords .coords-lines-table-heading span{font-size:9px;color:#89968e}
+#coords .coords-lines-table-scroll{overflow-x:auto}
+#coords .coords-line-table{min-width:720px;border:0;border-radius:0;font-size:10px}
+#coords .coords-line-table th{padding:10px 9px;font-size:8px;white-space:nowrap}
+#coords .coords-line-table td{padding:10px 9px;white-space:nowrap;font-variant-numeric:tabular-nums}
+#coords .coords-line-table td:nth-child(1){font-weight:900;color:#2c5440}
+#coords .coords-line-table td:nth-child(3){color:#276a9a}
+#coords .coords-line-table td:nth-child(4){font-weight:900;color:#b75c2d}
+#coords .coords-scale-footnote{margin-top:11px;padding-top:10px;border-top:1px solid #e8eee9;color:#7e8e83;font-size:9px;line-height:1.5}
+#coords .coords-export-card{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px 18px}
+#coords .coords-export-copy h2{font-size:14px}
+#coords .coords-export-copy p{max-width:520px}
+#coords .coords-export-actions{display:flex;gap:8px;flex-wrap:wrap}
+#coords .coords-export-actions .btn{min-height:39px}
+#coords .coords-dxf-note{grid-column:1/-1;display:flex;align-items:center;gap:8px;margin:0;padding:9px 11px;border:1px solid #dfe8e1;border-radius:9px;background:#f6f9f6;color:#687a70;font-size:9px;line-height:1.4}
+#coords .coords-dxf-note .ui-icon{width:15px;height:15px;color:#4f7b63}
+#coords .coords-dxf-note strong{color:#365b45}
+@media(max-width:1050px){
+ #coords .coords-top-grid{grid-template-columns:minmax(0,1fr)}
+ #coords .coords-preview-card{min-height:290px}
+ #coords .coords-live-plan-wrap{min-height:220px}
+}
+@media(max-width:700px){
+ #coords .coords-page-head{margin-bottom:14px}
+ #coords .coords-page-head h1{font-size:24px}
+ #coords .coords-mode-pill{display:none}
+ #coords .coords-points-card,#coords .coords-preview-card,#coords .coords-results-card,#coords .coords-scale-panel,#coords .coords-export-card{padding:14px}
+ #coords .coords-top-grid{grid-template-columns:minmax(0,1fr);gap:10px}
+ #coords .coords-point-grid{gap:8px}
+ #coords .coords-point-card{padding:10px}
+ #coords .coords-point-field label{font-size:8px}
+ #coords .coords-point-card input{font-size:11px;padding:8px 8px;min-height:38px}
+ #coords .coords-pointc-input-grid{grid-template-columns:1fr}
+ #coords .coords-pointc-toggle-row{padding:9px}
+ #coords .coords-toggle-copy small{max-width:205px;line-height:1.3}
+ #coords .coords-live-plan-wrap{min-height:190px}
+ #coords #coordsLiveDiagram{min-height:190px}
+ #coords .coords-calculate-row{display:grid;grid-template-columns:1fr auto;gap:7px}
+ #coords .coords-calculate-btn{min-width:0;padding:10px 12px;font-size:11px}
+ #coords .coords-swap-btn{padding:9px 10px;font-size:10px}
+ #coords .coords-status{grid-column:1/-1}
+ #coords .coords-primary-results{gap:7px}
+ #coords .coords-primary-result{padding:12px 10px}
+ #coords .coords-primary-result>strong{font-size:clamp(18px,5.5vw,25px)}
+ #coords .coords-delta-row{gap:7px}
+ #coords .coords-delta-row>div{align-items:flex-start;flex-direction:column;gap:3px;padding:8px}
+ #coords .coords-delta-row strong{font-size:11px}
+ #coords .coords-scale-controls{grid-template-columns:minmax(0,1fr);gap:8px}
+ #coords .coords-apply-btn{width:100%}
+ #coords .coords-scale-formula{min-height:0;padding:7px 0 0;border-left:0;border-top:1px solid #e4ece5}
+ #coords .coords-export-card{grid-template-columns:minmax(0,1fr)}
+ #coords .coords-export-actions{display:grid;grid-template-columns:1fr 1fr}
+ #coords .coords-export-actions .btn{padding:8px 7px;font-size:10px}
+ #coords .coords-export-copy p{margin-bottom:2px}
+}
+@media(max-width:390px){
+ #coords .coords-point-grid{grid-template-columns:1fr}
+ #coords .coords-point-card{padding:12px}
+ #coords .coords-pointc-toggle{gap:8px}
+ #coords .coords-delta-row{grid-template-columns:1fr 1fr}
+}
+</style>
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -1188,7 +1337,7 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 <div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
 <div class="app">
 <aside class="side">
-<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v9.0</small></span></div>
+<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v9.1</small></span></div>
 <div class="nav">
 <div class="section">Workspace</div>
 <button class="active" onclick="show('dashboard',this)"><svg class="ui-icon nav-icon"><use href="#st-home"></use></svg><span>Home</span></button>
@@ -1210,11 +1359,11 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
   <div class="desktop-context"><span class="desktop-context-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
     <div class="mobile-brand-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v9.0</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v9.1</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v9.0</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v9.1</small></span>
   </div>
 </div>
 
@@ -1245,41 +1394,124 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
   <div class="card point-list-card"><div class="point-search-row"><input id="pointSearch" placeholder="Search points..." oninput="renderPoints()"><button class="btn secondary" onclick="clearPointSearch()">Clear</button></div><div id="pointList"></div></div>
 </section>
 
-<section id="coords" class="page">
-<h1>B&D</h1><div class="sub">Calculate bearings and distances between survey mark coordinates.</div>
-<div class="grid">
-<div class="card"><h2>Point A</h2><label for="coordsName1">Mark name</label><input id="coordsName1" maxlength="40" placeholder="e.g. PM 104"><label>Easting</label><input id="ce1" value="500" inputmode="decimal"><label>Northing</label><input id="cn1" value="1000" inputmode="decimal"></div>
-<div class="card"><h2>Point B</h2><label for="coordsName2">Mark name</label><input id="coordsName2" maxlength="40" placeholder="e.g. PM 105"><label>Easting</label><input id="ce2" value="666" inputmode="decimal"><label>Northing</label><input id="cn2" value="777" inputmode="decimal"></div>
-<div class="card full coords-pointc-card">
-  <div class="coords-pointc-head">
-    <div><h2>Point C <span class="coords-optional">OPTIONAL</span></h2><p class="muted">Enable Point C to calculate all three sides between the survey marks.</p></div>
-    <label class="coords-enable"><input id="coordsUseC" type="checkbox" onchange="toggleCoordsPointC()"> Use Point C</label>
+<section id="coords" class="page coords-redesigned">
+  <div class="coords-page-head">
+    <div>
+      <div class="eyebrow">SURVEY CALCULATOR / COORDINATE GEOMETRY</div>
+      <h1>B&amp;D From Coordinates</h1>
+      <div class="sub">Calculate grid bearings and distances between survey marks.</div>
+    </div>
+    <div class="coords-mode-pill"><span></span> GRID COORDINATES</div>
   </div>
-  <div id="coordsPointCFields" class="coords-pointc-fields" hidden>
-    <div><label for="coordsName3">Mark name</label><input id="coordsName3" maxlength="40" placeholder="e.g. PM 106"></div>
-    <div><label for="ce3">Easting</label><input id="ce3" inputmode="decimal" placeholder="Point C Easting"></div>
-    <div><label for="cn3">Northing</label><input id="cn3" inputmode="decimal" placeholder="Point C Northing"></div>
+
+  <div class="coords-top-grid">
+    <div class="coords-points-card card">
+      <div class="coords-section-head">
+        <div><div class="coords-section-kicker">01 / INPUT</div><h2>Survey points</h2><p>Enter the mark name and coordinate values for each point.</p></div>
+        <span class="coords-required-pill">2 POINTS REQUIRED</span>
+      </div>
+
+      <div class="coords-point-grid">
+        <div class="coords-point-card coords-point-a">
+          <div class="coords-point-title"><span class="coords-point-badge">A</span><div><strong>Point A</strong><small>From mark</small></div></div>
+          <div class="coords-field"><label for="coordsName1">MARK NAME <span>OPTIONAL</span></label><input id="coordsName1" maxlength="40" placeholder="e.g. PM 104" autocomplete="off"></div>
+          <div class="coords-field"><label for="ce1">EASTING <span>m</span></label><input id="ce1" value="500" inputmode="decimal" autocomplete="off"></div>
+          <div class="coords-field"><label for="cn1">NORTHING <span>m</span></label><input id="cn1" value="1000" inputmode="decimal" autocomplete="off"></div>
+        </div>
+
+        <div class="coords-point-card coords-point-b">
+          <div class="coords-point-title"><span class="coords-point-badge">B</span><div><strong>Point B</strong><small>To mark</small></div></div>
+          <div class="coords-field"><label for="coordsName2">MARK NAME <span>OPTIONAL</span></label><input id="coordsName2" maxlength="40" placeholder="e.g. PM 105" autocomplete="off"></div>
+          <div class="coords-field"><label for="ce2">EASTING <span>m</span></label><input id="ce2" value="666" inputmode="decimal" autocomplete="off"></div>
+          <div class="coords-field"><label for="cn2">NORTHING <span>m</span></label><input id="cn2" value="777" inputmode="decimal" autocomplete="off"></div>
+        </div>
+      </div>
+
+      <div class="coords-pointc-toggle-row">
+        <label class="coords-pointc-toggle" for="coordsUseC"><input id="coordsUseC" type="checkbox" onchange="toggleCoordsPointC()"><span class="coords-toggle-track"></span><span class="coords-toggle-copy"><strong>Add Point C</strong><small>Calculate all three sides of a survey triangle</small></span></label>
+        <span class="coords-optional-tag">OPTIONAL</span>
+      </div>
+
+      <div id="coordsPointCFields" class="coords-pointc-fields" hidden>
+        <div class="coords-point-card coords-point-c">
+          <div class="coords-point-title"><span class="coords-point-badge">C</span><div><strong>Point C</strong><small>Third survey mark</small></div></div>
+          <div class="coords-pointc-input-grid">
+            <div class="coords-field"><label for="coordsName3">MARK NAME <span>OPTIONAL</span></label><input id="coordsName3" maxlength="40" placeholder="e.g. PM 106" autocomplete="off"></div>
+            <div class="coords-field"><label for="ce3">EASTING <span>m</span></label><input id="ce3" inputmode="decimal" placeholder="Point C Easting" autocomplete="off"></div>
+            <div class="coords-field"><label for="cn3">NORTHING <span>m</span></label><input id="cn3" inputmode="decimal" placeholder="Point C Northing" autocomplete="off"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="coords-preview-card card">
+      <div class="coords-section-head">
+        <div><div class="coords-section-kicker">LIVE PREVIEW</div><h2>Point layout</h2><p>Proportioned from the entered grid coordinates.</p></div>
+        <span class="coords-north-badge">N ↑</span>
+      </div>
+      <div class="coords-live-plan-wrap">
+        <svg id="coordsLiveDiagram" viewBox="0 0 520 310" role="img" aria-label="Live survey point layout">
+          <rect x="1" y="1" width="518" height="308" rx="12" fill="#f8faf8" stroke="#e1e9e3"/>
+          <text x="260" y="155" text-anchor="middle" fill="#7f8f85" font-size="13">Enter coordinates to preview the survey points</text>
+        </svg>
+      </div>
+      <div class="coords-preview-legend"><span><i class="coords-legend-a"></i>Point A</span><span><i class="coords-legend-b"></i>Point B</span><span><i class="coords-legend-c"></i>Point C</span></div>
+    </div>
   </div>
-</div>
-<div class="card full"><div class="toolbar calc-toolbar"><button class="btn primary" onclick="calcCoords()"><svg class="ui-icon"><use href="#st-calculator"></use></svg>Calculate</button><button class="btn secondary" onclick="swapCoords()"><svg class="ui-icon"><use href="#st-swap"></use></svg>Swap A / B</button><button class="btn secondary" type="button" onclick="printCoordsCalculation()"><svg class="ui-icon"><use href="#st-printer"></use></svg>Print calculation</button><button class="btn secondary" type="button" onclick="exportCoordsDXF()"><svg class="ui-icon"><use href="#st-download"></use></svg>Export DXF</button></div><div class="coords-dxf-note"><strong>DXF export:</strong> Uses the original grid coordinates. The scale factor is not applied.</div><div id="coordsStatus" class="status" hidden></div>
-<div class="results"><div class="result"><small>A→B Distance</small><strong id="crDist">278.002 m</strong></div><div class="result"><small>A→B Bearing</small><strong id="crBear">323d20'10"</strong></div><div class="result"><small>Δ Easting</small><strong id="crE">166.000 m</strong></div><div class="result"><small>Δ Northing</small><strong id="crN">-223.000 m</strong></div></div>
-<div class="coords-scale-panel">
-  <div class="coords-scale-heading"><h3>Scale factor</h3><span>Apply after calculating</span></div>
-  <div class="coords-scale-controls">
-    <div><label for="coordsScaleFactor">Scale factor (multiply)</label><input id="coordsScaleFactor" type="number" min="0.00000001" step="0.00000001" value="1.00000000" inputmode="decimal"></div>
-    <button class="btn secondary" type="button" onclick="applyCoordsScale()">APPLY SCALE FACTOR</button>
+
+  <div class="coords-calculate-row">
+    <button class="btn primary coords-calculate-btn" type="button" onclick="calcCoords()"><svg class="ui-icon"><use href="#st-calculator"></use></svg>Calculate bearing &amp; distance</button>
+    <button class="btn secondary coords-swap-btn" type="button" onclick="swapCoords()"><svg class="ui-icon"><use href="#st-swap"></use></svg>Swap A / B</button>
+    <div id="coordsStatus" class="status coords-status" hidden></div>
   </div>
-  <p class="coords-scale-note">Adjusted distance = grid distance × scale factor. Bearings and coordinate differences remain unchanged.</p>
-  <div id="coordsLineTableWrap" class="coords-line-table-wrap" hidden>
-    <table class="coords-line-table">
-      <thead><tr><th>Line</th><th>Bearing</th><th>Grid Distance (m)</th><th>Scaled Distance (m)</th><th>Δ Easting (m)</th><th>Δ Northing (m)</th></tr></thead>
-      <tbody id="coordsLineBody"></tbody>
-    </table>
+
+  <div class="coords-results-card card">
+    <div class="coords-section-head">
+      <div><div class="coords-section-kicker">02 / RESULTS</div><h2>Grid calculation</h2><p>Primary results for the A → B line.</p></div>
+      <span class="coords-result-tag">GRID / MGA</span>
+    </div>
+    <div class="coords-primary-results">
+      <div class="coords-primary-result coords-bearing-result"><div class="coords-result-label"><span class="coords-result-glyph">∠</span>GRID BEARING</div><strong id="crBear">323d20'10"</strong><small>Degrees · Minutes · Seconds</small></div>
+      <div class="coords-primary-result coords-distance-result"><div class="coords-result-label"><span class="coords-result-glyph">↔</span>GRID DISTANCE</div><strong id="crDist">278.002 m</strong><small>Horizontal grid distance</small></div>
+    </div>
+    <div class="coords-delta-row">
+      <div><small>DEPARTURE · ΔE</small><strong id="crE">166.000 m</strong></div>
+      <div><small>LATITUDE · ΔN</small><strong id="crN">-223.000 m</strong></div>
+    </div>
   </div>
-</div>
-</div>
-</div>
-<div id="coordsPrintSheet" aria-hidden="true"></div>
+
+  <div class="coords-scale-panel card">
+    <div class="coords-section-head">
+      <div><div class="coords-section-kicker">03 / GROUND ADJUSTMENT</div><h2>Scale factor</h2><p>Apply a combined scale factor to convert grid distance to ground distance.</p></div>
+      <span class="coords-optional-tag">OPTIONAL</span>
+    </div>
+    <div class="coords-scale-controls">
+      <div class="coords-scale-input-wrap"><label for="coordsScaleFactor">SCALE FACTOR <span>MULTIPLIER</span></label><input id="coordsScaleFactor" type="number" min="0.00000001" step="0.00000001" value="1.00000000" inputmode="decimal"></div>
+      <button class="btn secondary coords-apply-btn" type="button" onclick="applyCoordsScale()">Apply scale factor <svg class="ui-icon"><use href="#st-arrow"></use></svg></button>
+      <div class="coords-scale-formula"><strong>Ground distance</strong><span>Grid distance × scale factor</span></div>
+    </div>
+    <div id="coordsLineTableWrap" class="coords-line-table-wrap" hidden>
+      <div class="coords-lines-table-heading"><strong>Line breakdown</strong><span>All distances in metres</span></div>
+      <div class="coords-lines-table-scroll">
+        <table class="coords-line-table">
+          <thead><tr><th>LINE</th><th>GRID BEARING</th><th>GRID DISTANCE</th><th>GROUND DISTANCE</th><th>Δ EASTING</th><th>Δ NORTHING</th></tr></thead>
+          <tbody id="coordsLineBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="coords-scale-footnote">Bearings and coordinate differences remain unchanged. The DXF export always uses the original grid coordinates.</div>
+  </div>
+
+  <div class="coords-export-card card">
+    <div class="coords-export-copy"><div class="coords-section-kicker">04 / REPORT &amp; CAD</div><h2>Use your calculation</h2><p>Print a field report or export the survey points and connecting lines to AutoCAD.</p></div>
+    <div class="coords-export-actions">
+      <button class="btn secondary" type="button" onclick="printCoordsCalculation()"><svg class="ui-icon"><use href="#st-printer"></use></svg>Print calculation</button>
+      <button class="btn primary" type="button" onclick="exportCoordsDXF()"><svg class="ui-icon"><use href="#st-download"></use></svg>Export DXF</button>
+    </div>
+    <div class="coords-dxf-note"><svg class="ui-icon"><use href="#st-pin"></use></svg><span><strong>DXF uses grid coordinates.</strong> The scale factor is not applied to exported points.</span></div>
+  </div>
+
+  <div id="coordsPrintSheet" aria-hidden="true"></div>
 </section>
 
 <section id="bd" class="page">
@@ -2839,6 +3071,65 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
   var observer=new MutationObserver(function(records){records.forEach(function(record){record.addedNodes.forEach(function(node){if(node.nodeType===1)decorate(node)})})});
   observer.observe(document.body,{childList:true,subtree:true});
  }
+})();
+</script>
+<script id="v9-1-coords-live-plan">
+(function(){
+  function byId(id){return document.getElementById(id)}
+  function safe(value){return String(value??'').replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
+  function render(){
+    var svg=byId('coordsLiveDiagram');if(!svg)return;
+    var defs=[['A',1,'#397c63'],['B',2,'#5d8297']];
+    if(byId('coordsUseC')&&byId('coordsUseC').checked)defs.push(['C',3,'#b08a4b']);
+    var points=[];
+    for(var i=0;i<defs.length;i++){
+      var key=defs[i][0],ix=defs[i][1];
+      var eText=byId('ce'+ix)?.value.trim()||'',nText=byId('cn'+ix)?.value.trim()||'';
+      var e=Number(eText),n=Number(nText);
+      var name=(byId('coordsName'+ix)?.value||'').trim()||key;
+      if(!eText||!nText||!Number.isFinite(e)||!Number.isFinite(n)){
+        svg.innerHTML='<rect x="1" y="1" width="518" height="308" rx="12" fill="#f8faf8" stroke="#e1e9e3"/><text x="260" y="145" text-anchor="middle" fill="#6f8176" font-size="13" font-weight="700">Add valid coordinates for '+safe(key)+'</text><text x="260" y="166" text-anchor="middle" fill="#9aa69e" font-size="10">The point layout will appear here</text>';
+        return;
+      }
+      points.push({key:key,name:name,e:e,n:n,color:defs[i][2]});
+    }
+    var minE=Math.min.apply(null,points.map(p=>p.e)),maxE=Math.max.apply(null,points.map(p=>p.e));
+    var minN=Math.min.apply(null,points.map(p=>p.n)),maxN=Math.max.apply(null,points.map(p=>p.n));
+    var spanE=Math.max(maxE-minE,.001),spanN=Math.max(maxN-minN,.001);
+    var width=520,height=310,pad=62;
+    var scale=Math.min((width-pad*2)/spanE,(height-pad*2)/spanN);
+    var usedW=spanE*scale,usedH=spanN*scale;
+    var offsetX=(width-usedW)/2,offsetY=(height-usedH)/2;
+    points.forEach(function(p){p.x=offsetX+(p.e-minE)*scale;p.y=height-offsetY-(p.n-minN)*scale});
+    var cx=points.reduce((sum,p)=>sum+p.x,0)/points.length,cy=points.reduce((sum,p)=>sum+p.y,0)/points.length;
+    var pairs=points.length===3?[[0,1],[1,2],[2,0]]:[[0,1]];
+    var markup='<rect x="1" y="1" width="518" height="308" rx="12" fill="#f8faf8" stroke="#e1e9e3"/>';
+    for(var j=0;j<pairs.length;j++){
+      var from=points[pairs[j][0]],to=points[pairs[j][1]];
+      markup+='<line x1="'+from.x+'" y1="'+from.y+'" x2="'+to.x+'" y2="'+to.y+'" stroke="#436d55" stroke-width="3" stroke-linecap="round"/>';
+      if(points.length===3&&j===2)markup+='<line x1="'+from.x+'" y1="'+from.y+'" x2="'+to.x+'" y2="'+to.y+'" stroke="#436d55" stroke-width="3" stroke-linecap="round"/>';
+    }
+    points.forEach(function(p){
+      var dx=p.x-cx,dy=p.y-cy,len=Math.hypot(dx,dy)||1;
+      var tx=p.x+(dx/len)*25,ty=p.y+(dy/len)*25;
+      var anchor=dx<-8?'end':dx>8?'start':'middle';
+      var label=p.key+(p.name!==p.key?' · '+p.name:'');
+      markup+='<circle cx="'+p.x+'" cy="'+p.y+'" r="7" fill="'+p.color+'" stroke="#fff" stroke-width="3"/>';
+      markup+='<text x="'+tx+'" y="'+(ty+4)+'" text-anchor="'+anchor+'" font-size="12" font-weight="800" fill="#243e31" stroke="#f8faf8" stroke-width="5" paint-order="stroke">'+safe(label)+'</text>';
+    });
+    markup+='<g transform="translate(478 45)" stroke="#71877a" fill="none" stroke-width="2"><path d="M0 25V0m-5 7 5-7 5 7"/><text x="0" y="-7" text-anchor="middle" fill="#71877a" stroke="none" font-size="10" font-weight="800">N</text></g>';
+    svg.innerHTML=markup;
+  }
+  ['ce1','cn1','ce2','cn2','ce3','cn3','coordsName1','coordsName2','coordsName3'].forEach(function(id){
+    var el=byId(id);if(el){el.addEventListener('input',render);el.addEventListener('change',render)}
+  });
+  var oldToggle=window.toggleCoordsPointC;
+  window.toggleCoordsPointC=function(){if(typeof oldToggle==='function')oldToggle();render()};
+  var oldCalc=window.calcCoords;
+  window.calcCoords=function(){if(typeof oldCalc==='function')oldCalc();render()};
+  var oldSwap=window.swapCoords;
+  window.swapCoords=function(){if(typeof oldSwap==='function')oldSwap();render()};
+  render();
 })();
 </script>
 </body></html>
