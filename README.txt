@@ -1,3 +1,5 @@
+v9.4 — B&D From Coordinates: Added first-page SCIMS PDF import. PDF.js reads the selected PDF locally in the browser, extracts mark type/number and MGA2020 Easting/Northing/zone rows, and offers a two-to-four mark review before populating Points A–D and calculating. Page 2, GDA2020 latitude/longitude and height rows are ignored. Different MGA zones cannot be mixed in one import.
+
 v9.3 — B&D print report: Removed the rotated view so the diagram is north-up (Easting right, Northing up) and the grid-north arrow is correct. Redesigned point-name callouts to stay within the geometry panel, improved line-information spacing, and enlarged the landscape diagram area. Applies to both triangle and four-point boundary reports.
 
 v9.2 — B&D From Coordinates: Added optional Point D after Point C. Four-point calculations now close A→B→C→D→A, including the live diagram, scale-factor line schedule, print report and DXF export. Existing two- and three-point workflows remain supported.
