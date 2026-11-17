@@ -1,3 +1,5 @@
+v9.2 — B&D From Coordinates: Added optional Point D after Point C. Four-point calculations now close A→B→C→D→A, including the live diagram, scale-factor line schedule, print report and DXF export. Existing two- and three-point workflows remain supported.
+
 Surveyor’s Toolbox — iPhone PWA v9.1
 Built By Jackson 2026
 
