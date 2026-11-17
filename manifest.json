@@ -1,7 +1,7 @@
 {
-  "name": "Surveyor\u2019s Toolbox",
+  "name": "Surveyor’s Toolbox",
   "short_name": "Survey Toolbox",
-  "description": "Surveying calculations and field tools by Jackson.",
+  "description": "Surveying calculations, coordinates and field job records by Jackson.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -9,8 +9,8 @@
     "standalone"
   ],
   "orientation": "portrait",
-  "background_color": "#173a30",
-  "theme_color": "#173a30",
+  "background_color": "#f3f5f1",
+  "theme_color": "#153a30",
   "icons": [
     {
       "src": "./icons/icon-192.png",
