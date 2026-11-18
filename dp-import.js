@@ -4,6 +4,7 @@
  var PDFJS_VERSION='6.5.438';
  var modulePromise=null,pdfDocument=null,currentReport=null,selectedPage=-1,selectedSegment=-1,selectedRunKey='',runId=0;
  var minLineLength=25,overlayVisible=true,boundaryOverlayVisible=true,boundaryMinLength=35,currentBoundaryRuns=[],boundaryReviewMap={};
+ var tesseractModulePromise=null,ocrWorkerPromise=null,ocrWorker=null,ocrOverlayVisible=true,ocrRunBusy=false;
  var maxCandidateRows=120;
 
  function el(id){return document.getElementById(id)}
@@ -269,6 +270,202 @@
   renderVectorOverlay();
  }
 
+
+ function updateOcrProgress(message,progress){
+  var wrap=el('dpOcrProgressWrap'),text=el('dpOcrProgressText'),pct=el('dpOcrProgressPct'),bar=el('dpOcrProgressBar');
+  if(wrap)wrap.hidden=false;
+  if(text)text.textContent=message||'Reading annotations…';
+  var value=Math.max(0,Math.min(100,Math.round((Number(progress)||0)*100)));
+  if(pct)pct.textContent=value+'%';
+  if(bar)bar.style.width=value+'%';
+ }
+ function loadTesseractModule(){
+  if(window.Tesseract&&window.Tesseract.createWorker)return Promise.resolve(window.Tesseract);
+  if(!tesseractModulePromise){
+   tesseractModulePromise=(async function(){
+    var urls=['https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.esm.min.js','https://unpkg.com/tesseract.js@7.0.0/dist/tesseract.esm.min.js'],failure=null;
+    for(var i=0;i<urls.length;i++){
+     try{
+      var lib=await import(urls[i]);
+      if(!lib||typeof lib.createWorker!=='function')throw new Error('OCR module did not expose createWorker');
+      window.Tesseract=lib;return lib;
+     }catch(error){failure=error}
+    }
+    throw new Error('The OCR engine could not be loaded from either CDN. Connect to the internet and try again. '+(failure&&failure.message?failure.message:''));
+   })().catch(function(error){tesseractModulePromise=null;throw error});
+  }
+  return tesseractModulePromise;
+ }
+ async function getOcrWorker(){
+  if(ocrWorker)return ocrWorker;
+  if(!ocrWorkerPromise){
+   ocrWorkerPromise=(async function(){
+    var lib=await loadTesseractModule();
+    var worker=await lib.createWorker('eng',1,{
+     logger:function(message){
+      if(!ocrRunBusy)return;
+      if(message&&message.status)updateOcrProgress('OCR engine: '+message.status,typeof message.progress==='number'?message.progress:0);
+     },
+     errorHandler:function(error){setStatus('OCR worker error: '+(error&&error.message?error.message:String(error)),true)}
+    });
+    await worker.setParameters({tessedit_pageseg_mode:'11',preserve_interword_spaces:'1'});
+    ocrWorker=worker;return worker;
+   })().catch(function(error){ocrWorkerPromise=null;throw error});
+  }
+  return ocrWorkerPromise;
+ }
+ function parseBearingText(text){
+  var normalized=String(text||'').replace(/[º˚]/g,'°').replace(/[’‘′]/g,"'").replace(/[“”″]/g,'"');
+  var match=normalized.match(/(^|[^\d])(\d{1,3})\s*[°d]\s*(?:(\d{1,2})\s*['°]\s*(?:(\d{1,2})\s*["]?)?)?/i);
+  if(!match)return null;
+  var degrees=Number(match[2]),minutes=Number(match[3]||0),seconds=Number(match[4]||0);
+  if(degrees<0||degrees>360||minutes<0||minutes>=60||seconds<0||seconds>=60)return null;
+  if(degrees===360&&(minutes>0||seconds>0))return null;
+  return {value:String(degrees).padStart(3,'0')+'d'+String(minutes).padStart(2,'0')+"'"+String(seconds).padStart(2,'0')+'"',
+   degrees:degrees,minutes:minutes,seconds:seconds,raw:match[0].trim(),
+   index:match.index+(match[1]?match[1].length:0),length:match[0].length-(match[1]?match[1].length:0)};
+ }
+ function parseDistanceText(text,bearing){
+  var clean=String(text||'');
+  if(bearing)clean=clean.slice(0,bearing.index)+(' '.repeat(bearing.length))+clean.slice(bearing.index+bearing.length);
+  var regex=/\b(\d{1,5}\.\d{1,3})\b/g,match,values=[];
+  while((match=regex.exec(clean))!==null){
+   var value=Number(match[1]);
+   if(Number.isFinite(value)&&value>=0.01&&value<=99999)values.push({value:value,raw:match[1],index:match.index});
+  }
+  return values.length?values[0]:null;
+ }
+ function parseOcrTsv(tsv){
+  var rows=String(tsv||'').split(/\r?\n/),groups=Object.create(null);
+  rows.slice(1).forEach(function(row){
+   if(!row.trim())return;
+   var cols=row.split('\t');
+   if(cols.length<12||cols[0]!=='5')return;
+   var text=(cols[11]||'').trim(),conf=Number(cols[10]);
+   if(!text||!Number.isFinite(conf)||conf<0)return;
+   var key=[cols[1],cols[2],cols[3],cols[4]].join('-');
+   var item={text:text,confidence:conf,left:Number(cols[6]),top:Number(cols[7]),width:Number(cols[8]),height:Number(cols[9])};
+   (groups[key]||(groups[key]=[])).push(item);
+  });
+  return Object.keys(groups).map(function(key){
+   var words=groups[key].sort(function(a,b){return a.left-b.left});
+   var left=Math.min.apply(null,words.map(function(w){return w.left}));
+   var top=Math.min.apply(null,words.map(function(w){return w.top}));
+   var right=Math.max.apply(null,words.map(function(w){return w.left+w.width}));
+   var bottom=Math.max.apply(null,words.map(function(w){return w.top+w.height}));
+   var confidence=words.reduce(function(sum,w){return sum+w.confidence},0)/words.length;
+   return {text:words.map(function(w){return w.text}).join(' ').replace(/\s+/g,' ').trim(),
+    confidence:confidence,left:left,top:top,right:right,bottom:bottom,width:right-left,height:bottom-top};
+  }).sort(function(a,b){return a.top-b.top||a.left-b.left});
+ }
+ function inverseTransformPoint(matrix,x,y){
+  var a=matrix[0],b=matrix[1],c=matrix[2],d=matrix[3],e=matrix[4],f=matrix[5],det=a*d-b*c;
+  if(!det)return {x:x,y:y};
+  var px=x-e,py=y-f;
+  return {x:(d*px-c*py)/det,y:(-b*px+a*py)/det};
+ }
+ function measurementPointDistance(point,run){
+  var best=Infinity;
+  (run.segments||[]).forEach(function(segment){
+   var dx=segment.x2-segment.x1,dy=segment.y2-segment.y1,len2=dx*dx+dy*dy||1;
+   var t=Math.max(0,Math.min(1,((point.x-segment.x1)*dx+(point.y-segment.y1)*dy)/len2));
+   var distance=Math.hypot(point.x-(segment.x1+t*dx),point.y-(segment.y1+t*dy));
+   if(distance<best)best=distance;
+  });
+  return best;
+ }
+ function nearestBoundaryRun(point,runs){
+  var best=null;
+  (runs||[]).forEach(function(run){
+   var distance=measurementPointDistance(point,run);
+   if(!best||distance<best.distance)best={runKey:run.key,distance:distance,priority:run.priority};
+  });
+  if(best&&best.distance>120)return null;
+  return best;
+ }
+ function createOcrMeasurement(line,viewportTransform,scale,runs,index){
+  var normalized=line.text.replace(/[º˚]/g,'°').replace(/[’‘′]/g,"'").replace(/[“”″]/g,'"');
+  if(/EASTING|NORTHING|COORDINATE TABLE|MGA2020/i.test(normalized))return null;
+  var bearing=parseBearingText(normalized),distance=parseDistanceText(normalized,bearing);
+  if(!bearing&&!distance)return null;
+  var centerPx={x:(line.left+line.right)/2,y:(line.top+line.bottom)/2};
+  var pdfCenter=inverseTransformPoint(viewportTransform,centerPx.x,centerPx.y);
+  var nearest=nearestBoundaryRun(pdfCenter,runs);
+  var context=/MGA\s*GROUND|GROUND|SURVEY/i.test(normalized)?'GROUND / SURVEY TIE':
+   (/WIDE|INT\.?|OFFSET/i.test(normalized)?'DIMENSION / OFFSET':'PLAN ANNOTATION');
+  return {id:index+1,sourceText:line.text,bearing:bearing?bearing.value:'',distance:distance?distance.value.toFixed(3):'',
+   bearingRaw:bearing?bearing.raw:'',distanceRaw:distance?distance.raw:'',confidence:line.confidence,context:context,
+   bbox:{left:line.left,top:line.top,right:line.right,bottom:line.bottom,scale:scale},pdfPoint:pdfCenter,
+   nearestRunKey:nearest?nearest.runKey:'',assignedRunKey:nearest?nearest.runKey:'',
+   nearestRunDistance:nearest?nearest.distance:null,confirmedRunKey:'',confirmed:false,edited:false,
+   associationStatus:nearest?'SUGGESTED':'UNASSIGNED'};
+ }
+ function pairOcrMeasurements(items){
+  var used=new Set();
+  items.forEach(function(item,index){
+   if(!item.bearing||item.distance)return;
+   var point=item.pdfPoint,best=null;
+   items.forEach(function(candidate,candidateIndex){
+    if(candidateIndex===index||used.has(candidateIndex)||candidate.bearing||!candidate.distance)return;
+    var distance=Math.hypot(candidate.pdfPoint.x-point.x,candidate.pdfPoint.y-point.y);
+    if(distance>70)return;
+    var sameRun=item.nearestRunKey&&candidate.nearestRunKey&&item.nearestRunKey===candidate.nearestRunKey;
+    var closeWithRun=distance<=34&&(item.nearestRunDistance===null||item.nearestRunDistance<=110);
+    if(!sameRun&&!closeWithRun)return;
+    var score=distance+(sameRun?-18:0)-candidate.confidence*.025;
+    if(!best||score<best.score)best={index:candidateIndex,item:candidate,score:score};
+   });
+   if(best){
+    item.distance=best.item.distance;item.distanceRaw=best.item.distanceRaw;
+    item.sourceText=item.sourceText+' / '+best.item.sourceText;
+    item.confidence=(item.confidence+best.item.confidence)/2;
+    if(item.context==='PLAN ANNOTATION')item.context=best.item.context;
+    item.bbox={left:Math.min(item.bbox.left,best.item.bbox.left),top:Math.min(item.bbox.top,best.item.bbox.top),
+     right:Math.max(item.bbox.right,best.item.bbox.right),bottom:Math.max(item.bbox.bottom,best.item.bbox.bottom),scale:item.bbox.scale};
+    item.pdfPoint={x:(point.x+best.item.pdfPoint.x)/2,y:(point.y+best.item.pdfPoint.y)/2};
+    if(!item.nearestRunKey)item.nearestRunKey=best.item.nearestRunKey;
+    if(!item.assignedRunKey)item.assignedRunKey=item.nearestRunKey;
+    if(item.nearestRunDistance===null)item.nearestRunDistance=best.item.nearestRunDistance;
+    used.add(best.index);
+   }
+  });
+  return items.filter(function(item,index){return !used.has(index)}).filter(function(item){return item.nearestRunKey||item.bearing});
+ }
+ function renderOcrPanel(page){
+  var body=el('dpOcrAnnotationBody');if(!body)return;
+  var annotations=page&&page.ocrAnnotations?page.ocrAnnotations:[];
+  var hasScan=!!(page&&page.ocrScanned);
+  el('dpOcrTag').textContent=hasScan?'OCR COMPLETE':'NOT SCANNED';
+  el('dpOcrLineCount').textContent=fmt(page&&page.ocrLineCount||0);
+  el('dpOcrCandidateCount').textContent=fmt(annotations.length);
+  el('dpOcrSuggestionCount').textContent=fmt(annotations.filter(function(a){return !!a.nearestRunKey}).length);
+  el('dpOcrConfirmedCount').textContent=fmt(annotations.filter(function(a){return a.confirmed}).length);
+  el('dpExportMeasurementsBtn').disabled=!annotations.length;
+  var note=el('dpOcrNote');
+  if(note)note.textContent=hasScan?
+   'OCR scan complete for PDF page '+page.pageNumber+'. Correct any recognition errors and confirm its associated boundary run. Low-confidence and ground/survey tie labels need particular care.':
+   'Select a plan sheet and scan it to recognise printed bearings and distances. OCR is loaded when first used and needs an internet connection.';
+  if(!annotations.length){
+   body.innerHTML='<tr><td colspan="6">'+(hasScan?'No bearing/distance annotations were recognised on this page.':'No OCR scan has been run for this sheet.')+'</td></tr>';return;
+  }
+  var runs=currentBoundaryRuns||[];
+  body.innerHTML=annotations.map(function(a,index){
+   var selectedRun=a.assignedRunKey||a.nearestRunKey;
+   var options='<option value="">Unassigned</option>'+runs.map(function(run,runIndex){
+    var selected=run.key===selectedRun?' selected':'';
+    return '<option value="'+run.key+'"'+selected+'>BR'+String(runIndex+1).padStart(3,'0')+' · '+run.span.toFixed(1)+' pt · '+run.priorityLabel+'</option>';
+   }).join('');
+   var state=a.confirmed?'<span class="dp-ocr-state confirmed">CONFIRMED</span>':'<span class="dp-ocr-state">NEEDS CHECK</span>';
+   var confClass=a.confidence<60?'low':'';
+   return '<tr><td><div class="dp-ocr-source"><strong>'+escapeHTML(a.sourceText)+'</strong><small>'+escapeHTML(a.context)+' · X '+a.pdfPoint.x.toFixed(1)+' / Y '+a.pdfPoint.y.toFixed(1)+' pt</small>'+state+'</div></td>'+
+    '<td><input class="dp-ocr-edit" aria-label="Bearing candidate '+(index+1)+'" value="'+escapeHTML(a.bearing)+'" onchange="dpEditMeasurement('+index+',\'bearing\',this.value)" placeholder="No bearing"></td>'+
+    '<td><input class="dp-ocr-edit dp-ocr-distance" aria-label="Distance candidate '+(index+1)+'" value="'+escapeHTML(a.distance)+'" onchange="dpEditMeasurement('+index+',\'distance\',this.value)" placeholder="No distance"></td>'+
+    '<td><select class="dp-ocr-run-select" aria-label="Boundary run association '+(index+1)+'" onchange="dpSetMeasurementRun('+index+',this.value)">'+options+'</select><div class="dp-ocr-source"><small>'+(a.nearestRunDistance===null?'No nearby run':'Nearest '+a.nearestRunDistance.toFixed(1)+' pt away')+'</small></div></td>'+
+    '<td><span class="dp-ocr-confidence '+confClass+'">'+Math.round(a.confidence)+'%</span></td>'+
+    '<td><input class="dp-ocr-check" type="checkbox" aria-label="Confirm annotation '+(index+1)+'" '+(a.confirmed?'checked':'')+' onchange="dpConfirmMeasurement('+index+',this.checked)"></td></tr>';
+  }).join('');
+ }
+
  function updateCandidatePanel(){
   var page=currentReport&&currentReport.pages[selectedPage];
   if(!page||!page.processed){
@@ -311,6 +508,14 @@
     });
    });
   }
+  if(ocrOverlayVisible&&page.ocrAnnotations){
+   page.ocrAnnotations.forEach(function(annotation,index){
+    var point=pdfToViewport(viewport,annotation.pdfPoint.x,annotation.pdfPoint.y);
+    var color=annotation.confirmed?'#168652':'#bc7c24';
+    lines.push('<circle class="dp-ocr-dot'+(annotation.confirmed?' confirmed':'')+'" cx="'+point.x.toFixed(2)+'" cy="'+point.y.toFixed(2)+'" r="6" fill="'+color+'"/>');
+    lines.push('<text x="'+(point.x+8).toFixed(2)+'" y="'+(point.y-7).toFixed(2)+'" font-size="11" font-weight="900" fill="'+color+'" stroke="#ffffff" stroke-width="2.6" paint-order="stroke">'+(index+1)+'</text>');
+   });
+  }
   svg.setAttribute('viewBox','0 0 '+page.width+' '+page.height);
   svg.setAttribute('preserveAspectRatio','none');
   svg.innerHTML=lines.join('');
@@ -331,6 +536,7 @@
   if(page.textItemCount<10&&page.likelyPlanSheet)note+=' The drawing contains very little selectable text; dimensions and mark labels appear to be outlined as vectors and require OCR later.';
   el('dpInspectionNote').textContent=note+(page.textPreview?' Text sample: '+page.textPreview:'');
   updateCandidatePanel();
+  renderOcrPanel(page);
  }
  async function renderSelectedPage(index,id){
   if(!pdfDocument||!currentReport)return;
@@ -469,6 +675,104 @@
   document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500);
  };
 
+
+ window.dpScanMeasurements=async function(){
+  if(ocrRunBusy)return;
+  if(!pdfDocument||!currentReport||selectedPage<0){setStatus('Upload a DP and select a sheet before scanning its annotations.',true);return}
+  var pageData=currentReport.pages[selectedPage];
+  if(!pageData||!pageData.processed){setStatus('Wait until this sheet has finished loading before running OCR.',true);return}
+  var button=el('dpScanMeasurementsBtn');
+  ocrRunBusy=true;if(button){button.disabled=true;button.textContent='Scanning…'}
+  var canvas=document.createElement('canvas');
+  try{
+   updateOcrProgress('Preparing high-resolution sheet image…',0.03);
+   setStatus('Preparing OCR for PDF page '+pageData.pageNumber+'…');
+   var page=await pdfDocument.getPage(pageData.pageNumber);
+   var base=page.getViewport({scale:1});
+   var scale=Math.min(2.95,3500/base.width,5000/base.height);
+   var viewport=page.getViewport({scale:scale});
+   canvas.width=Math.max(1,Math.round(viewport.width));canvas.height=Math.max(1,Math.round(viewport.height));
+   var context=canvas.getContext('2d',{alpha:false});
+   await page.render({canvasContext:context,viewport:viewport}).promise;
+   updateOcrProgress('Loading OCR language data…',0.12);
+   var worker=await getOcrWorker();
+   updateOcrProgress('Reading bearing and distance labels…',0.2);
+   var result=await worker.recognize(canvas,{}, {tsv:true});
+   var lines=parseOcrTsv(result&&result.data?result.data.tsv:'');
+   var runs=buildBoundaryRuns(pageData),measurements=[];
+   lines.forEach(function(line){
+    var item=createOcrMeasurement(line,viewport.transform,scale,runs,measurements.length);
+    if(item)measurements.push(item);
+   });
+   measurements=pairOcrMeasurements(measurements).slice(0,250);
+   measurements.forEach(function(item,index){item.id=index+1});
+   pageData.ocrLineCount=lines.length;pageData.ocrAnnotations=measurements;
+   pageData.ocrScanned=true;pageData.ocrScannedAt=new Date().toISOString();
+   currentBoundaryRuns=runs;
+   renderOcrPanel(pageData);renderVectorOverlay();
+   updateOcrProgress('OCR scan complete',1);
+   setStatus('OCR complete on page '+pageData.pageNumber+': '+measurements.length+' bearing/distance candidate(s) found. Review and confirm each result.');
+   var note=el('dpOcrNote');
+   if(note&&measurements.length===0)note.textContent='OCR read '+lines.length+' text line(s), but no likely bearing/distance annotations were associated with a candidate run. Try another sheet or adjust the boundary-run filter.';
+  }catch(error){
+   updateOcrProgress('OCR scan failed',0);
+   setStatus('OCR could not complete: '+(error&&error.message?error.message:String(error)),true);
+  }finally{
+   canvas.width=0;canvas.height=0;ocrRunBusy=false;
+   if(button){button.disabled=false;button.textContent='Scan sheet for B&D'}
+  }
+ };
+ window.dpToggleOcrOverlay=function(value){ocrOverlayVisible=!!value;renderVectorOverlay()};
+ window.dpEditMeasurement=function(index,field,value){
+  var page=currentReport&&currentReport.pages[selectedPage],item=page&&page.ocrAnnotations&&page.ocrAnnotations[index];
+  if(!item||['bearing','distance'].indexOf(field)<0)return;
+  item[field]=String(value||'').trim();item.edited=true;item.confirmed=false;item.confirmedRunKey='';
+  renderOcrPanel(page);renderVectorOverlay();
+ };
+ window.dpSetMeasurementRun=function(index,runKey){
+  var page=currentReport&&currentReport.pages[selectedPage],item=page&&page.ocrAnnotations&&page.ocrAnnotations[index];
+  if(!item)return;
+  item.assignedRunKey=String(runKey||'');item.confirmedRunKey='';item.confirmed=false;
+  renderOcrPanel(page);renderVectorOverlay();
+ };
+ window.dpConfirmMeasurement=function(index,checked){
+  var page=currentReport&&currentReport.pages[selectedPage],item=page&&page.ocrAnnotations&&page.ocrAnnotations[index];
+  if(!item)return;
+  var runKey=item.assignedRunKey||item.nearestRunKey;
+  var bearingValid=!item.bearing||!!parseBearingText(item.bearing);
+  var distanceNumber=item.distance?Number(item.distance):null;
+  var distanceValid=!item.distance||(Number.isFinite(distanceNumber)&&distanceNumber>0);
+  if(checked&&(!runKey||(!item.bearing&&!item.distance)||!bearingValid||!distanceValid)){
+   item.confirmed=false;
+   setStatus('To confirm this item, check its bearing/distance values and assign it to a boundary run.',true);
+  }else{
+   item.confirmed=!!checked;item.confirmedRunKey=checked?runKey:'';
+   item.associationStatus=checked?'CONFIRMED':'SUGGESTED';
+   setStatus(checked?'Measurement and run association confirmed for this review.':'Measurement confirmation removed.',false);
+  }
+  renderOcrPanel(page);renderVectorOverlay();
+ };
+ window.dpExportMeasurements=function(){
+  if(!currentReport)return;
+  var pages=currentReport.pages.filter(function(page){return page&&page.ocrScanned}).map(function(page){
+   return {pageNumber:page.pageNumber,pageSizePt:{width:page.width,height:page.height},
+    coordinateBasis:'PDF user-space points; not MGA/grid coordinates',
+    scannedAt:page.ocrScannedAt,textLinesRead:page.ocrLineCount,
+    annotations:(page.ocrAnnotations||[]).map(function(a){
+     return {sourceText:a.sourceText,bearing:a.bearing||null,distanceMetres:a.distance?Number(a.distance):null,
+      rawBearing:a.bearingRaw,rawDistance:a.distanceRaw,ocrConfidence:a.confidence,context:a.context,pdfPoint:a.pdfPoint,
+      nearestRunSuggestion:a.nearestRunKey||null,nearestRunDistancePt:a.nearestRunDistance,
+      assignedRun:a.assignedRunKey||a.nearestRunKey||null,confirmed:a.confirmed,confirmedRun:a.confirmedRunKey||null,edited:a.edited};
+    })};
+  });
+  var payload={product:'Surveyor’s Toolbox · DP to CAD Phase 4',sourceFile:currentReport.fileName,exportedAt:new Date().toISOString(),
+   warnings:['OCR output is not a verified survey measurement.','All bearings and distances must be checked against the source plan.','Run associations are proximity suggestions until manually confirmed.','Coordinates in this report are PDF page coordinates, not MGA coordinates.'],
+   pages:pages};
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=(currentReport.fileName.replace(/\.pdf$/i,'')||'DP')+' - recognised B&D review.json';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500);
+ };
+
  window.dpChooseFile=function(){var input=el('dpPdfFile');if(input){input.value='';input.click()}};
  window.dpFileSelected=function(event){if(typeof window.dpHandleFile==='function')window.dpHandleFile(event);else setStatus('The DP importer has not loaded. Reopen the app while connected to the internet.',true)};
  window.dpDragOver=function(event){event.preventDefault();el('dpDropZone').classList.add('is-dragover')};
@@ -478,6 +782,7 @@
   runId++;var id=runId;currentReport=null;selectedPage=-1;selectedSegment=-1;selectedRunKey='';currentBoundaryRuns=[];boundaryReviewMap={};
   if(pdfDocument){try{pdfDocument.destroy()}catch(e){}pdfDocument=null}
   el('dpDocumentBar').hidden=true;el('dpAnalysisArea').hidden=true;
+  if(el('dpOcrProgressWrap'))el('dpOcrProgressWrap').hidden=true;
   setStatus('Starting PDF inspection…');
   analysePdf(file,id).catch(function(error){
    if(id!==runId)return;
@@ -506,7 +811,7 @@
     return {pageNumber:p.pageNumber,width:p.width,height:p.height,rotation:p.rotation,textItemCount:p.textItemCount,
      pathGroups:p.pathGroups,lineSegments:p.lineSegments,curveSegments:p.curveSegments,imageOps:p.imageOps,
      drawingOps:p.drawingOps,likelyPlanSheet:p.likelyPlanSheet,
-     candidateLines:filteredCandidates(p),boundaryRuns:buildBoundaryRuns(p).map(function(run){return {key:run.key,segmentIds:run.segmentIds,spanPt:run.span,angleDegrees:run.angle,averageStrokeWidthPt:run.averageWidth,junctionContacts:run.junctions,priorityScore:run.priority,priorityLabel:run.priorityLabel,review:run.review}})};
+     candidateLines:filteredCandidates(p),boundaryRuns:buildBoundaryRuns(p).map(function(run){return {key:run.key,segmentIds:run.segmentIds,spanPt:run.span,angleDegrees:run.angle,averageStrokeWidthPt:run.averageWidth,junctionContacts:run.junctions,priorityScore:run.priority,priorityLabel:run.priorityLabel,review:run.review}}),ocrScanned:!!p.ocrScanned,ocrLineCount:p.ocrLineCount||0,ocrAnnotations:p.ocrAnnotations||[]};
    })
   };
   var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
@@ -519,7 +824,11 @@
   el('dpPdfFile').value='';el('dpDocumentBar').hidden=true;el('dpAnalysisArea').hidden=true;
   el('dpPreviewEmpty').hidden=false;el('dpPageLayer').hidden=true;
   el('dpPageCanvas').getContext('2d').clearRect(0,0,el('dpPageCanvas').width,el('dpPageCanvas').height);
-  el('dpVectorOverlay').innerHTML='';setStatus('');
+  el('dpVectorOverlay').innerHTML='';
+  if(el('dpOcrProgressWrap'))el('dpOcrProgressWrap').hidden=true;
+  if(el('dpOcrAnnotationBody'))el('dpOcrAnnotationBody').innerHTML='<tr><td colspan="6">No OCR scan has been run for this sheet.</td></tr>';
+  if(ocrWorker){try{ocrWorker.terminate()}catch(e){}ocrWorker=null;ocrWorkerPromise=null}
+  setStatus('');
  };
  window.dpImporterReady=true;
  if(el('dpProcessingStatus'))setStatus('DP PDF engine ready. Choose or drop a deposited plan PDF to begin.');
