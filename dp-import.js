@@ -2,8 +2,8 @@
 (function(){
  'use strict';
  var PDFJS_VERSION='6.5.438';
- var modulePromise=null,pdfDocument=null,currentReport=null,selectedPage=-1,selectedSegment=-1,runId=0;
- var minLineLength=25,overlayVisible=true;
+ var modulePromise=null,pdfDocument=null,currentReport=null,selectedPage=-1,selectedSegment=-1,selectedRunKey='',runId=0;
+ var minLineLength=25,overlayVisible=true,boundaryOverlayVisible=true,boundaryMinLength=35,currentBoundaryRuns=[],boundaryReviewMap={};
  var maxCandidateRows=120;
 
  function el(id){return document.getElementById(id)}
@@ -154,6 +154,121 @@
   if(!page||!page.vectorSegments)return [];
   return page.vectorSegments.filter(function(s){return s.length>=minLineLength&&s.width<=3.5}).sort(function(a,b){return b.length-a.length});
  }
+
+ function boundaryRegionFilter(page,segment){
+  var padX=65,padY=150;
+  var minX=Math.min(segment.x1,segment.x2),maxX=Math.max(segment.x1,segment.x2);
+  var minY=Math.min(segment.y1,segment.y2),maxY=Math.max(segment.y1,segment.y2);
+  return minX>=padX&&maxX<=page.width-padX&&minY>=padY&&maxY<=page.height-padY;
+ }
+ function angleOf(segment){
+  var a=Math.atan2(segment.y2-segment.y1,segment.x2-segment.x1)%Math.PI;
+  return a<0?a+Math.PI:a;
+ }
+ function angleDifference(a,b){
+  var d=Math.abs(a-b)%Math.PI;
+  return Math.min(d,Math.PI-d);
+ }
+ function buildBoundaryRuns(page){
+  if(!page||!page.vectorSegments)return [];
+  var candidates=filteredCandidates(page).filter(function(segment){
+   return segment.length>=boundaryMinLength&&segment.width<=1.55&&boundaryRegionFilter(page,segment);
+  });
+  if(!candidates.length)return [];
+  var parent=candidates.map(function(_,index){return index});
+  function find(x){while(parent[x]!==x){parent[x]=parent[parent[x]];x=parent[x]}return x}
+  function join(a,b){a=find(a);b=find(b);if(a!==b)parent[b]=a}
+  var snap=2.8,angleTolerance=2.2*Math.PI/180;
+  for(var i=0;i<candidates.length;i++){
+   var a=candidates[i],aa=angleOf(a);
+   for(var j=i+1;j<candidates.length;j++){
+    var b=candidates[j];
+    if(angleDifference(aa,angleOf(b))>angleTolerance)continue;
+    var near=Math.hypot(a.x1-b.x1,a.y1-b.y1)<=snap||
+     Math.hypot(a.x1-b.x2,a.y1-b.y2)<=snap||
+     Math.hypot(a.x2-b.x1,a.y2-b.y1)<=snap||
+     Math.hypot(a.x2-b.x2,a.y2-b.y2)<=snap;
+    if(near)join(i,j);
+   }
+  }
+  var groups=Object.create(null);
+  candidates.forEach(function(segment,index){var root=find(index);(groups[root]||(groups[root]=[])).push(segment)});
+  var runs=Object.keys(groups).map(function(root){
+   var segments=groups[root],cos=0,sin=0,total=0,width=0;
+   segments.forEach(function(segment){
+    var angle=angleOf(segment),weight=segment.length;
+    cos+=Math.cos(2*angle)*weight;sin+=Math.sin(2*angle)*weight;
+    total+=weight;width+=segment.width;
+   });
+   var angle=(Math.atan2(sin,cos)/2+Math.PI)%Math.PI;
+   var ux=Math.cos(angle),uy=Math.sin(angle),points=[];
+   segments.forEach(function(s){points.push({x:s.x1,y:s.y1},{x:s.x2,y:s.y2})});
+   var projections=points.map(function(p){return p.x*ux+p.y*uy});
+   var min=Math.min.apply(null,projections),max=Math.max.apply(null,projections);
+   return {
+    key:segments.map(function(s){return s.id}).sort(function(a,b){return a-b}).join('-'),
+    segments:segments,segmentIds:segments.map(function(s){return s.id}).sort(function(a,b){return a-b}),
+    span:max-min,totalSegmentLength:total,averageWidth:width/segments.length,angle:angle*180/Math.PI,
+    start:points[projections.indexOf(min)],end:points[projections.indexOf(max)],junctions:0,priority:0,review:'unreviewed'
+   };
+  });
+  function pointToSegmentDistance(point,segment){
+   var dx=segment.x2-segment.x1,dy=segment.y2-segment.y1,len2=dx*dx+dy*dy||1;
+   var t=Math.max(0,Math.min(1,((point.x-segment.x1)*dx+(point.y-segment.y1)*dy)/len2));
+   return Math.hypot(point.x-(segment.x1+t*dx),point.y-(segment.y1+t*dy));
+  }
+  runs.forEach(function(run){
+   var contacts=0;
+   run.segments.forEach(function(segment){
+    [{x:segment.x1,y:segment.y1},{x:segment.x2,y:segment.y2}].forEach(function(point){
+     var touched=candidates.some(function(other){
+      return run.segmentIds.indexOf(other.id)<0&&pointToSegmentDistance(point,other)<=3.2;
+     });
+     if(touched)contacts++;
+    });
+   });
+   run.junctions=contacts;
+   var lengthScore=run.span>=250?35:(run.span>=120?27:(run.span>=70?19:10));
+   var widthScore=run.averageWidth<=0.9?20:12;
+   var chainScore=run.segments.length>1?8:0;
+   var junctionScore=Math.min(22,contacts*6);
+   run.priority=Math.min(100,lengthScore+widthScore+chainScore+junctionScore);
+   run.priorityLabel=run.priority>=65?'HIGH':(run.priority>=45?'MEDIUM':'LOW');
+   run.review=boundaryReviewMap[page.pageNumber+':'+run.key]||'unreviewed';
+  });
+  return runs.sort(function(a,b){return b.priority-a.priority||b.span-a.span});
+ }
+ function updateBoundaryPanel(){
+  var page=currentReport&&currentReport.pages[selectedPage];
+  currentBoundaryRuns=page&&page.processed?buildBoundaryRuns(page):[];
+  var countEl=el('dpBoundaryRunCount'),body=el('dpBoundaryRunBody');
+  if(!countEl||!body)return;
+  var confirmed=0,easement=0,ignored=0;
+  currentBoundaryRuns.forEach(function(run){
+   if(run.review==='boundary')confirmed++;
+   else if(run.review==='easement')easement++;
+   else if(run.review==='ignore')ignored++;
+  });
+  countEl.textContent=fmt(currentBoundaryRuns.length)+' RUNS';
+  el('dpBoundaryReviewCount').textContent=fmt(currentBoundaryRuns.length-confirmed-easement-ignored);
+  el('dpBoundaryConfirmedCount').textContent=fmt(confirmed);
+  el('dpBoundaryEasementCount').textContent=fmt(easement);
+  el('dpBoundaryIgnoredCount').textContent=fmt(ignored);
+  var hasSelection=currentBoundaryRuns.some(function(run){return run.key===selectedRunKey});
+  if(!hasSelection)selectedRunKey='';
+  ['dpMarkBoundaryBtn','dpMarkEasementBtn','dpIgnoreBoundaryBtn','dpResetBoundaryBtn'].forEach(function(id){if(el(id))el(id).disabled=!selectedRunKey});
+  el('dpExportBoundaryReview').disabled=!currentBoundaryRuns.length;
+  body.innerHTML=currentBoundaryRuns.slice(0,150).map(function(run,index){
+   var key=run.key.replace(/[^0-9-]/g,''),review=run.review;
+   var reviewText=review==='boundary'?'BOUNDARY':(review==='easement'?'EASEMENT / TIE':(review==='ignore'?'IGNORED':'UNREVIEWED'));
+   return '<tr class="'+(selectedRunKey===run.key?'active':'')+'" onclick="dpSelectBoundaryRun(\''+key+'\')">'+
+    '<td>BR'+String(index+1).padStart(3,'0')+'</td><td>'+run.span.toFixed(2)+' pt</td><td>'+run.angle.toFixed(1)+'°</td>'+
+    '<td>'+run.segments.length+'</td><td>'+run.averageWidth.toFixed(2)+' pt</td><td>'+run.junctions+'</td>'+
+    '<td class="dp-priority">'+run.priority+' / 100 · '+run.priorityLabel+'</td><td><span class="dp-review-pill '+review+'">'+reviewText+'</span></td></tr>';
+  }).join('')||'<tr><td colspan="8">No long, thin line runs found in the main drawing area. Lower the minimum length or inspect another sheet.</td></tr>';
+  renderVectorOverlay();
+ }
+
  function updateCandidatePanel(){
   var page=currentReport&&currentReport.pages[selectedPage];
   if(!page||!page.processed){
@@ -172,22 +287,31 @@
    var selected=s.id===selectedSegment?' active':'';
    return '<tr class="'+selected+'" onclick="dpHighlightCandidate('+s.id+')"><td>L'+String(s.id).padStart(4,'0')+'</td><td>'+s.length.toFixed(2)+' pt</td><td>'+s.width.toFixed(2)+' pt</td><td>'+angle.toFixed(1)+'°</td><td>'+s.x1.toFixed(1)+', '+s.y1.toFixed(1)+'</td><td>'+s.x2.toFixed(1)+', '+s.y2.toFixed(1)+'</td></tr>';
   }).join('')||'<tr><td colspan="6">No segments meet this filter. Lower the minimum length to inspect more linework.</td></tr>';
-  renderVectorOverlay();
+  updateBoundaryPanel();
  }
  function renderVectorOverlay(){
   var svg=el('dpVectorOverlay'),page=currentReport&&currentReport.pages[selectedPage];
-  if(!svg||!page||!page.processed||!page.viewportTransform||!overlayVisible){if(svg)svg.innerHTML='';return}
-  var candidates=filteredCandidates(page),lines=[];
-  var viewportWidth=page.width,viewportHeight=page.height;
-  var viewport=page.viewportTransform;
-  candidates.slice(0,1600).forEach(function(s){
-   var p1=pdfToViewport(viewport,s.x1,s.y1),p2=pdfToViewport(viewport,s.x2,s.y2);
-   var stroke=s.id===selectedSegment?'#d74737':'#d69a35';
-   var width=s.id===selectedSegment?3.2:1.2;
-   var opacity=s.id===selectedSegment?1:.65;
-   lines.push('<line x1="'+p1.x.toFixed(2)+'" y1="'+p1.y.toFixed(2)+'" x2="'+p2.x.toFixed(2)+'" y2="'+p2.y.toFixed(2)+'" stroke="'+stroke+'" stroke-width="'+width+'" opacity="'+opacity+'" vector-effect="non-scaling-stroke"/>');
-  });
-  svg.setAttribute('viewBox','0 0 '+viewportWidth+' '+viewportHeight);
+  if(!svg||!page||!page.processed||!page.viewportTransform){if(svg)svg.innerHTML='';return}
+  var lines=[],viewport=page.viewportTransform;
+  if(overlayVisible){
+   filteredCandidates(page).slice(0,1600).forEach(function(s){
+    var p1=pdfToViewport(viewport,s.x1,s.y1),p2=pdfToViewport(viewport,s.x2,s.y2);
+    var stroke=s.id===selectedSegment?'#d74737':'#d69a35';
+    var width=s.id===selectedSegment?3.2:1.0,opacity=s.id===selectedSegment?1:.28;
+    lines.push('<line x1="'+p1.x.toFixed(2)+'" y1="'+p1.y.toFixed(2)+'" x2="'+p2.x.toFixed(2)+'" y2="'+p2.y.toFixed(2)+'" stroke="'+stroke+'" stroke-width="'+width+'" opacity="'+opacity+'" vector-effect="non-scaling-stroke"/>');
+   });
+  }
+  if(boundaryOverlayVisible){
+   currentBoundaryRuns.forEach(function(run){
+    var color=run.review==='boundary'?'#168652':(run.review==='easement'?'#8c69b2':(run.review==='ignore'?'#9aa39e':'#167db4'));
+    var isSelected=run.key===selectedRunKey;
+    run.segments.forEach(function(s){
+     var p1=pdfToViewport(viewport,s.x1,s.y1),p2=pdfToViewport(viewport,s.x2,s.y2);
+     lines.push('<line x1="'+p1.x.toFixed(2)+'" y1="'+p1.y.toFixed(2)+'" x2="'+p2.x.toFixed(2)+'" y2="'+p2.y.toFixed(2)+'" stroke="'+(isSelected?'#e04837':color)+'" stroke-width="'+(isSelected?3.6:2.0)+'" opacity="'+(isSelected?1:.88)+'" vector-effect="non-scaling-stroke"/>');
+    });
+   });
+  }
+  svg.setAttribute('viewBox','0 0 '+page.width+' '+page.height);
   svg.setAttribute('preserveAspectRatio','none');
   svg.innerHTML=lines.join('');
  }
@@ -308,6 +432,43 @@
   a.href=url;a.download=(currentReport.fileName.replace(/\.pdf$/i,'')||'DP')+' - page '+page.pageNumber+' candidate linework.json';
   document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500);
  };
+
+ window.dpSetBoundaryFilter=function(value){
+  boundaryMinLength=Math.max(15,Number(value)||35);
+  el('dpMinBoundaryLengthLabel').textContent=boundaryMinLength+' pt';
+  selectedRunKey='';updateBoundaryPanel();
+ };
+ window.dpToggleBoundaryOverlay=function(value){boundaryOverlayVisible=!!value;renderVectorOverlay()};
+ window.dpSelectBoundaryRun=function(key){selectedRunKey=String(key||'');updateBoundaryPanel()};
+ window.dpClassifyBoundaryRun=function(kind){
+  if(!selectedRunKey)return;
+  if(['boundary','easement','ignore','review'].indexOf(kind)<0)return;
+  var run=currentBoundaryRuns.find(function(item){return item.key===selectedRunKey});
+  if(!run)return;
+  boundaryReviewMap[currentReport.pages[selectedPage].pageNumber+':'+run.key]=kind==='review'?'unreviewed':kind;
+  updateBoundaryPanel();
+  var note=el('dpBoundaryReviewNote');
+  if(note)note.textContent='Run '+run.key+' marked '+(kind==='review'?'unreviewed':kind)+'. This review is retained for the current PDF session and can be exported as JSON.';
+ };
+ window.dpExportBoundaryReview=function(){
+  if(!currentReport)return;
+  var pages=currentReport.pages.filter(function(page){return page&&page.processed}).map(function(page){
+   return {pageNumber:page.pageNumber,pageSizePt:{width:page.width,height:page.height},
+    coordinateBasis:'PDF user-space points; not MGA/grid coordinates',
+    runs:buildBoundaryRuns(page).map(function(run){
+     return {key:run.key,segmentIds:run.segmentIds,segments:run.segments,spanPt:run.span,angleDegrees:run.angle,
+      averageStrokeWidthPt:run.averageWidth,junctionContacts:run.junctions,priorityScore:run.priority,
+      priorityLabel:run.priorityLabel,review:run.review,start:run.start,end:run.end};
+    })};
+  });
+  var payload={product:'Surveyor’s Toolbox · DP to CAD Phase 3',sourceFile:currentReport.fileName,
+   inspectedAt:new Date().toISOString(),method:'Grouped collinear native vector segments with endpoint snapping, main-sheet region and thin-stroke filters',
+   warnings:['Candidate runs are not automatically confirmed parcel boundaries.','PDF coordinates are not MGA coordinates.','Bearing/distance labels have not yet been OCR-associated with runs.'],pages:pages};
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=(currentReport.fileName.replace(/\.pdf$/i,'')||'DP')+' - boundary run review.json';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500);
+ };
+
  window.dpChooseFile=function(){var input=el('dpPdfFile');if(input){input.value='';input.click()}};
  window.dpFileSelected=function(event){if(typeof window.dpHandleFile==='function')window.dpHandleFile(event);else setStatus('The DP importer has not loaded. Reopen the app while connected to the internet.',true)};
  window.dpDragOver=function(event){event.preventDefault();el('dpDropZone').classList.add('is-dragover')};
@@ -337,15 +498,15 @@
    inspectedAt:currentReport.inspectedAt,pageCount:currentReport.pageCount,
    notes:[
     'Plan sheet identification is heuristic, not boundary interpretation.',
-    'Vector segments are measured in PDF user-space points and are not MGA coordinates.',
+    'Vector segments and candidate runs are measured in PDF user-space points and are not MGA coordinates.',
     'Outlined text, symbols, title blocks, easements and parcel lines all contribute vector segments.',
-    'Bearings and distances are not yet associated with parcel boundaries.'
+    'Boundary runs are geometric candidates requiring human review; bearings and distances are not yet associated with parcel boundaries.'
    ],
    pages:currentReport.pages.map(function(p){
     return {pageNumber:p.pageNumber,width:p.width,height:p.height,rotation:p.rotation,textItemCount:p.textItemCount,
      pathGroups:p.pathGroups,lineSegments:p.lineSegments,curveSegments:p.curveSegments,imageOps:p.imageOps,
      drawingOps:p.drawingOps,likelyPlanSheet:p.likelyPlanSheet,
-     candidateLines:filteredCandidates(p)};
+     candidateLines:filteredCandidates(p),boundaryRuns:buildBoundaryRuns(p).map(function(run){return {key:run.key,segmentIds:run.segmentIds,spanPt:run.span,angleDegrees:run.angle,averageStrokeWidthPt:run.averageWidth,junctionContacts:run.junctions,priorityScore:run.priority,priorityLabel:run.priorityLabel,review:run.review}})};
    })
   };
   var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
