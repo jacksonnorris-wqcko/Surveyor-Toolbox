@@ -275,7 +275,7 @@
    el('dpCandidateCount').textContent='0 CANDIDATES';
    el('dpCandidateTotal').textContent='0';el('dpCandidateVisible').textContent='0';
    el('dpCandidateBody').innerHTML='<tr><td colspan="6">Select an inspected plan sheet to review vector segments.</td></tr>';
-   el('dpExportCandidates').disabled=true;return;
+   el('dpExportCandidates').disabled=true;updateBoundaryPanel();return;
   }
   var candidates=filteredCandidates(page),shown=candidates.slice(0,maxCandidateRows);
   el('dpCandidateCount').textContent=fmt(candidates.length)+' CANDIDATES';
