@@ -176,7 +176,7 @@
  }
  function renderVectorOverlay(){
   var svg=el('dpVectorOverlay'),page=currentReport&&currentReport.pages[selectedPage];
-  if(!svg||!page||!page.processed||!overlayVisible){if(svg)svg.innerHTML='';return}
+  if(!svg||!page||!page.processed||!page.viewportTransform||!overlayVisible){if(svg)svg.innerHTML='';return}
   var candidates=filteredCandidates(page),lines=[];
   var viewportWidth=page.width,viewportHeight=page.height;
   var viewport=page.viewportTransform;
