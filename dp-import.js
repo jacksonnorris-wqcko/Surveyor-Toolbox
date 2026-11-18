@@ -9,6 +9,11 @@
 
  function el(id){return document.getElementById(id)}
  function fmt(n){return Number(n||0).toLocaleString('en-AU')}
+ function escapeHTML(value){
+  return String(value==null?'':value).replace(/[&<>"']/g,function(ch){
+   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+  });
+ }
  function nextPaint(){return new Promise(function(resolve){requestAnimationFrame(function(){resolve()})})}
  function setStatus(message,isError){
   var x=el('dpProcessingStatus');if(!x)return;
