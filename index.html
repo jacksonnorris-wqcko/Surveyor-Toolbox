@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="9.7" data-release="major">
+<meta name="app-version" content="9.8" data-release="major">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -911,7 +911,49 @@ canvas{background:#fbfcfa}
 }
 </style>
 
-<style id="v9-6-dp-phase2-css">
+<style id="v9-8-dp-boundary-css">
+#dpImport .dp-boundary-panel{margin-top:12px}
+#dpImport .dp-boundary-controls{display:flex;align-items:center;gap:13px;flex-wrap:wrap;padding:10px 12px;border:1px solid #e3eae4;border-radius:10px;background:#f8faf8}
+#dpImport .dp-boundary-controls .dp-filter-control{min-width:190px;flex:1}
+#dpImport .dp-boundary-actions{display:flex;gap:6px;flex-wrap:wrap}
+#dpImport .dp-boundary-actions .btn,#dpImport #dpExportBoundaryReview{min-height:33px;padding:6px 9px;font-size:9px}
+#dpImport .dp-boundary-actions .btn:disabled,#dpImport #dpExportBoundaryReview:disabled{opacity:.42}
+#dpImport .dp-boundary-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:11px 0}
+#dpImport .dp-boundary-metrics>div{display:grid;gap:4px;padding:9px 10px;border:1px solid #e4eae5;border-radius:9px;background:#fff}
+#dpImport .dp-boundary-metrics small{font-size:7px;letter-spacing:.55px;font-weight:900;color:#849188}
+#dpImport .dp-boundary-metrics strong{font-size:18px;font-weight:950;color:#365d47;font-variant-numeric:tabular-nums}
+#dpImport .dp-boundary-legend{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin:0 0 9px;color:#7e8b82;font-size:8px}
+#dpImport .dp-boundary-legend span{display:inline-flex;align-items:center;gap:5px}
+#dpImport .dp-boundary-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+#dpImport .dp-boundary-dot.unreviewed{background:#d69a35}
+#dpImport .dp-boundary-dot.boundary{background:#21875c}
+#dpImport .dp-boundary-dot.easement{background:#9270ba}
+#dpImport .dp-boundary-dot.ignore{background:#aab2ad}
+#dpImport .dp-boundary-table-wrap{max-height:370px;overflow:auto;border:1px solid #e2e9e3;border-radius:10px}
+#dpImport .dp-boundary-table{width:100%;min-width:760px;border-collapse:collapse;font-size:9px;font-variant-numeric:tabular-nums}
+#dpImport .dp-boundary-table th{position:sticky;top:0;z-index:2;padding:9px 8px;background:#eef3ef;color:#718078;font-size:7px;letter-spacing:.5px;font-weight:900;text-align:left;white-space:nowrap}
+#dpImport .dp-boundary-table td{padding:8px;border-top:1px solid #edf1ed;color:#526459;white-space:nowrap}
+#dpImport .dp-boundary-table tbody tr{background:#fff;cursor:pointer}
+#dpImport .dp-boundary-table tbody tr:hover{background:#f7faf7}
+#dpImport .dp-boundary-table tbody tr.active{background:#fff3dc;box-shadow:inset 3px 0 #c18b37}
+#dpImport .dp-boundary-table td:first-child{font-weight:900;color:#315d45}
+#dpImport .dp-priority{font-weight:900}
+#dpImport .dp-review-pill{display:inline-flex;padding:4px 6px;border-radius:6px;background:#f2f4f2;color:#79877e;font-size:7px;font-weight:900}
+#dpImport .dp-review-pill.boundary{background:#e8f4ec;color:#28744e}
+#dpImport .dp-review-pill.easement{background:#f0eaf6;color:#785e9c}
+#dpImport .dp-review-pill.ignore{background:#eef0ef;color:#8b9690}
+#dpImport .dp-boundary-table td[colspan]{padding:18px;text-align:center;color:#929e96;cursor:default}
+#dpImport .dp-page-progress{padding:9px 10px;border:1px dashed #d7e1d9;border-radius:8px;color:#7f8d83;font-size:9px}
+@media(max-width:700px){
+ #dpImport .dp-boundary-controls{align-items:stretch;gap:10px}
+ #dpImport .dp-boundary-controls .dp-filter-control{min-width:100%;flex-basis:100%}
+ #dpImport .dp-boundary-actions{display:grid;grid-template-columns:1fr 1fr}
+ #dpImport .dp-boundary-actions .btn{width:100%}
+ #dpImport .dp-boundary-controls>#dpExportBoundaryReview{width:100%}
+ #dpImport .dp-boundary-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #dpImport .dp-boundary-table-wrap{max-height:320px}
+}
+</style><style id="v9-6-dp-phase2-css">
 #dpImport .dp-drop-zone{cursor:pointer}
 #dpImport .dp-processing-status{display:block;min-height:34px;margin-top:10px;padding:10px 12px;border-radius:9px;background:#eef4ef;color:#4c6958;font-size:11px;line-height:1.45}
 #dpImport .dp-processing-status[hidden]{display:none!important}
@@ -1417,7 +1459,7 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 <div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
 <div class="app">
 <aside class="side">
-<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v9.7</small></span></div>
+<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v9.8</small></span></div>
 <div class="nav">
 <div class="section">Workspace</div>
 <button class="active" onclick="show('dashboard',this)"><svg class="ui-icon nav-icon"><use href="#st-home"></use></svg><span>Home</span></button>
@@ -1440,11 +1482,11 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
   <div class="desktop-context"><span class="desktop-context-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
     <div class="mobile-brand-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v9.7</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v9.8</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v9.7</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v9.8</small></span>
   </div>
 </div>
 
@@ -1508,6 +1550,39 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
     <table class="dp-candidate-table"><thead><tr><th>#</th><th>Length</th><th>Width</th><th>Page angle</th><th>Start (PDF pt)</th><th>End (PDF pt)</th></tr></thead><tbody id="dpCandidateBody"><tr><td colspan="6">Upload a plan sheet to extract vector linework.</td></tr></tbody></table>
    </div>
    <div class="dp-inspection-note">Phase 2 is a reviewable linework extraction step. Dimensions and mark labels on this DP are outlined as vectors, so automatic bearing/distance recognition requires the later OCR and annotation-association stage.</div>
+  </div> 
+  <div class="dp-panel card dp-boundary-panel">
+   <div class="dp-panel-head">
+    <div><div class="dp-kicker">05 / PHASE 3 · BOUNDARY IDENTIFICATION</div><h2>Boundary run candidates</h2><p>Connected, collinear thin linework is grouped into reviewable runs. The priority score is a geometric hint, not an automatic cadastral decision.</p></div>
+    <span id="dpBoundaryRunCount" class="dp-preview-tag">0 RUNS</span>
+   </div>
+   <div class="dp-boundary-controls">
+    <label class="dp-filter-control"><span>Minimum run length</span><strong id="dpMinBoundaryLengthLabel">35 pt</strong><input id="dpMinBoundaryLength" type="range" min="15" max="150" step="5" value="35" oninput="dpSetBoundaryFilter(this.value)"></label>
+    <div class="dp-boundary-actions">
+     <button class="btn secondary" type="button" onclick="dpClassifyBoundaryRun('boundary')" id="dpMarkBoundaryBtn" disabled>Mark boundary</button>
+     <button class="btn secondary" type="button" onclick="dpClassifyBoundaryRun('easement')" id="dpMarkEasementBtn" disabled>Mark easement / tie</button>
+     <button class="btn secondary" type="button" onclick="dpClassifyBoundaryRun('ignore')" id="dpIgnoreBoundaryBtn" disabled>Ignore</button>
+     <button class="btn secondary" type="button" onclick="dpClassifyBoundaryRun('review')" id="dpResetBoundaryBtn" disabled>Reset</button>
+    </div>
+    <label class="dp-overlay-control"><input id="dpShowBoundaryOverlay" type="checkbox" checked onchange="dpToggleBoundaryOverlay(this.checked)"> Show boundary candidates</label>
+    <button class="btn secondary" type="button" onclick="dpExportBoundaryReview()" id="dpExportBoundaryReview" disabled>Export boundary review JSON</button>
+   </div>
+   <div class="dp-boundary-metrics">
+    <div><small>REVIEW RUNS</small><strong id="dpBoundaryReviewCount">0</strong></div>
+    <div><small>MARKED BOUNDARY</small><strong id="dpBoundaryConfirmedCount">0</strong></div>
+    <div><small>EASEMENT / TIE</small><strong id="dpBoundaryEasementCount">0</strong></div>
+    <div><small>IGNORED</small><strong id="dpBoundaryIgnoredCount">0</strong></div>
+   </div>
+   <div class="dp-boundary-legend">
+    <span><i class="dp-boundary-dot unreviewed"></i> Unreviewed</span>
+    <span><i class="dp-boundary-dot boundary"></i> Boundary</span>
+    <span><i class="dp-boundary-dot easement"></i> Easement / tie</span>
+    <span><i class="dp-boundary-dot ignore"></i> Ignored</span>
+   </div>
+   <div class="dp-boundary-table-wrap">
+    <table class="dp-boundary-table"><thead><tr><th>Run</th><th>Span</th><th>Angle</th><th>Segments</th><th>Width</th><th>Junctions</th><th>Priority</th><th>Review</th></tr></thead><tbody id="dpBoundaryRunBody"><tr><td colspan="8">Upload a plan sheet to identify candidate boundary runs.</td></tr></tbody></table>
+   </div>
+   <div id="dpBoundaryReviewNote" class="dp-inspection-note">Select a candidate run, then classify it as a boundary, easement/tie or ignore. This review is a manual confirmation layer; no DXF is generated at this stage.</div>
   </div>
  </div>
 </section>
