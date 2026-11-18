@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="9.4" data-release="major">
+<meta name="app-version" content="9.5" data-release="major">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -911,6 +911,11 @@ canvas{background:#fbfcfa}
 }
 </style>
 
+<style id="v9-5-dp-css">
+#dpImport{max-width:1500px}#dpImport .dp-page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:16px}#dpImport .dp-page-head h1{margin:0 0 5px;font-size:29px;color:#233d32}#dpImport .dp-page-head .sub{margin:0;color:#829087;font-size:12px}#dpImport .dp-phase-pill{padding:8px 11px;border:1px solid #dce7df;border-radius:999px;background:#fff;color:#60756a;font-size:9px;font-weight:900;white-space:nowrap}#dpImport .dp-intro-strip{margin-bottom:13px;padding:12px 14px;border:1px solid #dce7df;border-radius:12px;background:#f5f9f6;color:#52685b}#dpImport .dp-intro-strip strong{font-size:12px;color:#2c4c3d}#dpImport .dp-intro-strip p{margin:4px 0 0;font-size:10.5px;line-height:1.5}#dpImport .dp-upload-card,#dpImport .dp-panel{padding:16px;border-radius:14px}#dpImport .dp-drop-zone{display:flex;align-items:center;gap:13px;padding:16px;border:1.5px dashed #adc5b4;border-radius:12px;background:#f8fbf8;cursor:pointer}#dpImport .dp-drop-zone.is-dragover{border-color:#347c67;background:#edf6ef}#dpImport .dp-upload-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:11px;background:#e7f1e9;color:#347c67;font-size:24px}#dpImport .dp-drop-copy{display:grid;gap:3px;flex:1}#dpImport .dp-drop-copy strong{font-size:12px;color:#294538}#dpImport .dp-drop-copy span,#dpImport .dp-drop-zone>small{font-size:9px;color:#87948c}#dpImport .dp-processing-status{margin-top:10px;padding:10px;border-radius:9px;background:#f3f6f3;color:#64756b;font-size:11px}#dpImport .dp-document-bar{display:flex;align-items:center;gap:12px;margin-top:11px;padding:11px;border:1px solid #e1e8e2;border-radius:10px}#dpImport .dp-document-bar[hidden],#dpImport #dpAnalysisArea[hidden]{display:none!important}#dpImport .dp-document-meta{display:grid;gap:3px;min-width:0;flex:1}#dpImport .dp-document-meta strong{font-size:11px;overflow-wrap:anywhere}#dpImport .dp-document-meta small{font-size:9px;color:#87948c}#dpImport .dp-document-actions{display:flex;gap:7px}#dpImport .dp-document-actions .btn{font-size:10px;padding:7px 10px}#dpImport .dp-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:13px 0}#dpImport .dp-stat-card{display:grid;gap:4px;padding:12px;border:1px solid #e0e8e2;border-radius:11px;background:#fff}#dpImport .dp-stat-card small{font-size:8px;color:#829087;font-weight:900;letter-spacing:.6px}#dpImport .dp-stat-card strong{font-size:23px;color:#294d3a;font-weight:950}#dpImport .dp-stat-card span{font-size:9px;color:#9aa59e}#dpImport .dp-workbench-grid{display:grid;grid-template-columns:minmax(250px,.34fr) minmax(0,.66fr);gap:12px;align-items:stretch}#dpImport .dp-panel-head{margin-bottom:11px}#dpImport .dp-kicker{font-size:8px;color:#a27d47;font-weight:900;letter-spacing:1px;margin-bottom:4px}#dpImport .dp-panel-head h2{margin:0;font-size:15px;color:#263f33}#dpImport .dp-panel-head p{margin:4px 0 0;font-size:10px;color:#849188;line-height:1.4}#dpImport .dp-page-list{display:grid;gap:7px}#dpImport .dp-page-choice{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;padding:9px;border:1px solid #e0e8e2;border-radius:9px;background:#fff;text-align:left;cursor:pointer}#dpImport .dp-page-choice.active{border-color:#78a78b;background:#f1f7f2;box-shadow:0 0 0 2px #e7f1e9}#dpImport .dp-page-no{display:grid;place-items:center;width:28px;height:28px;border-radius:7px;background:#eef3ef;color:#4a6b56;font-size:10px;font-weight:900}#dpImport .dp-page-copy{display:grid;gap:3px;min-width:0}#dpImport .dp-page-copy strong{font-size:10px;color:#30493b}#dpImport .dp-page-copy small{font-size:8px;color:#8b9890;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#dpImport .dp-page-badge{padding:4px 6px;border-radius:5px;background:#f0f3f0;color:#7d8981;font-size:7px;font-weight:900}#dpImport .dp-page-choice.plan .dp-page-badge{background:#e8f3eb;color:#397454}#dpImport .dp-sheet-legend{margin-top:10px;font-size:8px;color:#8a968e}#dpImport .dp-canvas-stage{display:flex;align-items:center;justify-content:center;min-height:350px;padding:9px;overflow:hidden;border:1px solid #e1e8e2;border-radius:10px;background:#f6f8f6}#dpImport #dpPageCanvas{display:block;max-width:100%;height:auto;max-height:670px;background:#fff;box-shadow:0 3px 16px #1d382b18}#dpImport #dpPageCanvas[hidden]{display:none}#dpImport .dp-preview-empty{color:#819087;font-size:12px;text-align:center}#dpImport .dp-canvas-foot{display:flex;justify-content:space-between;gap:10px;margin-top:8px;color:#98a39c;font-size:8px}#dpImport .dp-inspection-panel{margin-top:12px}#dpImport .dp-inspection-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}#dpImport .dp-inspection-grid>div{display:grid;gap:5px;padding:9px;border:1px solid #e5ebe6;border-radius:8px;background:#fbfcfb}#dpImport .dp-inspection-grid small{font-size:7px;color:#8b9890;font-weight:900}#dpImport .dp-inspection-grid strong{font-size:18px;color:#365d47;font-weight:950}#dpImport .dp-inspection-note{margin-top:10px;padding:10px 12px;border-left:3px solid #9dbca6;border-radius:0 8px 8px 0;background:#f6f9f6;color:#66766c;font-size:10px;line-height:1.5}
+@media(max-width:1000px){#dpImport .dp-workbench-grid{grid-template-columns:minmax(220px,.4fr) minmax(0,.6fr)}#dpImport .dp-inspection-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){#dpImport .dp-page-head{display:grid}#dpImport .dp-phase-pill{justify-self:start}#dpImport .dp-drop-zone{display:grid;grid-template-columns:42px 1fr}#dpImport .dp-drop-zone .btn,#dpImport .dp-drop-zone>small{grid-column:1/-1;width:100%}#dpImport .dp-document-bar{align-items:flex-start;flex-wrap:wrap}#dpImport .dp-document-actions{width:100%}#dpImport .dp-document-actions .btn{flex:1}#dpImport .dp-summary-grid{grid-template-columns:repeat(2,1fr)}#dpImport .dp-workbench-grid{grid-template-columns:1fr}#dpImport .dp-canvas-stage{min-height:250px}#dpImport #dpPageCanvas{max-height:520px}#dpImport .dp-inspection-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
 <style id="v8-9-coords-print-css">
 #coords .coords-pointc-fields{grid-template-columns:1fr 1fr 1fr}
 #coords .coords-pointc-fields[hidden]{display:none!important}
@@ -1373,12 +1378,13 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 <div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
 <div class="app">
 <aside class="side">
-<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v9.4</small></span></div>
+<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v9.5</small></span></div>
 <div class="nav">
 <div class="section">Workspace</div>
 <button class="active" onclick="show('dashboard',this)"><svg class="ui-icon nav-icon"><use href="#st-home"></use></svg><span>Home</span></button>
 <div class="section">Survey Calculators</div>
 <button onclick="show('coords',this)"><svg class="ui-icon nav-icon"><use href="#st-coords"></use></svg><span>B&amp;D From Coords</span></button>
+<div class="section">Plan Processing</div><button onclick="show('dpImport',this)"><svg class="ui-icon nav-icon"><use href="#st-upload"></use></svg><span>DP to CAD</span></button>
 <button onclick="show('bd',this)"><svg class="ui-icon nav-icon"><use href="#st-bd"></use></svg><span>Coords From B&amp;D</span></button>
 <button onclick="show('misclose',this)"><svg class="ui-icon nav-icon"><use href="#st-traverse"></use></svg><span>Quick Close</span></button>
 <button onclick="show('strata',this)"><svg class="ui-icon nav-icon"><use href="#st-strata"></use></svg><span>Strata Areas</span></button>
@@ -1395,11 +1401,11 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
   <div class="desktop-context"><span class="desktop-context-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
     <div class="mobile-brand-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v9.4</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v9.5</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v9.4</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v9.5</small></span>
   </div>
 </div>
 
@@ -1430,6 +1436,29 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
   <div class="card point-list-card"><div class="point-search-row"><input id="pointSearch" placeholder="Search points..." oninput="renderPoints()"><button class="btn secondary" onclick="clearPointSearch()">Clear</button></div><div id="pointList"></div></div>
 </section>
 
+
+<section id="dpImport" class="page dp-import-page">
+ <div class="dp-page-head"><div><div class="eyebrow">PLAN PROCESSING / CAD WORKFLOW</div><h1>DP to CAD</h1><div class="sub">Inspect deposited plan PDFs and identify sheets containing native vector drawing data.</div></div><span class="dp-phase-pill">PHASE 1 · PDF INTAKE</span></div>
+ <div class="dp-intro-strip"><strong>Plan intake &amp; vector inspection</strong><p>Upload a DP PDF to inspect its sheets, preview the original drawing and inventory native vector paths. Boundary recognition and DXF reconstruction follow in Phase 2.</p></div>
+ <div class="dp-upload-card card">
+  <div id="dpDropZone" class="dp-drop-zone" onclick="dpChooseFile()" ondragover="dpDragOver(event)" ondragleave="dpDragLeave(event)" ondrop="dpDropFile(event)"><div class="dp-upload-icon">⇧</div><div class="dp-drop-copy"><strong>Drop a deposited plan PDF here</strong><span>or select a file from your device</span></div><button class="btn primary" type="button" onclick="event.stopPropagation();dpChooseFile()">Choose PDF</button><small>PDF only · local processing · 100 MB maximum</small></div>
+  <input id="dpPdfFile" type="file" accept="application/pdf,.pdf" hidden onchange="dpHandleFile(event)">
+  <div id="dpProcessingStatus" class="dp-processing-status" hidden></div>
+  <div id="dpDocumentBar" class="dp-document-bar" hidden><div class="dp-document-meta"><strong id="dpDocumentName">—</strong><small id="dpDocumentDetails">—</small></div><div class="dp-document-actions"><button class="btn secondary" onclick="dpExportAnalysis()" id="dpExportAnalysisBtn" disabled>Export analysis JSON</button><button class="btn secondary" onclick="dpReset()">New PDF</button></div></div>
+ </div>
+ <div id="dpAnalysisArea" hidden>
+  <div class="dp-summary-grid">
+   <div class="dp-stat-card"><small>DOCUMENT PAGES</small><strong id="dpStatPages">—</strong><span>Pages inspected</span></div><div class="dp-stat-card"><small>LIKELY PLAN SHEETS</small><strong id="dpStatPlans">—</strong><span>Vector-rich drawing sheets</span></div><div class="dp-stat-card"><small>NATIVE VECTOR PATHS</small><strong id="dpStatPaths">—</strong><span>Across inspected pages</span></div><div class="dp-stat-card"><small>EMBEDDED IMAGES</small><strong id="dpStatImages">—</strong><span>Raster/image operators</span></div>
+  </div>
+  <div class="dp-workbench-grid">
+   <div class="dp-panel card"><div class="dp-panel-head"><div class="dp-kicker">01 / SHEET DETECTION</div><h2>Document sheets</h2><p>Choose a sheet to inspect its drawing and vector inventory.</p></div><div id="dpPageList" class="dp-page-list"></div><div class="dp-sheet-legend">Green = likely plan drawing · grey = other sheet</div></div>
+   <div class="dp-panel card"><div class="dp-panel-head"><div><div class="dp-kicker">02 / ORIGINAL PDF</div><h2 id="dpPreviewTitle">Sheet preview</h2><p id="dpPreviewMeta">Select a page to preview the original PDF.</p></div><span id="dpPreviewTag" class="dp-preview-tag">NO SHEET</span></div><div id="dpCanvasStage" class="dp-canvas-stage"><div id="dpPreviewEmpty" class="dp-preview-empty">Plan preview will appear here</div><canvas id="dpPageCanvas" hidden></canvas></div><div class="dp-canvas-foot"><span>Original PDF rendering</span><span id="dpPageDimensions">—</span></div></div>
+  </div>
+  <div class="dp-panel card dp-inspection-panel"><div class="dp-panel-head"><div class="dp-kicker">03 / VECTOR INSPECTION</div><h2>Selected sheet analysis</h2><p>PDF drawing operator counts are not yet interpreted as surveyed boundaries.</p></div><div class="dp-inspection-grid">
+   <div><small>VECTOR PATH GROUPS</small><strong id="dpPathGroups">—</strong></div><div><small>LINE SEGMENTS</small><strong id="dpLineSegments">—</strong></div><div><small>CURVE SEGMENTS</small><strong id="dpCurveSegments">—</strong></div><div><small>TEXT ITEMS</small><strong id="dpTextItems">—</strong></div><div><small>IMAGE OPERATORS</small><strong id="dpImageOps">—</strong></div><div><small>DRAWING OPERATORS</small><strong id="dpDrawingOps">—</strong></div>
+  </div><div id="dpInspectionNote" class="dp-inspection-note">Upload a DP to begin inspecting its native PDF content.</div></div>
+ </div>
+</section>
 <section id="coords" class="page coords-redesigned">
   <div class="coords-page-head">
     <div>
@@ -2517,6 +2546,7 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
 <button onclick="iphoneShow('dashboard');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-home"></use></svg>Home</button>
 <button onclick="iphoneShow('bd');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-bd"></use></svg>Coords from B&amp;D</button>
 <button onclick="iphoneShow('points');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-points"></use></svg>Point Manager</button>
+<button onclick="iphoneShow('dpImport');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-upload"></use></svg>DP to CAD</button>
 <button onclick="iphoneShow('strata');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-strata"></use></svg>Strata Areas</button>
 <button onclick="iphoneShow('jobs');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-jobs"></use></svg>Saved Jobs</button>
 <button onclick="iphoneShow('scale');iphoneMoreClose()"><svg class="ui-icon"><use href="#st-scale"></use></svg>Scale</button>
@@ -3407,3 +3437,6 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
   };
 })();
 </script>
+<script src="./dp-import.js"></script>
+</body>
+</html>
