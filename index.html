@@ -3503,7 +3503,13 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
   };
   window.dpScriptLoaded=function(){status('DP PDF engine ready. Choose or drop a deposited plan PDF to inspect it.',false)};
   window.dpScriptFailed=function(){status('DP importer script failed to load. Close and reopen the app while connected to the internet.',true)};
-  window.dpDropOver=window.dpDropOver||function(event){event.preventDefault()};
+  window.dpDragOver=window.dpDragOver||function(event){event.preventDefault()};
+  window.dpDragLeave=window.dpDragLeave||function(event){event.preventDefault()};
+  window.dpDropFile=window.dpDropFile||function(event){
+    event.preventDefault();
+    var file=event.dataTransfer&&event.dataTransfer.files&&event.dataTransfer.files[0];
+    if(file)status('The PDF was selected, but the DP importer script is unavailable. Reopen the app while connected to the internet.',true);
+  };
 })();
 </script>
 <script src="./dp-import.js" onload="dpScriptLoaded()" onerror="dpScriptFailed()"></script>
