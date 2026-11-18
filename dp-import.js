@@ -335,7 +335,7 @@
  async function renderSelectedPage(index,id){
   if(!pdfDocument||!currentReport)return;
   var pageData=currentReport.pages[index];if(!pageData||!pageData.processed)return;
-  selectedPage=index;selectedSegment=-1;updateSummary();
+  selectedPage=index;selectedSegment=-1;selectedRunKey='';updateSummary();
   renderPageStats(pageData);
   el('dpPreviewEmpty').hidden=true;el('dpPageLayer').hidden=false;
   setStatus('Rendering original PDF sheet '+pageData.pageNumber+'…');
@@ -475,7 +475,7 @@
  window.dpDragLeave=function(event){event.preventDefault();el('dpDropZone').classList.remove('is-dragover')};
  window.dpDropFile=function(event){event.preventDefault();el('dpDropZone').classList.remove('is-dragover');var f=event.dataTransfer&&event.dataTransfer.files&&event.dataTransfer.files[0];if(f)processFile(f)};
  function processFile(file){
-  runId++;var id=runId;currentReport=null;selectedPage=-1;selectedSegment=-1;
+  runId++;var id=runId;currentReport=null;selectedPage=-1;selectedSegment=-1;selectedRunKey='';currentBoundaryRuns=[];boundaryReviewMap={};
   if(pdfDocument){try{pdfDocument.destroy()}catch(e){}pdfDocument=null}
   el('dpDocumentBar').hidden=true;el('dpAnalysisArea').hidden=true;
   setStatus('Starting PDF inspection…');
@@ -515,7 +515,7 @@
  };
  window.dpReset=function(){
   runId++;if(pdfDocument){try{pdfDocument.destroy()}catch(e){}pdfDocument=null}
-  currentReport=null;selectedPage=-1;selectedSegment=-1;
+  currentReport=null;selectedPage=-1;selectedSegment=-1;selectedRunKey='';currentBoundaryRuns=[];boundaryReviewMap={};
   el('dpPdfFile').value='';el('dpDocumentBar').hidden=true;el('dpAnalysisArea').hidden=true;
   el('dpPreviewEmpty').hidden=false;el('dpPageLayer').hidden=true;
   el('dpPageCanvas').getContext('2d').clearRect(0,0,el('dpPageCanvas').width,el('dpPageCanvas').height);
