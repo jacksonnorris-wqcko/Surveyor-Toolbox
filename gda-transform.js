@@ -190,7 +190,7 @@
     const systemFrom = String(overview.SYSTEM_F || '').trim();
     const systemTo = String(overview.SYSTEM_T || '').trim();
     if (!/GDA\s*94/i.test(systemFrom) || !/GDA\s*2020/i.test(systemTo)) {
-      throw new Error('The selected grid is not labelled as a GDA94 → GDA2020 NTv2 transformation. Use the official ICSM GDA94_GDA2020_conformal_and_distortion.gsb file.');
+      throw new Error('The integrated ICSM asset is not labelled as a GDA94 → GDA2020 NTv2 transformation. The converter has rejected it.');
     }
     return { view, little, grids, bytes: arrayBuffer.byteLength, systemFrom, systemTo, gridType: overview.GS_TYPE || '' };
   }
@@ -273,7 +273,7 @@
     if (!Number.isInteger(sourceZone) || sourceZone < 48 || sourceZone > 56 || !Number.isInteger(targetZone) || targetZone < 48 || targetZone > 56) {
       throw new Error('Choose a valid Australian MGA zone (48–56).');
     }
-    if (method === 'cpd' && !gridSet) throw new Error('Select the official ICSM Conformal + Distortion grid file first.');
+    if (method === 'cpd' && !gridSet) throw new Error('The built-in NSW SCIMS grid is not ready. Open the converter and wait for its status to show Ready.');
 
     const parsed = parseDxf(dxfText);
     const pairs = parsed.pairs;
