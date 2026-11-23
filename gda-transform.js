@@ -513,13 +513,14 @@
       const file = gridInput.files && gridInput.files[0];
       if (!file) { root.__gdaLoadedGrid = null; setReadyState(); return; }
       if (!/\.gsb$/i.test(file.name)) { setStatus('Please select an NTv2 .gsb grid file.', 'error'); return; }
+      if (/^GDA94_GDA2020_conformal\.gsb$/i.test(file.name)) { root.__gdaLoadedGrid = null; setStatus('That is the conformal-only grid, not the CPD grid. Select GDA94_GDA2020_conformal_and_distortion.gsb for this method.', 'error'); setReadyState(); return; }
       setStatus('Reading NTv2 grid (' + (file.size / 1024 / 1024).toFixed(1) + ' MB). This can take a moment…', '');
       try {
         const buffer = await readFileBuffer(file);
         root.__gdaLoadedGrid = parseNtv2(buffer);
         const label = byId('gdaGridName');
         if (label) label.textContent = file.name + ' · ' + (file.size / 1024 / 1024).toFixed(1) + ' MB · ' + root.__gdaLoadedGrid.grids.length + ' sub-grid(s)';
-        setStatus('Official NTv2 grid loaded and checked. CPD conversion is ready.', 'success');
+        setStatus('NTv2 grid structure and datum labels checked. Confirm this is the official Conformal + Distortion grid before proceeding.', 'success');
       } catch (error) {
         root.__gdaLoadedGrid = null;
         setStatus(error.message || 'Unable to read the NTv2 grid.', 'error');
