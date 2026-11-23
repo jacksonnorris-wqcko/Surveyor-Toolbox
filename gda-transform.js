@@ -3,7 +3,8 @@
  *
  * Conformal method: official GDA94 -> GDA2020 seven-parameter similarity transform
  * (ICSM GDA2020 Technical Manual v1.8 / EPSG:8048; identical to EPSG:8446).
- * CPD method: NTv2 GSB forward shift using the official ICSM grid supplied by the user.
+ * CPD method: NTv2 GSB forward shift using the official ICSM grid loaded automatically
+ * from the pinned public ICSM repository revision and cached in IndexedDB.
  *
  * Only ASCII DXF model/paper-space ENTITIES are transformed. Block geometry is
  * intentionally retained in block-local coordinates; INSERT points are transformed.
@@ -235,7 +236,7 @@
     checkAustralianExtent(geographic[0], geographic[1]);
     let shifted;
     if (method === 'cpd') {
-      if (!gridSet) throw new Error('Load the official ICSM Conformal + Distortion (.gsb) grid before converting with CPD.');
+      if (!gridSet) throw new Error('The built-in NSW SCIMS grid is not ready yet.');
       shifted = interpolateNtv2(gridSet, geographic[0], geographic[1]);
     } else {
       shifted = helmertGda94ToGda2020(geographic[0], geographic[1]);
@@ -418,6 +419,186 @@
   }
 
   function byId(id) { return document.getElementById(id); }
+
+  const CPD_GRID = Object.freeze({
+    url: 'https://raw.githubusercontent.com/icsm-au/transformation_grids/d2b26335dbc466c70334446c07463a6e95c5e115/GDA94_GDA2020_conformal_and_distortion.gsb',
+    source: 'ICSM transformation_grids · pinned revision d2b26335',
+    expectedBytes: 83028032,
+    cacheKey: 'icsm-gda94-gda2020-cpd-83028032-v1'
+  });
+  const CPD_CACHE_DB = 'surveyors-toolbox-gda-grid-cache';
+  const CPD_CACHE_STORE = 'ntv2';
+  let cpdGridLoadPromise = null;
+  let cpdGridDbPromise = null;
+
+  function updateGridStatus(message, state, progress) {
+    const textEl = byId('gdaGridStatusText');
+    const badge = byId('gdaGridState');
+    const dot = byId('gdaGridDot');
+    const progressWrap = byId('gdaGridProgress');
+    const progressFill = byId('gdaGridProgressFill');
+    if (textEl) textEl.textContent = message;
+    if (badge) {
+      badge.textContent = state === 'ready' ? 'Ready' : state === 'loading' ? 'Loading' : state === 'error' ? 'Retry needed' : 'Automatic';
+      badge.className = 'gda-grid-state ' + (state || 'idle');
+    }
+    if (dot) dot.className = 'gda-grid-dot ' + (state || 'idle');
+    if (progressWrap) progressWrap.hidden = state !== 'loading' || !Number.isFinite(progress);
+    if (progressFill && Number.isFinite(progress)) progressFill.style.width = Math.max(0, Math.min(100, progress)) + '%';
+    const retry = byId('gdaGridRetry');
+    if (retry) retry.hidden = state !== 'error';
+  }
+
+  function openCpdCacheDb() {
+    if (cpdGridDbPromise) return cpdGridDbPromise;
+    cpdGridDbPromise = new Promise((resolve, reject) => {
+      if (!root.indexedDB) { reject(new Error('This browser does not support local grid caching.')); return; }
+      const request = root.indexedDB.open(CPD_CACHE_DB, 1);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        if (!db.objectStoreNames.contains(CPD_CACHE_STORE)) db.createObjectStore(CPD_CACHE_STORE);
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error('Unable to open the local grid cache.'));
+      request.onblocked = () => reject(new Error('The local grid cache is busy in another tab. Close other toolbox tabs and retry.'));
+    }).catch(error => {
+      cpdGridDbPromise = null;
+      throw error;
+    });
+    return cpdGridDbPromise;
+  }
+
+  async function readCachedCpdGrid() {
+    const db = await openCpdCacheDb();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(CPD_CACHE_STORE, 'readonly');
+      const request = tx.objectStore(CPD_CACHE_STORE).get(CPD_GRID.cacheKey);
+      request.onsuccess = () => resolve(request.result instanceof ArrayBuffer ? request.result : null);
+      request.onerror = () => reject(request.error || new Error('Unable to read the saved NSW grid.'));
+      tx.oncomplete = () => db.close();
+      tx.onerror = () => { db.close(); reject(tx.error || new Error('Unable to read the saved NSW grid.')); };
+      tx.onabort = () => { db.close(); reject(tx.error || new Error('The saved NSW grid could not be opened.')); };
+    });
+  }
+
+  async function saveCachedCpdGrid(buffer) {
+    const db = await openCpdCacheDb();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(CPD_CACHE_STORE, 'readwrite');
+      tx.objectStore(CPD_CACHE_STORE).put(buffer, CPD_GRID.cacheKey);
+      tx.oncomplete = () => { db.close(); resolve(true); };
+      tx.onerror = () => { db.close(); reject(tx.error || new Error('The NSW grid could not be saved locally.')); };
+      tx.onabort = () => { db.close(); reject(tx.error || new Error('The NSW grid could not be saved locally.')); };
+    });
+  }
+
+  async function downloadBuiltInCpdGrid() {
+    let response;
+    try {
+      response = await fetch(CPD_GRID.url, { mode: 'cors', credentials: 'omit', cache: 'force-cache' });
+    } catch (error) {
+      throw new Error('The built-in NSW SCIMS grid could not be reached. Connect to the internet and press Retry. No separate grid file is required.');
+    }
+    if (!response.ok) throw new Error('The official ICSM grid server returned HTTP ' + response.status + '. Press Retry to try again.');
+    const reportedLength = Number(response.headers.get('content-length')) || CPD_GRID.expectedBytes;
+    if (reportedLength !== CPD_GRID.expectedBytes) {
+      throw new Error('The official ICSM grid size did not match the expected release. The download was stopped to protect the transformation.');
+    }
+
+    const output = new Uint8Array(CPD_GRID.expectedBytes);
+    let loaded = 0;
+    let lastPercent = -1;
+    if (response.body && response.body.getReader) {
+      const reader = response.body.getReader();
+      while (true) {
+        const result = await reader.read();
+        if (result.done) break;
+        const chunk = result.value;
+        if (loaded + chunk.byteLength > output.byteLength) throw new Error('The ICSM grid download was larger than expected and was stopped.');
+        output.set(chunk, loaded);
+        loaded += chunk.byteLength;
+        const pct = Math.floor((loaded / CPD_GRID.expectedBytes) * 100);
+        if (pct !== lastPercent) {
+          updateGridStatus('Retrieving official ICSM NSW SCIMS grid · ' + pct + '%', 'loading', pct);
+          lastPercent = pct;
+        }
+      }
+    } else {
+      const buffer = await response.arrayBuffer();
+      if (buffer.byteLength !== CPD_GRID.expectedBytes) throw new Error('The ICSM grid download was incomplete. Press Retry to try again.');
+      output.set(new Uint8Array(buffer));
+      loaded = buffer.byteLength;
+      updateGridStatus('Retrieving official ICSM NSW SCIMS grid · 100%', 'loading', 100);
+    }
+    if (loaded !== CPD_GRID.expectedBytes) {
+      throw new Error('The ICSM grid download was incomplete (' + loaded.toLocaleString() + ' of ' + CPD_GRID.expectedBytes.toLocaleString() + ' bytes). Press Retry to try again.');
+    }
+    return output.buffer;
+  }
+
+  async function ensureBuiltInCpdGrid() {
+    if (root.__gdaLoadedGrid) return root.__gdaLoadedGrid;
+    if (cpdGridLoadPromise) return cpdGridLoadPromise;
+    root.__gdaGridLoading = true;
+    setReadyState();
+    updateGridStatus('Checking this device for the saved official NSW SCIMS grid…', 'loading', 0);
+    setStatus('Preparing the built-in NSW SCIMS transformation grid…', '');
+
+    cpdGridLoadPromise = (async () => {
+      let buffer = null;
+      let fromCache = false;
+      try {
+        try {
+          const cached = await readCachedCpdGrid();
+          if (cached && cached.byteLength === CPD_GRID.expectedBytes) {
+            try {
+              const parsedCache = parseNtv2(cached);
+              if (!/GDA\\s*94/i.test(parsedCache.systemFrom) || !/GDA\\s*2020/i.test(parsedCache.systemTo)) {
+                throw new Error('Saved grid datum labels are incorrect.');
+              }
+              root.__gdaLoadedGrid = parsedCache;
+              fromCache = true;
+            } catch (cacheError) {
+              root.__gdaLoadedGrid = null;
+            }
+          }
+        } catch (cacheError) {
+          // Private browsing or storage restrictions should not prevent an online conversion.
+        }
+
+        if (!root.__gdaLoadedGrid) {
+          updateGridStatus('First use: loading the official ICSM grid automatically (about 79.2 MiB)…', 'loading', 0);
+          buffer = await downloadBuiltInCpdGrid();
+          const parsed = parseNtv2(buffer);
+          if (!/GDA\\s*94/i.test(parsed.systemFrom) || !/GDA\\s*2020/i.test(parsed.systemTo)) {
+            throw new Error('The downloaded grid is not labelled as GDA94 → GDA2020. It was rejected.');
+          }
+          if (!parsed.grids || !parsed.grids.length) throw new Error('The downloaded ICSM grid contains no usable sub-grids.');
+          root.__gdaLoadedGrid = parsed;
+          try {
+            await saveCachedCpdGrid(buffer);
+            updateGridStatus('Official ICSM CPD grid verified and saved on this device. Future use is immediate, including offline.', 'ready');
+          } catch (cacheError) {
+            updateGridStatus('Official ICSM CPD grid is ready. This browser could not save its local copy, so it may need to load again next time.', 'ready');
+          }
+        } else if (fromCache) {
+          updateGridStatus('Official ICSM CPD grid found in local storage. Ready for offline conversion.', 'ready');
+        }
+        setStatus('NSW SCIMS CPD grid is ready. Choose your DXF and convert.', 'success');
+        return root.__gdaLoadedGrid;
+      } catch (error) {
+        root.__gdaLoadedGrid = null;
+        updateGridStatus(error && error.message ? error.message : 'Unable to load the official NSW SCIMS grid.', 'error');
+        setStatus('NSW SCIMS grid unavailable. ' + (error && error.message ? error.message : 'Press Retry to try again.'), 'error');
+        throw error;
+      } finally {
+        root.__gdaGridLoading = false;
+        cpdGridLoadPromise = null;
+        setReadyState();
+      }
+    })();
+    return cpdGridLoadPromise;
+  }
   function setStatus(message, tone) {
     const el = byId('gdaStatus');
     if (!el) return;
@@ -445,11 +626,11 @@
   function setReadyState() {
     const file = byId('gdaDxfFile') && byId('gdaDxfFile').files[0];
     const method = document.querySelector('input[name="gdaMethod"]:checked')?.value || 'conformal';
-    const hasGrid = !!(byId('gdaGridFile') && byId('gdaGridFile').files[0]) || !!root.__gdaLoadedGrid;
+    const hasGrid = !!root.__gdaLoadedGrid;
     const btn = byId('gdaConvertBtn');
-    if (btn) btn.disabled = !file || !/\.dxf$/i.test(file.name) || (method === 'cpd' && !hasGrid);
-    const wrap = byId('gdaGridUpload');
-    if (wrap) wrap.hidden = method !== 'cpd';
+    if (btn) btn.disabled = !file || !/\.dxf$/i.test(file.name) || (method === 'cpd' && (!hasGrid || !!root.__gdaGridLoading));
+    const panel = byId('gdaGridPanel');
+    if (panel) panel.hidden = method !== 'cpd';
   }
   function renderResults(stats, filename, outputText) {
     const results = byId('gdaResults');
@@ -496,38 +677,33 @@
 
   function initUI() {
     const dxfInput = byId('gdaDxfFile');
-    const gridInput = byId('gdaGridFile');
     const button = byId('gdaConvertBtn');
     const methodInputs = document.querySelectorAll('input[name="gdaMethod"]');
     if (!dxfInput || !button || dxfInput.dataset.bound === '1') return;
     dxfInput.dataset.bound = '1';
+
     dxfInput.addEventListener('change', () => {
       const file = dxfInput.files && dxfInput.files[0];
       const name = byId('gdaDxfName');
       if (name) name.textContent = file ? file.name + ' · ' + (file.size / 1024 / 1024).toFixed(2) + ' MB' : 'No drawing selected';
       if (file && !/\.dxf$/i.test(file.name)) setStatus('Please choose an ASCII DXF drawing. DWG and binary DXF files are not supported in this first release.', 'error');
-      else setStatus(file ? 'Drawing selected. Check the source and target MGA zones, then convert.' : 'Choose an ASCII DXF drawing to begin.', '');
+      else if (file) setStatus('Drawing selected. Check the source and target MGA zones, then convert.', '');
+      else setStatus('Choose an ASCII DXF drawing to begin.', '');
       setReadyState();
     });
-    if (gridInput) gridInput.addEventListener('change', async () => {
-      const file = gridInput.files && gridInput.files[0];
-      if (!file) { root.__gdaLoadedGrid = null; setReadyState(); return; }
-      if (!/\.gsb$/i.test(file.name)) { setStatus('Please select an NTv2 .gsb grid file.', 'error'); return; }
-      if (/^GDA94_GDA2020_conformal\.gsb$/i.test(file.name)) { root.__gdaLoadedGrid = null; setStatus('That is the conformal-only grid, not the CPD grid. Select GDA94_GDA2020_conformal_and_distortion.gsb for this method.', 'error'); setReadyState(); return; }
-      setStatus('Reading NTv2 grid (' + (file.size / 1024 / 1024).toFixed(1) + ' MB). This can take a moment…', '');
-      try {
-        const buffer = await readFileBuffer(file);
-        root.__gdaLoadedGrid = parseNtv2(buffer);
-        const label = byId('gdaGridName');
-        if (label) label.textContent = file.name + ' · ' + (file.size / 1024 / 1024).toFixed(1) + ' MB · ' + root.__gdaLoadedGrid.grids.length + ' sub-grid(s)';
-        setStatus('NTv2 grid structure and datum labels checked. Confirm this is the official Conformal + Distortion grid before proceeding.', 'success');
-      } catch (error) {
-        root.__gdaLoadedGrid = null;
-        setStatus(error.message || 'Unable to read the NTv2 grid.', 'error');
+
+    methodInputs.forEach(input => input.addEventListener('change', () => {
+      setReadyState();
+      if (input.checked && input.value === 'cpd') ensureBuiltInCpdGrid().catch(() => {});
+      else if (input.checked && input.value === 'conformal') {
+        updateGridStatus('Not required for conformal-only transformations.', 'idle');
+        setStatus('Conformal-only method selected. No distortion grid is needed.', 'success');
       }
-      setReadyState();
-    });
-    methodInputs.forEach(input => input.addEventListener('change', setReadyState));
+    }));
+
+    const retry = byId('gdaGridRetry');
+    if (retry) retry.addEventListener('click', () => ensureBuiltInCpdGrid().catch(() => {}));
+
     button.addEventListener('click', async () => {
       const file = dxfInput.files && dxfInput.files[0];
       if (!file) return;
@@ -538,8 +714,9 @@
       button.textContent = 'Converting drawing…';
       setStatus('Reading the drawing and transforming its supported coordinates…', '');
       try {
+        const gridSet = method === 'cpd' ? await ensureBuiltInCpdGrid() : null;
         const dxfText = await readFileText(file);
-        const converted = transformDxfText(dxfText, { sourceZone, targetZone, method, gridSet: root.__gdaLoadedGrid });
+        const converted = transformDxfText(dxfText, { sourceZone, targetZone, method, gridSet });
         renderResults(converted.stats, file.name, converted.text);
         setStatus('Conversion complete. Review the point checks and export the new DXF.', 'success');
       } catch (error) {
@@ -549,20 +726,19 @@
         setReadyState();
       }
     });
+
     const reset = byId('gdaReset');
     if (reset) reset.addEventListener('click', () => {
       dxfInput.value = '';
-      if (gridInput) gridInput.value = '';
-      root.__gdaLoadedGrid = null;
       if (byId('gdaDxfName')) byId('gdaDxfName').textContent = 'No drawing selected';
-      if (byId('gdaGridName')) byId('gdaGridName').textContent = 'No NTv2 grid loaded';
       if (byId('gdaResults')) byId('gdaResults').hidden = true;
       setStatus('Choose an ASCII DXF drawing to begin.', '');
       setReadyState();
     });
+
+    updateGridStatus('The official ICSM NSW SCIMS grid loads automatically when you open this tool.', 'idle');
     try {
       const test = selfTest();
-      setStatus('Ready · projection and EPSG:8446 conformal checks passed.', 'success');
       const qa = byId('gdaQaStatus');
       if (qa) qa.textContent = 'Core maths checked against an EPSG:8446 reference coordinate (difference ' + (test.officialReferenceError * 1000).toFixed(3) + ' mm).';
     } catch (error) {
@@ -572,12 +748,19 @@
     setReadyState();
   }
 
+  function onPageOpen() {
+    const method = document.querySelector('input[name="gdaMethod"]:checked')?.value || 'conformal';
+    if (method === 'cpd' && !root.__gdaLoadedGrid) ensureBuiltInCpdGrid().catch(() => {});
+  }
+
   root.GDATransform = {
     transformPoint,
     transformDxfText,
     parseNtv2,
     interpolateNtv2,
-    selfTest
+    selfTest,
+    onPageOpen,
+    ensureBuiltInCpdGrid
   };
   if (typeof document !== 'undefined') {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initUI);
