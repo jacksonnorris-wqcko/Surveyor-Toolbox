@@ -563,7 +563,7 @@
       const test = selfTest();
       setStatus('Ready · projection and EPSG:8446 conformal checks passed.', 'success');
       const qa = byId('gdaQaStatus');
-      if (qa) qa.textContent = 'Core maths checked against EPSG:8446 reference coordinates (max check difference ' + test.officialReferenceError.toFixed(4) + ' m).';
+      if (qa) qa.textContent = 'Core maths checked against an EPSG:8446 reference coordinate (difference ' + (test.officialReferenceError * 1000).toFixed(3) + ' mm).';
     } catch (error) {
       setStatus('The internal coordinate check failed. Do not use this converter: ' + error.message, 'error');
       button.disabled = true;
