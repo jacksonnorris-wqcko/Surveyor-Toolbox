@@ -458,7 +458,14 @@
         const db = request.result;
         if (!db.objectStoreNames.contains(CPD_CACHE_STORE)) db.createObjectStore(CPD_CACHE_STORE);
       };
-      request.onsuccess = () => resolve(request.result);
+      request.onsuccess = () => {
+        const db = request.result;
+        db.onversionchange = () => {
+          db.close();
+          cpdGridDbPromise = null;
+        };
+        resolve(db);
+      };
       request.onerror = () => reject(request.error || new Error('Unable to open the local grid cache.'));
       request.onblocked = () => reject(new Error('The local grid cache is busy in another tab. Close other toolbox tabs and retry.'));
     }).catch(error => {
@@ -475,9 +482,8 @@
       const request = tx.objectStore(CPD_CACHE_STORE).get(CPD_GRID.cacheKey);
       request.onsuccess = () => resolve(request.result instanceof ArrayBuffer ? request.result : null);
       request.onerror = () => reject(request.error || new Error('Unable to read the saved NSW grid.'));
-      tx.oncomplete = () => db.close();
-      tx.onerror = () => { db.close(); reject(tx.error || new Error('Unable to read the saved NSW grid.')); };
-      tx.onabort = () => { db.close(); reject(tx.error || new Error('The saved NSW grid could not be opened.')); };
+      tx.onerror = () => reject(tx.error || new Error('Unable to read the saved NSW grid.'));
+      tx.onabort = () => reject(tx.error || new Error('The saved NSW grid could not be opened.'));
     });
   }
 
@@ -486,9 +492,9 @@
     return new Promise((resolve, reject) => {
       const tx = db.transaction(CPD_CACHE_STORE, 'readwrite');
       tx.objectStore(CPD_CACHE_STORE).put(buffer, CPD_GRID.cacheKey);
-      tx.oncomplete = () => { db.close(); resolve(true); };
-      tx.onerror = () => { db.close(); reject(tx.error || new Error('The NSW grid could not be saved locally.')); };
-      tx.onabort = () => { db.close(); reject(tx.error || new Error('The NSW grid could not be saved locally.')); };
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => reject(tx.error || new Error('The NSW grid could not be saved locally.'));
+      tx.onabort = () => reject(tx.error || new Error('The NSW grid could not be saved locally.'));
     });
   }
 
@@ -686,8 +692,14 @@
 
     methodInputs.forEach(input => input.addEventListener('change', () => {
       setReadyState();
-      if (input.checked && input.value === 'cpd') ensureBuiltInCpdGrid().catch(() => {});
-      else if (input.checked && input.value === 'conformal') {
+      if (input.checked && input.value === 'cpd') {
+        if (root.__gdaLoadedGrid) {
+          updateGridStatus('Official ICSM CPD grid is ready in this session.', 'ready');
+          setStatus('NSW SCIMS CPD grid is ready. Choose your DXF and convert.', 'success');
+        } else {
+          ensureBuiltInCpdGrid().catch(() => {});
+        }
+      } else if (input.checked && input.value === 'conformal') {
         updateGridStatus('Not required for conformal-only transformations.', 'idle');
         setStatus('Conformal-only method selected. No distortion grid is needed.', 'success');
       }
@@ -742,7 +754,13 @@
 
   function onPageOpen() {
     const method = document.querySelector('input[name="gdaMethod"]:checked')?.value || 'conformal';
-    if (method === 'cpd' && !root.__gdaLoadedGrid) ensureBuiltInCpdGrid().catch(() => {});
+    if (method !== 'cpd') return;
+    if (root.__gdaLoadedGrid) {
+      updateGridStatus('Official ICSM CPD grid is ready in this session.', 'ready');
+      setReadyState();
+      return;
+    }
+    ensureBuiltInCpdGrid().catch(() => {});
   }
 
   root.GDATransform = {
