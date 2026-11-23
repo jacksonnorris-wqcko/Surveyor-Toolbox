@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="10.1" data-release="major">
+<meta name="app-version" content="10.2" data-release="major">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -1546,6 +1546,74 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 @media(max-width:560px){.gda-panel{padding:15px}.gda-result-head{align-items:flex-start;flex-direction:column}.gda-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.gda-bounds-grid{grid-template-columns:1fr}.gda-action-row{align-items:stretch;flex-direction:column}.gda-actions{width:100%}.gda-actions button{flex:1}.gda-method-card{flex-wrap:wrap}.gda-method-card>span:nth-child(2){flex-basis:calc(100% - 30px)}}
 </style>
 
+
+<style id="gda-transform-tidy-css">
+/* Keep global full-width form styling away from compact radio selectors. */
+.gda-method-card{
+  display:grid!important;
+  grid-template-columns:18px minmax(0,1fr) auto;
+  align-items:start;
+  gap:11px;
+  min-height:0!important;
+  margin:0 0 10px!important;
+  padding:14px 15px!important;
+  width:100%;
+  text-transform:none!important;
+  letter-spacing:normal!important;
+  font-size:inherit!important;
+  line-height:1.4;
+}
+.gda-method-card input[type=radio]{
+  appearance:auto!important;
+  -webkit-appearance:radio!important;
+  display:block!important;
+  position:static!important;
+  flex:none!important;
+  width:18px!important;
+  min-width:18px!important;
+  max-width:18px!important;
+  height:18px!important;
+  min-height:18px!important;
+  margin:2px 0 0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  accent-color:#416d50;
+}
+.gda-method-card>span:nth-child(2){display:flex;flex-direction:column;gap:4px;min-width:0;flex:initial}
+.gda-method-card>span:last-child{align-self:start;justify-self:end;margin-left:4px}
+.gda-method-card strong{font-size:12px;line-height:1.35}
+.gda-method-card small{font-size:10px;line-height:1.5;overflow-wrap:anywhere}
+.gda-recommended,.gda-method-tag{display:inline-flex;align-items:center;justify-content:center;padding:5px 8px;border-radius:7px;font-size:9px;font-weight:800;white-space:nowrap}
+.gda-grid-panel{margin-top:12px;padding:12px 13px;border:1px solid #dfe9e1;border-radius:11px;background:#f7faf7}
+.gda-grid-status{display:flex;align-items:flex-start;gap:10px;min-width:0}
+.gda-grid-dot{width:8px;height:8px;flex:0 0 8px;border-radius:50%;margin-top:4px;background:#9aa79d}
+.gda-grid-dot.loading{background:#c28c36;box-shadow:0 0 0 3px #f5ead5}
+.gda-grid-dot.ready{background:#3c9364;box-shadow:0 0 0 3px #dcefe2}
+.gda-grid-dot.error{background:#bd594e;box-shadow:0 0 0 3px #f5e3e1}
+.gda-grid-status-copy{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}
+.gda-grid-status-copy strong{font-size:10px;color:#3c5645}
+.gda-grid-status-copy small{font-size:9px;line-height:1.45;color:#78857c;overflow-wrap:anywhere}
+.gda-grid-state{flex:0 0 auto;padding:4px 7px;border-radius:6px;background:#edf1ed;color:#748077;font-size:8px;font-weight:850;text-transform:uppercase;letter-spacing:.05em}
+.gda-grid-state.loading{background:#fbf2e3;color:#967039}
+.gda-grid-state.ready{background:#e5f2e8;color:#39744e}
+.gda-grid-state.error{background:#f8e9e7;color:#a34d44}
+.gda-grid-progress{height:5px;margin-top:10px;border-radius:10px;background:#e5ece6;overflow:hidden}
+.gda-grid-progress[hidden]{display:none!important}
+.gda-grid-progress span{display:block;width:0;height:100%;border-radius:10px;background:#568668;transition:width .15s ease}
+.gda-grid-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px;color:#89948c;font-size:8px;line-height:1.4}
+.gda-grid-footer button{border:1px solid #d9e4da;background:#fff;border-radius:7px;color:#516e59;font-size:9px;font-weight:800;padding:5px 9px;cursor:pointer}
+.gda-grid-footer button[hidden]{display:none!important}
+@media(max-width:560px){
+  .gda-method-card{grid-template-columns:18px minmax(0,1fr);gap:9px}
+  .gda-method-card>span:last-child{grid-column:2;justify-self:start;margin:0}
+  .gda-grid-state{font-size:7px}
+  .gda-grid-footer{align-items:flex-start}
+}
+</style>
+
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -1581,7 +1649,7 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 <div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
 <div class="app">
 <aside class="side">
-<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v10.1</small></span></div>
+<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v10.2</small></span></div>
 <div class="nav">
 <div class="section">Workspace</div>
 <button class="active" onclick="show('dashboard',this)"><svg class="ui-icon nav-icon"><use href="#st-home"></use></svg><span>Home</span></button>
@@ -1606,11 +1674,11 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
   <div class="desktop-context"><span class="desktop-context-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></span><span><small>FIELD OPERATIONS</small><strong>Surveyor’s Toolbox</strong></span></div>
   <div class="mobile-brand">
     <div class="mobile-brand-mark"><svg class="ui-icon"><use href="#st-brand"></use></svg></div>
-    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v9.9</div></div>
+    <div><div class="mobile-brand-title">Surveyor’s Toolbox</div><div class="mobile-brand-sub">Built By Jackson 2026 · v10.2</div></div>
   </div>
   <div class="topbar-right">
     <span class="workspace-indicator"><i></i> LOCAL WORKSPACE</span>
-    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v9.9</small></span>
+    <span class="brandtag">BUILT BY JACKSON <b>2026</b><small>v10.2</small></span>
   </div>
 </div>
 
@@ -2024,7 +2092,7 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
     <div>
       <div class="gda-kicker">DATUM TRANSFORMATION</div>
       <h1>GDA94 → MGA2020</h1>
-      <p class="gda-subtitle">Transform an existing MGA94 DXF drawing into MGA2020 coordinates and export a new DXF.</p>
+      <p class="gda-subtitle">Convert an MGA94 drawing to MGA2020. The NSW SCIMS grid loads automatically — no extra file to find or install.</p>
     </div>
     <div class="gda-local-pill"><span></span> Runs locally in your browser</div>
   </div>
@@ -2041,25 +2109,29 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
         <div><label class="gda-field-label" for="gdaSourceZone">Source zone</label><select id="gdaSourceZone"><option value="48">MGA94 Zone 48</option><option value="49">MGA94 Zone 49</option><option value="50">MGA94 Zone 50</option><option value="51">MGA94 Zone 51</option><option value="52">MGA94 Zone 52</option><option value="53">MGA94 Zone 53</option><option value="54">MGA94 Zone 54</option><option value="55">MGA94 Zone 55</option><option value="56" selected>MGA94 Zone 56</option></select></div>
         <div><label class="gda-field-label" for="gdaTargetZone">Output zone</label><select id="gdaTargetZone"><option value="48">MGA2020 Zone 48</option><option value="49">MGA2020 Zone 49</option><option value="50">MGA2020 Zone 50</option><option value="51">MGA2020 Zone 51</option><option value="52">MGA2020 Zone 52</option><option value="53">MGA2020 Zone 53</option><option value="54">MGA2020 Zone 54</option><option value="55">MGA2020 Zone 55</option><option value="56" selected>MGA2020 Zone 56</option></select></div>
       </div>
-      <div class="gda-zone-note">For most Illawarra drawings, Zone 56 is commonly used. Check the drawing title block, survey control or coordinate metadata before converting.</div>
+      <div class="gda-zone-note">Illawarra is typically MGA Zone 56. Confirm the source zone from the drawing or survey metadata before converting.</div>
     </div>
 
     <div class="gda-panel">
-      <div class="gda-panel-head"><span class="gda-step">02</span><div><h2>Transformation method</h2><p>Select the method appropriate to the source of the survey coordinates.</p></div></div>
+      <div class="gda-panel-head"><span class="gda-step">02</span><div><h2>Transformation method</h2><p>For NSW SCIMS-based survey data, use Conformal + Distortion (CPD).</p></div></div>
       <label class="gda-method-card">
-        <input type="radio" name="gdaMethod" value="conformal" checked>
-        <span><strong>Conformal only</strong><small>7-parameter similarity transformation. Appropriate for unlocalised CORSnet-NSW or AUSPOS-derived data.</small></span>
+        <input type="radio" name="gdaMethod" value="conformal">
+        <span><strong>Conformal only</strong><small>7-parameter similarity transformation. Use for unlocalised CORSnet-NSW or AUSPOS-derived data.</small></span>
         <span class="gda-recommended">No grid needed</span>
       </label>
       <label class="gda-method-card">
-        <input type="radio" name="gdaMethod" value="cpd">
-        <span><strong>Conformal + Distortion (CPD)</strong><small>Applies the official NTv2 grid to account for localised distortion. Intended for SCIMS-derived or SCIMS-localised survey data in NSW.</small></span>
+        <input type="radio" name="gdaMethod" value="cpd" checked>
+        <span><strong>Conformal + Distortion (CPD)</strong><small>Recommended for NSW SCIMS-derived or SCIMS-localised coordinates. The official ICSM distortion grid is built into this workflow and loads automatically.</small></span>
         <span class="gda-method-tag">NSW SCIMS</span>
       </label>
-      <div id="gdaGridUpload" class="gda-grid-upload" hidden>
-        <label class="gda-field-label" for="gdaGridFile">Official ICSM NTv2 grid (.gsb)</label>
-        <label class="gda-file-pick gda-grid-pick" for="gdaGridFile"><span class="gda-file-icon">＋</span><span><strong>Choose CPD grid file</strong><small id="gdaGridName">No NTv2 grid loaded</small></span><input id="gdaGridFile" type="file" accept=".gsb,application/octet-stream"></label>
-        <p class="gda-grid-help">The official CPD grid is approximately 79 MB. <a href="https://github.com/icsm-au/transformation_grids" target="_blank" rel="noopener">Get the official ICSM grid files</a> and select <strong>GDA94_GDA2020_conformal_and_distortion.gsb</strong>.</p>
+      <div id="gdaGridPanel" class="gda-grid-panel">
+        <div class="gda-grid-status">
+          <span id="gdaGridDot" class="gda-grid-dot idle"></span>
+          <div class="gda-grid-status-copy"><strong>Integrated NSW SCIMS transformation grid</strong><small id="gdaGridStatusText">The official ICSM grid loads automatically when you open this tool.</small></div>
+          <span id="gdaGridState" class="gda-grid-state idle">Automatic</span>
+        </div>
+        <div id="gdaGridProgress" class="gda-grid-progress" hidden><span id="gdaGridProgressFill"></span></div>
+        <div class="gda-grid-footer"><span>One-time automatic setup · approx. 79.2 MiB · saved on this device for future and offline use</span><button id="gdaGridRetry" type="button" hidden>Retry</button></div>
       </div>
     </div>
   </div>
@@ -2183,6 +2255,7 @@ function show(id,btn){
   page.classList.add('active');
   document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
   if(btn && btn.classList) btn.classList.add('active');
+  if(id==='gdaTransform' && window.GDATransform && typeof window.GDATransform.onPageOpen==='function') window.GDATransform.onPageOpen();
 }
 function num(id){return parseFloat(document.getElementById(id).value)||0}
 function dms(deg){
