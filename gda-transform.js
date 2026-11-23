@@ -457,7 +457,7 @@
     if (!root.crypto || !root.crypto.subtle || typeof root.TextEncoder !== 'function') {
       throw new Error('This browser cannot verify the official NSW grid securely. Open the toolbox in a current browser over HTTPS.');
     }
-    const prefix = new TextEncoder().encode('blob ' + buffer.byteLength + '\\0');
+    const prefix = new TextEncoder().encode('blob ' + buffer.byteLength + '\0');
     const payload = new Uint8Array(prefix.byteLength + buffer.byteLength);
     payload.set(prefix, 0);
     payload.set(new Uint8Array(buffer), prefix.byteLength);
