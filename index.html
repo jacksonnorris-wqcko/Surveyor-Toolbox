@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="10.0" data-release="major">
+<meta name="app-version" content="10.1" data-release="major">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -1581,7 +1581,7 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 <div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
 <div class="app">
 <aside class="side">
-<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v10.0</small></span></div>
+<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v10.1</small></span></div>
 <div class="nav">
 <div class="section">Workspace</div>
 <button class="active" onclick="show('dashboard',this)"><svg class="ui-icon nav-icon"><use href="#st-home"></use></svg><span>Home</span></button>
@@ -2082,7 +2082,7 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 
   <div class="gda-limitations">
     <strong>First-release scope</strong>
-    <p>ASCII DXF only; DWG and binary DXF are not supported yet. The converter transforms supported coordinate pairs in the DXF drawing's ENTITIES section. Block definitions remain in their local coordinates, and specialised or unsupported entities are reported for review. DXF geolocation / CRS metadata is not rewritten, so assign or confirm the output coordinate system in your CAD/GIS software where required. Always inspect the exported drawing and verify control before using it for cadastral or engineering work.</p>
+    <p>ASCII DXF only; DWG and binary DXF are not supported yet. This is a 2D horizontal transformation; Z/elevation values are left unchanged. The converter transforms supported coordinate pairs in the DXF drawing's ENTITIES section. Block definitions remain in their local coordinates, and specialised or unsupported entities are reported for review. DXF geolocation / CRS metadata is not rewritten, so assign or confirm the output coordinate system in your CAD/GIS software where required. Always inspect the exported drawing and verify control before using it for cadastral or engineering work.</p>
     <p id="gdaQaStatus">Running internal coordinate checks…</p>
   </div>
 </section>
