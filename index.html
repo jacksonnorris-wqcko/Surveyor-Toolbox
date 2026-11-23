@@ -2082,7 +2082,7 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 
   <div class="gda-limitations">
     <strong>First-release scope</strong>
-    <p>ASCII DXF only; DWG and binary DXF are not supported yet. The converter transforms supported coordinate pairs in the DXF drawing's ENTITIES section. Block definitions remain in their local coordinates, and specialised or unsupported entities are reported for review. Always inspect the exported drawing and verify control before using it for cadastral or engineering work.</p>
+    <p>ASCII DXF only; DWG and binary DXF are not supported yet. The converter transforms supported coordinate pairs in the DXF drawing's ENTITIES section. Block definitions remain in their local coordinates, and specialised or unsupported entities are reported for review. DXF geolocation / CRS metadata is not rewritten, so assign or confirm the output coordinate system in your CAD/GIS software where required. Always inspect the exported drawing and verify control before using it for cadastral or engineering work.</p>
     <p id="gdaQaStatus">Running internal coordinate checks…</p>
   </div>
 </section>
