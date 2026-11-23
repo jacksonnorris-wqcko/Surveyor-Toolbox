@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surveyor’s Toolbox</title>
-<meta name="app-version" content="9.9" data-release="major">
+<meta name="app-version" content="10.0" data-release="major">
 <style>
 :root{
  --bg:#eef2f5;--panel:#fff;--panel2:#f7f9fb;--line:#d8e0e7;--text:#17212b;
@@ -1471,6 +1471,81 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
  #coords .coords-delta-row{grid-template-columns:1fr 1fr}
 }
 </style>
+
+<style id="gda-transform-css">
+.gda-page{max-width:1120px}
+.gda-page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin:0 0 24px}
+.gda-kicker{font-size:10px;font-weight:800;letter-spacing:.15em;color:#779387;margin-bottom:7px}
+.gda-page-head h1{font-size:clamp(26px,3vw,34px);letter-spacing:-.035em;margin:0;color:var(--text,#1b2a24)}
+.gda-subtitle{font-size:13px;line-height:1.55;color:var(--muted,#738078);margin:7px 0 0;max-width:670px}
+.gda-local-pill{display:flex;align-items:center;gap:8px;border:1px solid #dce8df;background:#f3f8f3;border-radius:30px;padding:9px 13px;color:#587563;font-size:11px;font-weight:700;white-space:nowrap}
+.gda-local-pill span{width:7px;height:7px;border-radius:50%;background:#4c9a6b;box-shadow:0 0 0 3px #dcefe2}
+.gda-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.gda-panel{min-width:0;background:var(--panel,#fff);border:1px solid var(--line,#dfe6e1);border-radius:15px;padding:20px;box-shadow:0 5px 20px rgba(20,50,35,.045)}
+.gda-panel-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:20px}
+.gda-step{flex:0 0 29px;width:29px;height:29px;border-radius:9px;background:#eaf1eb;color:#436b56;display:grid;place-items:center;font-size:11px;font-weight:800}
+.gda-panel h2{font-size:16px;letter-spacing:-.02em;margin:1px 0 4px}
+.gda-panel-head p{font-size:11px;line-height:1.5;color:var(--muted,#76827a);margin:0}
+.gda-field-label{display:block;font-size:11px;font-weight:750;color:var(--text,#24342b);margin:0 0 8px}
+.gda-file-pick{display:flex;align-items:center;gap:12px;border:1px dashed #b9cbbf;background:#f7faf7;border-radius:11px;padding:14px;cursor:pointer;min-width:0;transition:border-color .15s,background .15s}
+.gda-file-pick:hover{border-color:#6f947e;background:#f0f6f1}
+.gda-file-pick input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.gda-file-icon{flex:0 0 34px;width:34px;height:34px;border-radius:10px;background:#e4eee6;color:#456d53;display:grid;place-items:center;font-size:23px;font-weight:400}
+.gda-file-pick>span:nth-child(2){display:flex;flex-direction:column;gap:3px;min-width:0}
+.gda-file-pick strong{font-size:12px;color:#314b3a}
+.gda-file-pick small{font-size:10px;color:#77847b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.gda-zone-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:19px}
+.gda-zone-grid select{width:100%;min-height:42px;padding:0 11px;border:1px solid var(--line,#dfe6e1);border-radius:9px;background:#fff;color:#27372d;font-size:12px}
+.gda-zone-note{font-size:10px;line-height:1.5;color:#78837b;background:#f7f8f6;border-radius:8px;padding:10px 11px;margin-top:12px}
+.gda-method-card{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line,#dfe6e1);border-radius:11px;padding:13px;margin-bottom:10px;cursor:pointer;background:#fff}
+.gda-method-card:has(input:checked){border-color:#769780;background:#f5f9f5;box-shadow:inset 0 0 0 1px #769780}
+.gda-method-card input{flex:0 0 auto;margin:3px 0 0;accent-color:#416d50}
+.gda-method-card>span:nth-child(2){display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
+.gda-method-card strong{font-size:12px;color:#293d30}
+.gda-method-card small{font-size:10px;line-height:1.5;color:#758078}
+.gda-recommended,.gda-method-tag{font-size:9px;font-weight:800;border-radius:6px;padding:5px 7px;background:#e9f1eb;color:#587660;white-space:nowrap}
+.gda-method-tag{background:#f4f0e5;color:#8b7746}
+.gda-grid-upload{margin-top:13px;padding-top:14px;border-top:1px solid #edf0eb}
+.gda-grid-help{font-size:10px;line-height:1.5;color:#758078;margin:9px 0 0}
+.gda-grid-help a{color:#476e55;font-weight:750}
+.gda-action-row{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:17px 0 0}
+.gda-status{font-size:11px;line-height:1.5;color:#687970;min-height:20px;flex:1}
+.gda-status.success{color:#2e7750}.gda-status.error{color:#aa4d43}
+.gda-actions{display:flex;gap:8px;align-items:center}
+.gda-reset,.gda-convert{border-radius:9px;min-height:42px;padding:0 15px;font-size:11px;font-weight:800;cursor:pointer}
+.gda-reset{border:1px solid var(--line,#dfe6e1);background:#fff;color:#68766d}
+.gda-convert{border:1px solid #294f3d;background:#315d47;color:#fff;box-shadow:0 4px 10px rgba(49,93,71,.16)}
+.gda-convert:hover:not(:disabled){background:#254d38}.gda-convert:disabled{opacity:.42;cursor:not-allowed;box-shadow:none}
+.gda-convert span{font-size:17px;margin-left:7px;vertical-align:-1px}
+.gda-results{margin-top:23px;border:1px solid #dce8df;border-radius:15px;background:#fff;padding:20px}
+.gda-result-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:16px}
+.gda-result-head h2{font-size:20px;margin:0;color:#26382c}
+.gda-result-head p{font-size:11px;color:#728076;margin:5px 0 0}
+.gda-download{display:inline-flex;align-items:center;gap:9px;min-height:40px;border-radius:9px;padding:0 13px;background:#315d47;color:#fff;text-decoration:none;font-size:11px;font-weight:800;white-space:nowrap}
+.gda-download span{font-size:16px}
+.gda-stat-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-bottom:12px}
+.gda-stat{min-width:0;border-radius:9px;background:#f5f8f5;padding:11px}
+.gda-stat span{display:block;color:#748077;font-size:9px;line-height:1.35;margin-bottom:5px}
+.gda-stat strong{display:block;color:#2e4938;font-size:12px;overflow-wrap:anywhere}
+.gda-bounds-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
+.gda-bound-card{padding:11px;border:1px solid #e7ece7;border-radius:9px}
+.gda-bound-card small{display:block;font-size:9px;color:#79847d;margin-bottom:5px}
+.gda-bound-card strong{display:block;font-size:11px;color:#3b4d40;line-height:1.5;overflow-wrap:anywhere}
+.gda-table-wrap h3{font-size:12px;margin:0 0 9px;color:#344a3b}
+.gda-table-scroll{overflow-x:auto}
+.gda-table{width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap}
+.gda-table th{text-align:left;color:#748078;font-size:9px;font-weight:800;background:#f7f9f7;padding:9px 8px}
+.gda-table td{padding:9px 8px;border-top:1px solid #edf0ed;color:#405146;font-variant-numeric:tabular-nums}
+.gda-warning{margin-top:14px;background:#fff7e9;border:1px solid #f0dfb8;color:#826a37;border-radius:9px;padding:11px;font-size:10px;line-height:1.55}
+.gda-limitations{margin-top:17px;border:1px solid #e4e9e5;border-radius:12px;padding:15px 17px;background:#fafcf9}
+.gda-limitations strong{font-size:11px;color:#52665a}
+.gda-limitations p{font-size:10px;line-height:1.55;color:#77827a;margin:6px 0 0}
+.gda-limitations p:last-child{color:#5f806a}
+#gdaGridUpload[hidden],#gdaResults[hidden],#gdaUnsupportedNotice[hidden],#gdaStatus[hidden]{display:none!important}
+@media(max-width:850px){.gda-layout{grid-template-columns:1fr}.gda-page-head{flex-direction:column}.gda-stat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){.gda-panel{padding:15px}.gda-result-head{align-items:flex-start;flex-direction:column}.gda-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.gda-bounds-grid{grid-template-columns:1fr}.gda-action-row{align-items:stretch;flex-direction:column}.gda-actions{width:100%}.gda-actions button{flex:1}.gda-method-card{flex-wrap:wrap}.gda-method-card>span:nth-child(2){flex-basis:calc(100% - 30px)}}
+</style>
+
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -1506,13 +1581,15 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 <div id="appUpdateNotice" role="status" aria-live="polite" hidden></div>
 <div class="app">
 <aside class="side">
-<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v9.9</small></span></div>
+<div class="logo"><span class="logo-mark"><svg class="ui-icon brand-icon"><use href="#st-brand"></use></svg></span><span class="logo-copy"><strong>Surveyor’s Toolbox</strong><small>FIELD WORKSPACE · v10.0</small></span></div>
 <div class="nav">
 <div class="section">Workspace</div>
 <button class="active" onclick="show('dashboard',this)"><svg class="ui-icon nav-icon"><use href="#st-home"></use></svg><span>Home</span></button>
 <div class="section">Survey Calculators</div>
 <button onclick="show('coords',this)"><svg class="ui-icon nav-icon"><use href="#st-coords"></use></svg><span>B&amp;D From Coords</span></button>
 <div class="section">Plan Processing</div><button onclick="show('dpImport',this)"><svg class="ui-icon nav-icon"><use href="#st-upload"></use></svg><span>DP to CAD</span></button>
+<div class="section">Datum &amp; Coordinates</div>
+<button onclick="show('gdaTransform',this)"><svg class="ui-icon nav-icon"><use href="#st-convert"></use></svg><span>GDA94 → MGA2020</span></button>
 <button onclick="show('bd',this)"><svg class="ui-icon nav-icon"><use href="#st-bd"></use></svg><span>Coords From B&amp;D</span></button>
 <button onclick="show('misclose',this)"><svg class="ui-icon nav-icon"><use href="#st-traverse"></use></svg><span>Quick Close</span></button>
 <button onclick="show('strata',this)"><svg class="ui-icon nav-icon"><use href="#st-strata"></use></svg><span>Strata Areas</span></button>
@@ -1939,6 +2016,75 @@ table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border
 <h1>Conversions</h1><div class="sub">Common surveying unit conversions.</div>
 <div class="grid"><div class="card"><label>Value</label><input id="cv" value="1"><label>From</label><select id="cf"><option>metres</option><option>millimetres</option><option>kilometres</option><option>feet</option><option>chains</option></select><label>To</label><select id="ct"><option>metres</option><option>millimetres</option><option>kilometres</option><option>feet</option><option>chains</option></select><button class="btn primary" onclick="convert()">CONVERT</button></div>
 <div class="card"><div class="result"><small>Result</small><strong id="co">—</strong></div></div></div>
+</section>
+
+
+<section id="gdaTransform" class="page gda-page">
+  <div class="gda-page-head">
+    <div>
+      <div class="gda-kicker">DATUM TRANSFORMATION</div>
+      <h1>GDA94 → MGA2020</h1>
+      <p class="gda-subtitle">Transform an existing MGA94 DXF drawing into MGA2020 coordinates and export a new DXF.</p>
+    </div>
+    <div class="gda-local-pill"><span></span> Runs locally in your browser</div>
+  </div>
+
+  <div class="gda-layout">
+    <div class="gda-panel">
+      <div class="gda-panel-head"><span class="gda-step">01</span><div><h2>Drawing and coordinate zones</h2><p>Choose an ASCII DXF and confirm the MGA zone used by the original drawing.</p></div></div>
+      <label class="gda-field-label" for="gdaDxfFile">Source drawing</label>
+      <label class="gda-file-pick" for="gdaDxfFile">
+        <span class="gda-file-icon">＋</span><span><strong>Choose DXF drawing</strong><small id="gdaDxfName">No drawing selected</small></span>
+        <input id="gdaDxfFile" type="file" accept=".dxf,application/dxf">
+      </label>
+      <div class="gda-zone-grid">
+        <div><label class="gda-field-label" for="gdaSourceZone">Source zone</label><select id="gdaSourceZone"><option value="48">MGA94 Zone 48</option><option value="49">MGA94 Zone 49</option><option value="50">MGA94 Zone 50</option><option value="51">MGA94 Zone 51</option><option value="52">MGA94 Zone 52</option><option value="53">MGA94 Zone 53</option><option value="54">MGA94 Zone 54</option><option value="55">MGA94 Zone 55</option><option value="56" selected>MGA94 Zone 56</option></select></div>
+        <div><label class="gda-field-label" for="gdaTargetZone">Output zone</label><select id="gdaTargetZone"><option value="48">MGA2020 Zone 48</option><option value="49">MGA2020 Zone 49</option><option value="50">MGA2020 Zone 50</option><option value="51">MGA2020 Zone 51</option><option value="52">MGA2020 Zone 52</option><option value="53">MGA2020 Zone 53</option><option value="54">MGA2020 Zone 54</option><option value="55">MGA2020 Zone 55</option><option value="56" selected>MGA2020 Zone 56</option></select></div>
+      </div>
+      <div class="gda-zone-note">For most Illawarra drawings, Zone 56 is commonly used. Check the drawing title block, survey control or coordinate metadata before converting.</div>
+    </div>
+
+    <div class="gda-panel">
+      <div class="gda-panel-head"><span class="gda-step">02</span><div><h2>Transformation method</h2><p>Select the method appropriate to the source of the survey coordinates.</p></div></div>
+      <label class="gda-method-card">
+        <input type="radio" name="gdaMethod" value="conformal" checked>
+        <span><strong>Conformal only</strong><small>7-parameter similarity transformation. Appropriate for unlocalised CORSnet-NSW or AUSPOS-derived data.</small></span>
+        <span class="gda-recommended">No grid needed</span>
+      </label>
+      <label class="gda-method-card">
+        <input type="radio" name="gdaMethod" value="cpd">
+        <span><strong>Conformal + Distortion (CPD)</strong><small>Applies the official NTv2 grid to account for localised distortion. Intended for SCIMS-derived or SCIMS-localised survey data in NSW.</small></span>
+        <span class="gda-method-tag">NSW SCIMS</span>
+      </label>
+      <div id="gdaGridUpload" class="gda-grid-upload" hidden>
+        <label class="gda-field-label" for="gdaGridFile">Official ICSM NTv2 grid (.gsb)</label>
+        <label class="gda-file-pick gda-grid-pick" for="gdaGridFile"><span class="gda-file-icon">＋</span><span><strong>Choose CPD grid file</strong><small id="gdaGridName">No NTv2 grid loaded</small></span><input id="gdaGridFile" type="file" accept=".gsb,application/octet-stream"></label>
+        <p class="gda-grid-help">The official CPD grid is approximately 79 MB. <a href="https://github.com/icsm-au/transformation_grids" target="_blank" rel="noopener">Get the official ICSM grid files</a> and select <strong>GDA94_GDA2020_conformal_and_distortion.gsb</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="gda-action-row">
+    <div class="gda-status" id="gdaStatus" role="status" aria-live="polite">Choose an ASCII DXF drawing to begin.</div>
+    <div class="gda-actions"><button id="gdaReset" class="gda-reset" type="button">Reset</button><button id="gdaConvertBtn" class="gda-convert" type="button" disabled>Convert drawing <span>→</span></button></div>
+  </div>
+
+  <div id="gdaResults" class="gda-results" hidden>
+    <div class="gda-result-head"><div><div class="gda-kicker">CONVERSION REPORT</div><h2>Drawing transformed</h2><p id="gdaMethodResult"></p></div><a id="gdaDownload" class="gda-download" href="#" download>Download MGA2020 DXF <span>↓</span></a></div>
+    <div id="gdaStatGrid" class="gda-stat-grid"></div>
+    <div class="gda-bounds-grid">
+      <div class="gda-bound-card"><small>Original coordinate extent · MGA94</small><strong id="gdaBeforeBounds">—</strong></div>
+      <div class="gda-bound-card"><small>Converted coordinate extent · MGA2020</small><strong id="gdaAfterBounds">—</strong></div>
+    </div>
+    <div class="gda-table-wrap"><h3>Sample point checks</h3><div class="gda-table-scroll"><table class="gda-table"><thead><tr><th>Original E</th><th>Original N</th><th>New E</th><th>New N</th><th>ΔE</th><th>ΔN</th></tr></thead><tbody id="gdaSampleRows"></tbody></table></div></div>
+    <div id="gdaUnsupportedNotice" class="gda-warning" hidden></div>
+  </div>
+
+  <div class="gda-limitations">
+    <strong>First-release scope</strong>
+    <p>ASCII DXF only; DWG and binary DXF are not supported yet. The converter transforms supported coordinate pairs in the DXF drawing's ENTITIES section. Block definitions remain in their local coordinates, and specialised or unsupported entities are reported for review. Always inspect the exported drawing and verify control before using it for cadastral or engineering work.</p>
+    <p id="gdaQaStatus">Running internal coordinate checks…</p>
+  </div>
 </section>
 
 <section class="page" id="shortcuts">
@@ -3664,5 +3810,6 @@ window.addEventListener('load',()=>{attachPlan('qc');v7DateDefault('qcDate');ren
 })();
 </script>
 <script src="./dp-import.js" onload="dpScriptLoaded()" onerror="dpScriptFailed()"></script>
+<script src="./gda-transform.js"></script>
 </body>
 </html>
