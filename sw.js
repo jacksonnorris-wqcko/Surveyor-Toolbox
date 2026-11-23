@@ -1,11 +1,11 @@
 /* Surveyor's Toolbox — update-aware service worker */
-const CACHE_VERSION = 'surveyors-toolbox-iphone-v10-3';
+const CACHE_VERSION = 'surveyors-toolbox-iphone-v10-4';
 const CACHE_PREFIX = 'surveyors-toolbox-iphone-';
 const APP_SHELL = [
   './',
   './index.html',
   './dp-import.js',
-  './gda-transform.js',
+  './gda-transform-v10-4.js',
   './manifest.json',
   './v8-workspace.js',
   './sw.js',
