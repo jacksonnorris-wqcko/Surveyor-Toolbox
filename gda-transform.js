@@ -152,11 +152,11 @@
         if (!label) continue;
         if (['NUM_OREC', 'NUM_SREC', 'NUM_FILE', 'GS_COUNT'].includes(label)) values[label] = intValue(at, little);
         else if (['S_LAT', 'N_LAT', 'E_LONG', 'W_LONG', 'LAT_INC', 'LONG_INC', 'MAJOR_F', 'MINOR_F', 'MAJOR_T', 'MINOR_T'].includes(label)) values[label] = doubleValue(at, little);
-        else values[label] = readLabel(at + 0).length ? (() => {
-          let s = '';
-          for (let j = 0; j < 8; j++) s += String.fromCharCode(view.getUint8(at + 8 + j));
-          return s.replace(/[\0 ]+$/g, '').trim();
-        })() : '';
+        else {
+          let value = '';
+          for (let j = 0; j < 8; j++) value += String.fromCharCode(view.getUint8(at + 8 + j));
+          values[label] = value.replace(/[\\0 ]+$/g, '').trim();
+        }
       }
       return values;
     }
@@ -189,9 +189,9 @@
     if (!grids.length) throw new Error('No NTv2 sub-grids were found.');
     const systemFrom = String(overview.SYSTEM_F || '').trim();
     const systemTo = String(overview.SYSTEM_T || '').trim();
-    if (!/GDA\s*94/i.test(systemFrom) || !/GDA\s*2020/i.test(systemTo)) {
-      throw new Error('The integrated ICSM asset is not labelled as a GDA94 → GDA2020 NTv2 transformation. The converter has rejected it.');
-    }
+    // Text labels differ between NTv2 writers. The embedded ICSM asset is
+    // verified against its exact upstream Git blob SHA-1 before it is used.
+
     return { view, little, grids, bytes: arrayBuffer.byteLength, systemFrom, systemTo, gridType: overview.GS_TYPE || '' };
   }
 
@@ -424,7 +424,8 @@
     url: 'https://raw.githubusercontent.com/icsm-au/transformation_grids/d2b26335dbc466c70334446c07463a6e95c5e115/GDA94_GDA2020_conformal_and_distortion.gsb',
     source: 'ICSM transformation_grids · pinned revision d2b26335',
     expectedBytes: 83028032,
-    cacheKey: 'icsm-gda94-gda2020-cpd-83028032-v1'
+    gitBlobSha1: '372e2b4f5b33998e60561c24f3278fe955007698',
+    cacheKey: 'icsm-gda94-gda2020-cpd-83028032-v3'
   });
   const CPD_CACHE_DB = 'surveyors-toolbox-gda-grid-cache';
   const CPD_CACHE_STORE = 'ntv2';
@@ -447,6 +448,32 @@
     if (progressFill && Number.isFinite(progress)) progressFill.style.width = Math.max(0, Math.min(100, progress)) + '%';
     const retry = byId('gdaGridRetry');
     if (retry) retry.hidden = state !== 'error';
+  }
+
+  async function verifyOfficialCpdGrid(buffer) {
+    if (!(buffer instanceof ArrayBuffer) || buffer.byteLength !== CPD_GRID.expectedBytes) {
+      throw new Error('The official ICSM grid has an unexpected file size. It was rejected.');
+    }
+    if (!root.crypto || !root.crypto.subtle || typeof root.TextEncoder !== 'function') {
+      throw new Error('This browser cannot verify the official NSW grid securely. Open the toolbox in a current browser over HTTPS.');
+    }
+    const prefix = new TextEncoder().encode('blob ' + buffer.byteLength + '\\0');
+    const payload = new Uint8Array(prefix.byteLength + buffer.byteLength);
+    payload.set(prefix, 0);
+    payload.set(new Uint8Array(buffer), prefix.byteLength);
+    const digest = await root.crypto.subtle.digest('SHA-1', payload);
+    const actual = Array.from(new Uint8Array(digest)).map(v => v.toString(16).padStart(2, '0')).join('');
+    if (actual !== CPD_GRID.gitBlobSha1) {
+      throw new Error('The downloaded file does not match the official ICSM CPD grid checksum. It was rejected for safety.');
+    }
+    return true;
+  }
+
+  function validateNswCpdCoverage(gridSet) {
+    // A real NSW/Illawarra test interpolation is required before CPD is enabled.
+    const result = interpolateNtv2(gridSet, 150.9, -34.4);
+    if (!result.every(Number.isFinite)) throw new Error('The official CPD grid did not return a valid NSW coverage check.');
+    return result;
   }
 
   function openCpdCacheDb() {
@@ -558,10 +585,9 @@
           const cached = await readCachedCpdGrid();
           if (cached && cached.byteLength === CPD_GRID.expectedBytes) {
             try {
+              await verifyOfficialCpdGrid(cached);
               const parsedCache = parseNtv2(cached);
-              if (!/GDA\s*94/i.test(parsedCache.systemFrom) || !/GDA\s*2020/i.test(parsedCache.systemTo)) {
-                throw new Error('Saved grid datum labels are incorrect.');
-              }
+              validateNswCpdCoverage(parsedCache);
               root.__gdaLoadedGrid = parsedCache;
               fromCache = true;
             } catch (cacheError) {
@@ -575,11 +601,11 @@
         if (!root.__gdaLoadedGrid) {
           updateGridStatus('First use: loading the official ICSM grid automatically (about 79.2 MiB)…', 'loading', 0);
           buffer = await downloadBuiltInCpdGrid();
+          updateGridStatus('Checking the official ICSM checksum and NSW grid coverage…', 'loading', 100);
+          await verifyOfficialCpdGrid(buffer);
           const parsed = parseNtv2(buffer);
-          if (!/GDA\s*94/i.test(parsed.systemFrom) || !/GDA\s*2020/i.test(parsed.systemTo)) {
-            throw new Error('The downloaded grid is not labelled as GDA94 → GDA2020. It was rejected.');
-          }
           if (!parsed.grids || !parsed.grids.length) throw new Error('The downloaded ICSM grid contains no usable sub-grids.');
+          validateNswCpdCoverage(parsed);
           root.__gdaLoadedGrid = parsed;
           try {
             await saveCachedCpdGrid(buffer);
