@@ -553,7 +553,7 @@
           if (cached && cached.byteLength === CPD_GRID.expectedBytes) {
             try {
               const parsedCache = parseNtv2(cached);
-              if (!/GDA\\s*94/i.test(parsedCache.systemFrom) || !/GDA\\s*2020/i.test(parsedCache.systemTo)) {
+              if (!/GDA\s*94/i.test(parsedCache.systemFrom) || !/GDA\s*2020/i.test(parsedCache.systemTo)) {
                 throw new Error('Saved grid datum labels are incorrect.');
               }
               root.__gdaLoadedGrid = parsedCache;
@@ -570,7 +570,7 @@
           updateGridStatus('First use: loading the official ICSM grid automatically (about 79.2 MiB)…', 'loading', 0);
           buffer = await downloadBuiltInCpdGrid();
           const parsed = parseNtv2(buffer);
-          if (!/GDA\\s*94/i.test(parsed.systemFrom) || !/GDA\\s*2020/i.test(parsed.systemTo)) {
+          if (!/GDA\s*94/i.test(parsed.systemFrom) || !/GDA\s*2020/i.test(parsed.systemTo)) {
             throw new Error('The downloaded grid is not labelled as GDA94 → GDA2020. It was rejected.');
           }
           if (!parsed.grids || !parsed.grids.length) throw new Error('The downloaded ICSM grid contains no usable sub-grids.');
@@ -612,14 +612,6 @@
       reader.onload = () => resolve(String(reader.result || ''));
       reader.onerror = () => reject(new Error('Unable to read the selected DXF file.'));
       reader.readAsText(file);
-    });
-  }
-  function readFileBuffer(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error('Unable to read the selected NTv2 grid file.'));
-      reader.readAsArrayBuffer(file);
     });
   }
   function fmt(v) { return Number(v).toFixed(3); }
